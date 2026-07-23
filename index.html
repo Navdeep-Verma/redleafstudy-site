@@ -2556,7 +2556,7 @@ async function syncEntitlements(){
   const user = window.netlifyIdentity && netlifyIdentity.currentUser();
   if(!user) return;
   try{
-    const token = user.token.access_token;
+    const token = await user.jwt(); // fresh, auto-refreshed token — not the possibly-stale one
     const res = await fetch('/.netlify/functions/list-my-access', {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -2584,7 +2584,7 @@ async function startCheckout(product){
   const btn = document.getElementById('paywall-checkout-btn');
   if(btn){ btn.disabled = true; btn.textContent = t('paywallRedirecting'); }
   try{
-    const token = user.token.access_token;
+    const token = await user.jwt(); // fresh, auto-refreshed token — not the possibly-stale one
     const res = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
