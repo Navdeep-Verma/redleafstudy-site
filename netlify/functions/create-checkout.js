@@ -29,7 +29,23 @@ exports.handler = async (event) => {
   // here when the frontend sends the user's JWT in the Authorization header.
   const { user } = event.clientContext || {};
   if (!user) {
-    return { statusCode: 401, body: JSON.stringify({ error: 'You must be logged in to purchase.' }) };
+    // TEMPORARY DIAGNOSTICS — this tells us exactly what the function
+    // actually received, instead of guessing again. Safe to leave in
+    // short-term: it does not reveal the full token, only whether one
+    // arrived and roughly what it looked like.
+    const authHeader = event.headers && (event.headers.authorization || event.headers.Authorization);
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        error: 'You must be logged in to purchase.',
+        debug: {
+          hadClientContext: !!event.clientContext,
+          hadAuthorizationHeader: !!authHeader,
+          authHeaderPreview: authHeader ? authHeader.slice(0, 20) + '...' : null,
+          clientContextKeys: event.clientContext ? Object.keys(event.clientContext) : [],
+        },
+      }),
+    };
   }
 
   let body;

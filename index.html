@@ -2594,7 +2594,7 @@ async function startCheckout(product){
     if(data.url){
       window.location.href = data.url;
     } else {
-      alert(data.error || t('paywallCheckoutError'));
+      alert((data.error || t('paywallCheckoutError')) + (data.debug ? '\n\nDEBUG INFO:\n' + JSON.stringify(data.debug, null, 2) : ''));
       if(btn){ btn.disabled = false; renderPaywallCta(); }
     }
   }catch(e){
