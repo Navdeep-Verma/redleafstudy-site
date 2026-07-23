@@ -837,10 +837,10 @@
     <div class="lock-stamp">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C99A2E" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
     </div>
-    <h3 data-i18n="paywallTitle"></h3>
-    <p data-i18n="paywallBody"></p>
+    <h3 id="paywall-title" data-i18n="paywallTitle"></h3>
+    <p id="paywall-body" data-i18n="paywallBody"></p>
     <p style="font-size:13px; font-weight:700; color:var(--ink);" id="paywall-product-label"></p>
-    <ul class="paywall-list">
+    <ul class="paywall-list" id="paywall-list">
       <li data-i18n="paywallPoint1"></li>
       <li data-i18n="paywallPoint2"></li>
       <li data-i18n="paywallPoint3"></li>
@@ -895,6 +895,9 @@ en: {
   paywallTitle:"Unlock every chapter and both final exams",
   paywallBody:"You've completed the free chapters — nicely done. The rest of the guide (government, elections, justice, symbols, economy, and regions), plus both 100-question final exams, are available with a single one-time payment.",
   paywallPoint1:"6 more chapters with detailed notes",
+  paywallTitleLang:"Unlock Language Premium", paywallBodyLang:"Get full access to premium vocabulary, grammar, reading, and listening content across IELTS, CELPIP, PTE Core, and TEF Canada — one payment unlocks all four.",
+  paywallPoint1Lang:"Premium vocabulary and grammar questions in all 4 exams", paywallPoint2Lang:"Full-length reading passages with complete question sets",
+  paywallPoint3Lang:"Every listening passage, unlocked", paywallPoint4Lang:"Lifetime access, study at your own pace",
   paywallPoint2:"24 more practice tests, 360 questions with explanations",
   paywallPoint3:"Both 100-question combined final exams",
   paywallPoint4:"Lifetime access, study at your own pace",
@@ -1018,6 +1021,9 @@ fr: {
   paywallTitle:"Débloquer tous les chapitres et les deux examens finaux",
   paywallBody:"Vous avez terminé les chapitres gratuits — bravo. Le reste du guide (gouvernement, élections, justice, symboles, économie et régions), ainsi que les deux examens finaux de 100 questions, sont accessibles avec un seul paiement unique.",
   paywallPoint1:"6 chapitres supplémentaires avec notes détaillées",
+  paywallTitleLang:"Débloquer Language Premium", paywallBodyLang:"Obtenez un accès complet au contenu premium de vocabulaire, grammaire, lecture et écoute pour IELTS, CELPIP, PTE Core et TEF Canada — un seul paiement débloque les quatre.",
+  paywallPoint1Lang:"Questions premium de vocabulaire et grammaire pour les 4 examens", paywallPoint2Lang:"Passages de lecture complets avec tous leurs ensembles de questions",
+  paywallPoint3Lang:"Tous les passages d'écoute, débloqués", paywallPoint4Lang:"Accès à vie, étudiez à votre rythme",
   paywallPoint2:"24 tests pratiques additionnels, 360 questions avec explications",
   paywallPoint3:"Les deux examens finaux combinés de 100 questions",
   paywallPoint4:"Accès à vie, étudiez à votre rythme",
@@ -1141,6 +1147,9 @@ es: {
   paywallTitle:"Desbloquea todos los capítulos y ambos exámenes finales",
   paywallBody:"Has completado los capítulos gratuitos — muy bien. El resto de la guía (gobierno, elecciones, justicia, símbolos, economía y regiones), además de ambos exámenes finales de 100 preguntas, están disponibles con un solo pago único.",
   paywallPoint1:"6 capítulos adicionales con notas detalladas",
+  paywallTitleLang:"Desbloquear Language Premium", paywallBodyLang:"Obtén acceso completo al contenido premium de vocabulario, gramática, lectura y comprensión auditiva para IELTS, CELPIP, PTE Core y TEF Canada — un solo pago desbloquea los cuatro.",
+  paywallPoint1Lang:"Preguntas premium de vocabulario y gramática en los 4 exámenes", paywallPoint2Lang:"Pasajes de lectura completos con todos sus conjuntos de preguntas",
+  paywallPoint3Lang:"Todos los pasajes de audio, desbloqueados", paywallPoint4Lang:"Acceso de por vida, estudia a tu propio ritmo",
   paywallPoint2:"24 exámenes de práctica adicionales, 360 preguntas con explicaciones",
   paywallPoint3:"Ambos exámenes finales combinados de 100 preguntas",
   paywallPoint4:"Acceso de por vida, estudia a tu propio ritmo",
@@ -2214,6 +2223,25 @@ function openPaywall(product){
   const info = paywallProductInfo[currentPaywallProduct];
   document.getElementById('paywall-price-amount').textContent = info.price;
   document.getElementById('paywall-product-label').textContent = info.label;
+  if(currentPaywallProduct === 'language_premium'){
+    document.getElementById('paywall-title').textContent = t('paywallTitleLang');
+    document.getElementById('paywall-body').textContent = t('paywallBodyLang');
+    document.getElementById('paywall-list').innerHTML = `
+      <li>${t('paywallPoint1Lang')}</li>
+      <li>${t('paywallPoint2Lang')}</li>
+      <li>${t('paywallPoint3Lang')}</li>
+      <li>${t('paywallPoint4Lang')}</li>
+    `;
+  } else {
+    document.getElementById('paywall-title').textContent = t('paywallTitle');
+    document.getElementById('paywall-body').textContent = t('paywallBody');
+    document.getElementById('paywall-list').innerHTML = `
+      <li>${t('paywallPoint1')}</li>
+      <li>${t('paywallPoint2')}</li>
+      <li>${t('paywallPoint3')}</li>
+      <li>${t('paywallPoint4')}</li>
+    `;
+  }
   renderPaywallCta();
   document.getElementById("paywall-overlay").classList.add("show");
 }
