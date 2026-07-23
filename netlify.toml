@@ -4,9 +4,3 @@
 
 [functions]
   node_bundler = "esbuild"
-
-# Ensures Netlify Identity's confirmation/invite links resolve correctly
-[[redirects]]
-  from = "/.netlify/identity/*"
-  to = "/.netlify/identity/:splat"
-  status = 200
