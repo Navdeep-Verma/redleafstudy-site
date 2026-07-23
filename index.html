@@ -839,38 +839,15 @@
     </div>
     <h3 data-i18n="paywallTitle"></h3>
     <p data-i18n="paywallBody"></p>
+    <p style="font-size:13px; font-weight:700; color:var(--ink);" id="paywall-product-label"></p>
     <ul class="paywall-list">
       <li data-i18n="paywallPoint1"></li>
       <li data-i18n="paywallPoint2"></li>
       <li data-i18n="paywallPoint3"></li>
       <li data-i18n="paywallPoint4"></li>
     </ul>
-    <div class="paywall-price">$12.99 <span style="font-size:13px;color:var(--ink-70);font-weight:400;" data-i18n="paywallOneTime"></span></div>
-    <!--
-      PAYMENT LINK — this is your LIVE Stripe link:
-      https://buy.stripe.com/cNi9AU4oPfGygLFdHQ3cc00
-
-      SIMPLE, NO-DATA-COLLECTION UNLOCK SETUP:
-
-      In the Stripe Dashboard, open this Payment Link -> edit ->
-      "After payment" -> "Redirect customers to a specific webpage"
-      -> set it to your site URL with ?unlocked=true appended, e.g.:
-      https://redleafstudy.com/?unlocked=true
-
-      This page reads that parameter on load and unlocks all chapters
-      and both final exams for that browser only, saved in that
-      browser's local storage so it stays unlocked on return visits
-      to the SAME device. No email, name, or any other personal
-      information is collected or stored anywhere by this site.
-
-      Trade-off, by design: since nothing is collected, there is no
-      way to "look up" a purchase to restore access on a different
-      device — a customer who switches devices or clears their
-      browser data needs to contact you directly for help, using the
-      support email shown below. That manual, low-volume path is the
-      intentional cost of not collecting any personal information.
-    -->
-    <a id="pay-link" class="btn btn-gold btn-block" href="https://buy.stripe.com/cNi9AU4oPfGygLFdHQ3cc00" target="_blank" rel="noopener" data-i18n="paywallCta"></a>
+    <div class="paywall-price"><span id="paywall-price-amount">$12.99</span> <span style="font-size:13px;color:var(--ink-70);font-weight:400;" data-i18n="paywallOneTime"></span></div>
+    <div id="paywall-cta-container"></div>
     <p style="margin-top:14px; font-size:11.5px; color:var(--ink-45);" data-i18n="paywallFooterNote"></p>
     <p style="margin-top:10px; font-size:12.5px; color:var(--ink-70);" data-i18n="sameDeviceNote"></p>
     <p style="margin-top:6px; font-size:12.5px; color:var(--ink-70);" data-i18n="supportContactNote"></p>
@@ -922,8 +899,9 @@ en: {
   paywallPoint3:"Both 100-question combined final exams",
   paywallPoint4:"Lifetime access, study at your own pace",
   paywallOneTime:"one-time", paywallCta:"Continue to secure payment",
+  paywallLoginToUnlock:"Log in to unlock", paywallRedirecting:"Redirecting to checkout...", paywallCheckoutError:"Something went wrong starting checkout. Please try again.",
   paywallFooterNote:"You'll be taken to a secure Stripe payment page. This content unlocks automatically once payment is confirmed.",
-  sameDeviceNote:"After payment, locked chapters and exams unlock automatically on the same device you used to buy — no account or login needed.",
+  sameDeviceNote:"Your purchase is tied to your account, so it works on any device — just log in and unlocked content is there.",
   supportContactNote:"Questions, or need help on a new device? Email careredleaf@yahoo.com — we don't collect or store any personal information.",
   toolsHead:"Free Study Tools", toolsSub:"No payment needed for any of these",
   exploreHead:"Everything on Redleaf Study", exploreSub:"Jump straight to what you need",
@@ -1044,8 +1022,9 @@ fr: {
   paywallPoint3:"Les deux examens finaux combinés de 100 questions",
   paywallPoint4:"Accès à vie, étudiez à votre rythme",
   paywallOneTime:"paiement unique", paywallCta:"Continuer vers le paiement sécurisé",
+  paywallLoginToUnlock:"Se connecter pour débloquer", paywallRedirecting:"Redirection vers le paiement...", paywallCheckoutError:"Un problème est survenu. Veuillez réessayer.",
   paywallFooterNote:"Vous serez redirigé vers une page de paiement Stripe sécurisée. Ce contenu se débloque automatiquement une fois le paiement confirmé.",
-  sameDeviceNote:"Après le paiement, les chapitres et examens verrouillés se déverrouillent automatiquement sur le même appareil utilisé pour l'achat — aucun compte ni connexion requis.",
+  sameDeviceNote:"Votre achat est lié à votre compte, donc il fonctionne sur n'importe quel appareil — connectez-vous simplement et le contenu débloqué sera là.",
   supportContactNote:"Des questions, ou besoin d'aide sur un nouvel appareil? Écrivez à careredleaf@yahoo.com — nous ne collectons ni ne conservons aucune information personnelle.",
   toolsHead:"Outils d'étude gratuits", toolsSub:"Aucun paiement requis pour ceux-ci",
   exploreHead:"Tout sur Redleaf Study", exploreSub:"Accédez directement à ce dont vous avez besoin",
@@ -1166,8 +1145,9 @@ es: {
   paywallPoint3:"Ambos exámenes finales combinados de 100 preguntas",
   paywallPoint4:"Acceso de por vida, estudia a tu propio ritmo",
   paywallOneTime:"pago único", paywallCta:"Continuar al pago seguro",
+  paywallLoginToUnlock:"Inicia sesión para desbloquear", paywallRedirecting:"Redirigiendo al pago...", paywallCheckoutError:"Algo salió mal. Por favor intenta de nuevo.",
   paywallFooterNote:"Serás dirigido a una página de pago segura de Stripe. Este contenido se desbloquea automáticamente una vez confirmado el pago.",
-  sameDeviceNote:"Después del pago, los capítulos y exámenes bloqueados se desbloquean automáticamente en el mismo dispositivo que usaste para comprar — no se necesita cuenta ni inicio de sesión.",
+  sameDeviceNote:"Tu compra está vinculada a tu cuenta, así que funciona en cualquier dispositivo — solo inicia sesión y el contenido desbloqueado estará ahí.",
   supportContactNote:"¿Preguntas, o necesitas ayuda en un dispositivo nuevo? Escribe a careredleaf@yahoo.com — no recopilamos ni almacenamos ninguna información personal.",
   toolsHead:"Herramientas de estudio gratuitas", toolsSub:"No se necesita pago para ninguna de estas",
   exploreHead:"Todo en Redleaf Study", exploreSub:"Ve directo a lo que necesitas",
@@ -1263,6 +1243,7 @@ let examIndex = 0;
 const PASS_THRESHOLD = 0.75;
 
 let isPaid = false;
+let hasLanguagePremium = false;
 function loadPaidState(){
   try{
     if(localStorage.getItem('redleaf_paid') === 'true') isPaid = true;
@@ -1582,13 +1563,13 @@ function langTimerPillHtml(){
 function renderExamQuizSection(examCode, el, key, items){
   const state = examQuizState[examCode][key];
   el.innerHTML = items.map((q, qi)=>{
-    const locked = !q.free && !isPaid;
+    const locked = !q.free && !hasLanguagePremium;
     const answered = state[qi];
     if(locked){
       return `<div class="q-card" style="opacity:.55;">
         <div class="q-num">Question ${qi+1} / ${items.length} · <span style="color:var(--gold); font-weight:700;">PREMIUM</span></div>
         <h4>${q.q}</h4>
-        <button class="btn btn-gold" onclick="openPaywall()" style="margin-top:8px;">Unlock to answer</button>
+        <button class="btn btn-gold" onclick="openPaywall('language_premium')" style="margin-top:8px;">Unlock to answer</button>
       </div>`;
     }
     const name = `${examCode}-${key}-${qi}`;
@@ -1629,11 +1610,11 @@ function checkLangQuizAnswer(examCode, key, qi){
 
 function renderExamReading(examCode, el, passages){
   el.innerHTML = langTimerPillHtml() + passages.map((passage, pi)=>{
-    const locked = !passage.free && !isPaid;
+    const locked = !passage.free && !hasLanguagePremium;
     if(locked){
       return `<div class="note-card" style="opacity:.6;">
         <h3>Reading Passage ${pi+1} · <span style="color:var(--gold);">PREMIUM</span></h3>
-        <button class="btn btn-gold" onclick="openPaywall()">Unlock this passage</button>
+        <button class="btn btn-gold" onclick="openPaywall('language_premium')">Unlock this passage</button>
       </div>`;
     }
     if(!examReadingState[examCode][pi]) examReadingState[examCode][pi] = {};
@@ -1690,11 +1671,11 @@ function checkReadingAnswer(examCode, pi, qi){
 function renderExamListening(examCode, el, passages){
   el.innerHTML = langTimerPillHtml() + `<div class="callout" style="margin-bottom:24px;"><svg viewBox="0 0 24 24" fill="none" stroke="#C99A2E" stroke-width="1.8"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/></svg><div><h3>How this works</h3><p>Click "Play audio" to have the passage read aloud using your browser's built-in text-to-speech, then answer the questions below. This is a study stand-in for real listening-exam audio, not a recording with different voices/accents.</p></div></div>` +
   passages.map((item, pi)=>{
-    const locked = !item.free && !isPaid;
+    const locked = !item.free && !hasLanguagePremium;
     if(locked){
       return `<div class="note-card" style="opacity:.6;">
         <h3>Listening Passage ${pi+1} · <span style="color:var(--gold);">PREMIUM</span></h3>
-        <button class="btn btn-gold" onclick="openPaywall()">Unlock this passage</button>
+        <button class="btn btn-gold" onclick="openPaywall('language_premium')">Unlock this passage</button>
       </div>`;
     }
     if(!examListeningState[examCode][pi]) examListeningState[examCode][pi] = {};
@@ -1755,9 +1736,9 @@ function checkListeningAnswer(examCode, pi, qi){
 /* ---- PTE reading has a distinct format: MCQ passages + Reorder Paragraphs ---- */
 function renderPteReading(el){
   const mcqHtml = pteContent.reading.mcq.map((passage, pi)=>{
-    const locked = !passage.free && !isPaid;
+    const locked = !passage.free && !hasLanguagePremium;
     if(locked){
-      return `<div class="note-card" style="opacity:.6;"><h3>Reading Passage ${pi+1} · <span style="color:var(--gold);">PREMIUM</span></h3><button class="btn btn-gold" onclick="openPaywall()">Unlock this passage</button></div>`;
+      return `<div class="note-card" style="opacity:.6;"><h3>Reading Passage ${pi+1} · <span style="color:var(--gold);">PREMIUM</span></h3><button class="btn btn-gold" onclick="openPaywall('language_premium')">Unlock this passage</button></div>`;
     }
     if(!examReadingState.pte[pi]) examReadingState.pte[pi] = {};
     const state = examReadingState.pte[pi];
@@ -1792,9 +1773,9 @@ function renderPteReading(el){
 }
 
 function renderPteReorderCard(ri, exercise){
-  const locked = !exercise.free && !isPaid;
+  const locked = !exercise.free && !hasLanguagePremium;
   if(locked){
-    return `<div class="note-card" style="opacity:.6;"><h3>Reorder Exercise ${ri+1} · <span style="color:var(--gold);">PREMIUM</span></h3><button class="btn btn-gold" onclick="openPaywall()">Unlock this exercise</button></div>`;
+    return `<div class="note-card" style="opacity:.6;"><h3>Reorder Exercise ${ri+1} · <span style="color:var(--gold);">PREMIUM</span></h3><button class="btn btn-gold" onclick="openPaywall('language_premium')">Unlock this exercise</button></div>`;
   }
   if(!pteReorderState[ri]) pteReorderState[ri] = { order: shuffleArray(exercise.correctOrder.map((_,i)=>i)), checked:false };
   const st = pteReorderState[ri];
@@ -2231,7 +2212,19 @@ function examNav(dir){
   renderExamGridNav();
 }
 
-function openPaywall(){ document.getElementById("paywall-overlay").classList.add("show"); }
+let currentPaywallProduct = 'citizenship_prep';
+const paywallProductInfo = {
+  citizenship_prep: { price: '$12.99', label: 'Citizenship Prep' },
+  language_premium: { price: '$20.00', label: 'Language Premium (IELTS, CELPIP, PTE, TEF)' },
+};
+function openPaywall(product){
+  currentPaywallProduct = product || 'citizenship_prep';
+  const info = paywallProductInfo[currentPaywallProduct];
+  document.getElementById('paywall-price-amount').textContent = info.price;
+  document.getElementById('paywall-product-label').textContent = info.label;
+  renderPaywallCta();
+  document.getElementById("paywall-overlay").classList.add("show");
+}
 function closePaywall(){ document.getElementById("paywall-overlay").classList.remove("show"); }
 document.getElementById("paywall-overlay").addEventListener("click", (e)=>{ if(e.target.id === "paywall-overlay") closePaywall(); });
 
@@ -2535,11 +2528,88 @@ function updateAuthUI(user){
     loggedOutEl.style.display = 'flex';
     loggedInEl.style.display = 'none';
   }
+  renderPaywallCta(); // keep the paywall's button in sync with login state if it's open
 }
 
+/* ================= REAL ENTITLEMENTS (server-verified, not a browser flag) ================= */
+async function syncEntitlements(){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user) return;
+  try{
+    const token = user.token.access_token;
+    const res = await fetch('/.netlify/functions/list-my-access', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if(!res.ok) return;
+    const { products } = await res.json();
+    if(products.includes('citizenship_prep')) isPaid = true;
+    if(products.includes('language_premium')) hasLanguagePremium = true;
+    // Re-render whatever's currently on screen so newly-unlocked content shows immediately
+    if(document.querySelector('[data-view="home"].active')) renderChapterGrid();
+    if(document.querySelector('[data-view="ielts-hub"].active')) renderIeltsTabContent();
+    if(document.querySelector('[data-view="celpip-hub"].active')) renderCelpipTabContent();
+    if(document.querySelector('[data-view="pte-hub"].active')) renderPteTabContent();
+    if(document.querySelector('[data-view="tef-hub"].active')) renderTefTabContent();
+  }catch(e){
+    console.error('Could not check entitlements:', e);
+  }
+}
+
+async function startCheckout(product){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user){
+    netlifyIdentity.open('login');
+    return;
+  }
+  const btn = document.getElementById('paywall-checkout-btn');
+  if(btn){ btn.disabled = true; btn.textContent = t('paywallRedirecting'); }
+  try{
+    const token = user.token.access_token;
+    const res = await fetch('/.netlify/functions/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ product }),
+    });
+    const data = await res.json();
+    if(data.url){
+      window.location.href = data.url;
+    } else {
+      alert(data.error || t('paywallCheckoutError'));
+      if(btn){ btn.disabled = false; renderPaywallCta(); }
+    }
+  }catch(e){
+    console.error('Checkout failed:', e);
+    alert(t('paywallCheckoutError'));
+    if(btn){ btn.disabled = false; renderPaywallCta(); }
+  }
+}
+
+function renderPaywallCta(){
+  const container = document.getElementById('paywall-cta-container');
+  if(!container) return;
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user){
+    container.innerHTML = `<button class="btn btn-gold btn-block" onclick="netlifyIdentity.open('login')">${t('paywallLoginToUnlock')}</button>`;
+  } else {
+    container.innerHTML = `<button class="btn btn-gold btn-block" id="paywall-checkout-btn" onclick="startCheckout('${currentPaywallProduct}')">${t('paywallCta')}</button>`;
+  }
+}
+
+// Handle returning from a successful Stripe checkout
+(function handlePurchaseReturn(){
+  const params = new URLSearchParams(window.location.search);
+  const purchased = params.get('purchased');
+  if(purchased){
+    if(purchased === 'citizenship_prep') isPaid = true;
+    if(purchased === 'language_premium') hasLanguagePremium = true;
+    // Also re-check with the server on next load, in case the webhook
+    // was still processing at the moment of redirect.
+  }
+})();
+
 if(window.netlifyIdentity){
-  netlifyIdentity.on('init', user => updateAuthUI(user));
-  netlifyIdentity.on('login', user => { updateAuthUI(user); netlifyIdentity.close(); });
+  netlifyIdentity.on('init', user => { updateAuthUI(user); if(user) syncEntitlements(); });
+  netlifyIdentity.on('login', user => { updateAuthUI(user); syncEntitlements(); netlifyIdentity.close(); });
   netlifyIdentity.on('logout', () => updateAuthUI(null));
   netlifyIdentity.init();
 }
