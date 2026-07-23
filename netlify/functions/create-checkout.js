@@ -11,6 +11,7 @@
 //   SITE_URL   (e.g. https://redleafstudy.com)
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { verifyUser } = require('./utils/verifyUser');
 
 // Map each product to its real Stripe Price ID. Create these in the
 // Stripe Dashboard -> Product catalog -> Add product -> one-time price.
@@ -25,26 +26,11 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  // Netlify Identity automatically attaches the verified logged-in user
-  // here when the frontend sends the user's JWT in the Authorization header.
-  const { user } = event.clientContext || {};
+  const { user, reason } = await verifyUser(event);
   if (!user) {
-    // TEMPORARY DIAGNOSTICS — this tells us exactly what the function
-    // actually received, instead of guessing again. Safe to leave in
-    // short-term: it does not reveal the full token, only whether one
-    // arrived and roughly what it looked like.
-    const authHeader = event.headers && (event.headers.authorization || event.headers.Authorization);
     return {
       statusCode: 401,
-      body: JSON.stringify({
-        error: 'You must be logged in to purchase.',
-        debug: {
-          hadClientContext: !!event.clientContext,
-          hadAuthorizationHeader: !!authHeader,
-          authHeaderPreview: authHeader ? authHeader.slice(0, 20) + '...' : null,
-          clientContextKeys: event.clientContext ? Object.keys(event.clientContext) : [],
-        },
-      }),
+      body: JSON.stringify({ error: 'You must be logged in to purchase.', debug: { reason } }),
     };
   }
 
