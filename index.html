@@ -121,8 +121,9 @@
   .btn-auth-solid{background:var(--ink); border:1.5px solid var(--ink); color:#fff;}
   .account-pill{font-size:12.5px; font-weight:700; color:var(--green); background:#EAF6F0; padding:7px 13px; border-radius:999px; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   @media(max-width:700px){#auth-logged-out .btn-auth-ghost{display:none;} .account-pill{display:none;}}
-  .nav-burger{width:38px; height:38px; border:1.5px solid var(--ink); border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
-  .nav-burger svg{width:19px; height:19px;}
+  .nav-burger{height:40px; padding:0 16px 0 12px; border:none; border-radius:999px; background:var(--ink); color:#fff; display:flex; align-items:center; gap:7px; flex-shrink:0; font-weight:700; font-size:13.5px; box-shadow:0 3px 10px rgba(21,33,59,.25);}
+  .nav-burger:hover{background:var(--red);}
+  .nav-burger svg{width:17px; height:17px; flex-shrink:0;}
   .nav-overlay{position:fixed; inset:0; background:rgba(21,33,59,.5); backdrop-filter:blur(2px); z-index:90; display:none;}
   .nav-overlay.show{display:block;}
   .nav-drawer{position:fixed; top:0; right:-360px; width:320px; max-width:88vw; height:100%; background:var(--paper); z-index:95; box-shadow:-10px 0 40px rgba(0,0,0,.2); transition:right .25s ease; overflow-y:auto; padding:20px 0;}
@@ -410,6 +411,10 @@
   .rb-preview-page ul{margin:4px 0 0; padding-left:16px;}
   .rb-preview-page li{margin-bottom:2px;}
   .rb-preview-empty{color:#999; font-style:italic; font-size:12px;}
+  .rb-suggestions{background:var(--paper-dark); border-radius:12px; padding:16px; margin-bottom:18px;}
+  .rb-chip{display:inline-block; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:6px 13px; font-size:12.5px; margin:0 6px 6px 0; cursor:pointer; color:var(--ink);}
+  .rb-chip:hover{border-color:var(--red); color:var(--red);}
+  .rb-chip-soft{border-color:#bcd; }
 
   /* Template: Classic — serif, traditional, black & white */
   .rb-tpl-classic{font-family:Georgia,"Times New Roman",serif;}
@@ -509,6 +514,7 @@
       </div>
       <button class="nav-burger" onclick="toggleNavDrawer()" aria-label="Menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <span data-i18n="navMenuLabel"></span>
       </button>
     </div>
     </div>
@@ -627,42 +633,13 @@
       </div>
     </div>
 
-    <div class="callout">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#C99A2E" stroke-width="1.8"><path d="M12 2l1.9 5.8H20l-4.9 3.6 1.9 5.8L12 13.6l-5 3.6 1.9-5.8L4 7.8h6.1L12 2z"/></svg>
-      <div>
-        <h3 data-i18n="calloutTitle"></h3>
-        <p data-i18n="calloutBody"></p>
-      </div>
+<div class="section-head" id="chapters">
+      <h2 data-i18n="chaptersHead"></h2>
+      <span class="sub" data-i18n="chaptersSub"></span>
     </div>
+    <div class="chapter-grid" id="chapter-grid"></div>
 
-    <div class="exam-cta-grid" id="final-exams-section" style="grid-template-columns:repeat(4,1fr);">
-      <div class="exam-cta">
-        <div class="tag" data-i18n="examTagMock20"></div>
-        <h3 data-i18n="examTitleMock20"></h3>
-        <p data-i18n="examBodyMock20"></p>
-        <button class="btn btn-gold" onclick="openExam('mock20')" data-i18n="examCta"></button>
-      </div>
-      <div class="exam-cta">
-        <div class="tag" data-i18n="examTagMock50"></div>
-        <h3 data-i18n="examTitleMock50"></h3>
-        <p data-i18n="examBodyMock50"></p>
-        <button class="btn btn-gold" onclick="openExam('mock50')" data-i18n="examCta"></button>
-      </div>
-      <div class="exam-cta">
-        <div class="tag" data-i18n="examTag1"></div>
-        <h3 data-i18n="examTitle1"></h3>
-        <p data-i18n="examBody"></p>
-        <button class="btn btn-gold" onclick="openExam('final1')" data-i18n="examCta"></button>
-      </div>
-      <div class="exam-cta">
-        <div class="tag" data-i18n="examTag2"></div>
-        <h3 data-i18n="examTitle2"></h3>
-        <p data-i18n="examBody"></p>
-        <button class="btn btn-gold" onclick="openExam('final2')" data-i18n="examCta"></button>
-      </div>
-    </div>
-
-    <div class="section-head">
+<div class="section-head">
       <h2 data-i18n="toolsHead"></h2>
       <span class="sub" data-i18n="toolsSub"></span>
     </div>
@@ -705,13 +682,50 @@
       </div>
     </div>
 
-    <div class="qotd-card" id="qotd-card"></div>
+    
 
-    <div class="section-head" id="chapters">
-      <h2 data-i18n="chaptersHead"></h2>
-      <span class="sub" data-i18n="chaptersSub"></span>
+<div class="callout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#C99A2E" stroke-width="1.8"><path d="M12 2l1.9 5.8H20l-4.9 3.6 1.9 5.8L12 13.6l-5 3.6 1.9-5.8L4 7.8h6.1L12 2z"/></svg>
+      <div>
+        <h3 data-i18n="calloutTitle"></h3>
+        <p data-i18n="calloutBody"></p>
+      </div>
     </div>
-    <div class="chapter-grid" id="chapter-grid"></div>
+
+    
+
+<div class="exam-cta-grid" id="final-exams-section" style="grid-template-columns:repeat(4,1fr);">
+      <div class="exam-cta">
+        <div class="tag" data-i18n="examTagMock20"></div>
+        <h3 data-i18n="examTitleMock20"></h3>
+        <p data-i18n="examBodyMock20"></p>
+        <button class="btn btn-gold" onclick="openExam('mock20')" data-i18n="examCta"></button>
+      </div>
+      <div class="exam-cta">
+        <div class="tag" data-i18n="examTagMock50"></div>
+        <h3 data-i18n="examTitleMock50"></h3>
+        <p data-i18n="examBodyMock50"></p>
+        <button class="btn btn-gold" onclick="openExam('mock50')" data-i18n="examCta"></button>
+      </div>
+      <div class="exam-cta">
+        <div class="tag" data-i18n="examTag1"></div>
+        <h3 data-i18n="examTitle1"></h3>
+        <p data-i18n="examBody"></p>
+        <button class="btn btn-gold" onclick="openExam('final1')" data-i18n="examCta"></button>
+      </div>
+      <div class="exam-cta">
+        <div class="tag" data-i18n="examTag2"></div>
+        <h3 data-i18n="examTitle2"></h3>
+        <p data-i18n="examBody"></p>
+        <button class="btn btn-gold" onclick="openExam('final2')" data-i18n="examCta"></button>
+      </div>
+    </div>
+
+    
+
+<div class="qotd-card" id="qotd-card"></div>
+
+    
 
     <div class="section-head" id="faq-section">
       <h2 data-i18n="faqHead"></h2>
@@ -952,7 +966,7 @@
 
       <div id="pt-crop-controls" style="display:none; margin-top:16px;">
         <label class="pt-label" data-i18n="photoToolStep3"></label>
-        <input type="range" id="pt-zoom-slider" min="100" max="300" value="100" oninput="updatePhotoCropper()">
+        <input type="range" id="pt-zoom-slider" min="40" max="300" value="100" oninput="updatePhotoCropper()">
         <p style="font-size:12px; color:var(--ink-70); margin-top:4px;" data-i18n="photoToolDragHint"></p>
         <button class="btn btn-ghost" style="margin-top:10px; width:100%;" onclick="resetPhotoCropper()" data-i18n="photoToolResetBtn"></button>
 
@@ -1154,9 +1168,9 @@ const content = {
 en: {
   brandEn:"Redleaf Study", brandFr:"Préparation Redleaf",
   disclaimerStrip:"⚠ Independent study resource — <b>not</b> affiliated with or endorsed by the Government of Canada or IRCC. Always confirm current test requirements at canada.ca.",
-  eyebrow:"Citizenship test preparation",
-  heroTitle:"Study smarter for your <em>Canadian citizenship</em> test.",
-  heroLede:"Ten in-depth chapters, four 15-question practice tests each, and two full 100-question final exams — built for people who find the official study guide long and hard to get through. Every answer comes with instant right-or-wrong feedback and a clear explanation.",
+  eyebrow:"Your Canadian immigration & career toolkit",
+  heroTitle:"Everything you need to prepare for <em>life in Canada</em> — in one place.",
+  heroLede:"Citizenship test prep, IELTS, CELPIP, PTE Core and TEF Canada practice, a passport &amp; visa photo tool, and a resume builder — built to actually get you through the paperwork and the tests, not just tell you what to study. Every answer comes with a clear explanation, not just right or wrong.",
   heroCta1:"Browse chapters", heroCta2:"Start Chapter 1 →",
   statChapters:"chapters", statTests:"practice tests", statQuestions:"total questions", statFinal:"question final exams", statLang:"languages",
   calloutTitle:"Built for people who don't feel like reading the whole book",
@@ -1179,10 +1193,10 @@ en: {
   footerAboutHead:"About this site",
   footerBlogLink:"Read our citizenship test guides →",
   footerAboutBody:"An independent study platform for people preparing for Canadian immigration. Citizenship test prep, IELTS, CELPIP, PTE Core, and TEF Canada practice, a passport and visa photo tool, and more — all in one place, with detailed notes and full explanations for every answer.",
-  footerPayHead:"Support this project",
+  footerPayHead:"Premium Access",
   footerSupportHead:"Need help?",
-  footerPayBody:"Chapters 5 through 10, plus both 100-question final exams, are available for a one-time payment, which helps keep this resource running and up to date.",
-  fullDisclaimer:"Disclaimer: This website is an independently produced study aid and is not affiliated with, endorsed by, or sponsored by the Government of Canada, Immigration, Refugees and Citizenship Canada (IRCC), or any government body. It is intended to support — not replace — official preparation materials. Test content, eligibility rules, and requirements can change; always verify current information at canada.ca before your test. Practice scores here are not a guarantee of your result on the official citizenship test.",
+  footerPayBody:"Full access to citizenship prep, language exam practice, and our tools unlocks with a simple one-time payment — no subscription, no recurring charges.",
+  fullDisclaimer:"Disclaimer: Redleaf Study is an independently produced study and preparation platform. It is not affiliated with, endorsed by, or sponsored by the Government of Canada, Immigration, Refugees and Citizenship Canada (IRCC), the test providers for IELTS, CELPIP, PTE Core, or TEF Canada, or any government or official examination body. Nothing on this site constitutes legal, immigration, or professional advice. Test content, eligibility rules, photo and document requirements, and application procedures can change at any time — always verify current, official information directly with IRCC, the relevant test provider, or the relevant consulate/visa authority before relying on it. Practice scores, tools, and generated documents on this site (including the photo tool and resume builder) are provided for general guidance only, are not guaranteed to be accepted by any institution or authority, and are not a guarantee of any outcome, including test results, application approval, or employment. Use of this site and its tools is at your own risk.",
   paywallTitle:"Unlock every chapter and both final exams",
   paywallBody:"You've completed the free chapters — nicely done. The rest of the guide (government, elections, justice, symbols, economy, and regions), plus both 100-question final exams, are available with a single one-time payment.",
   paywallPoint1:"6 more chapters with detailed notes",
@@ -1197,7 +1211,7 @@ en: {
   paywallFooterNote:"You'll be taken to a secure Stripe payment page. This content unlocks automatically once payment is confirmed.",
   sameDeviceNote:"Your purchase is tied to your account, so it works on any device — just log in and unlocked content is there.",
   supportContactNote:"Questions, or need help on a new device? Email careredleaf@yahoo.com — we don't collect or store any personal information.",
-  toolsHead:"Free Study Tools", toolsSub:"No payment needed for any of these",
+  toolsHead:"Free Study Tools", toolsSub:"",
   exploreHead:"Everything on Redleaf Study", exploreSub:"Jump straight to what you need",
   exploreCitizenshipTitle:"Citizenship Prep", exploreCitizenshipDesc:"10 chapters, 600 questions, mock tests, and 2 full final exams in English, French, and Spanish.",
   exploreLangTitle:"Language Exams", exploreLangDesc:"IELTS, CELPIP, PTE Core, and TEF Canada — vocabulary, grammar, reading, and listening practice.",
@@ -1223,6 +1237,9 @@ en: {
   resumeBuilderMyResumesTitle:"My Saved Resumes", resumeBuilderNoSaved:"You haven't saved any resumes yet.",
   resumeBuilderExportLabel:"Download as PDF", resumeBuilderExportDesc:"Clean, watermark-free PDF export, ready to send to employers.",
   resumeBuilderDownloadBtn:"Download PDF", resumeBuilderUnlockBtn:"Unlock PDF export",
+  resumeBuilderJobCategoryLabel:"What kind of role is this resume for?", resumeBuilderJobCategoryHint:"This changes the suggested skills and bullet points below — pick whichever fits best, or General if none quite match.",
+  resumeBuilderSuggestedBullets:"Suggested bullet points — click to add", resumeBuilderSuggestedSkills:"Suggested skills — click to add",
+  resumeBuilderFinishBtn:"Finish → Go to download", resumeBuilderDownloadDocxBtn:"Download DOCX",
   photoToolTitle:"Passport & Visa Photo Tool", photoToolIntro:"Upload your photo, pick the exact document you need it for, and crop it to the correct size and proportions — free preview with a watermark, or unlock a clean high-resolution file.",
   photoToolStep1:"1. Choose your document type", photoToolStep2:"2. Upload your photo", photoToolStep3:"3. Drag to reposition, use the slider to zoom",
   photoToolDragHint:"Click and drag your photo to centre your face within the guide.",
@@ -1291,7 +1308,7 @@ en: {
   installModalFootnote:"Once installed, it opens full-screen with its own icon — no app store, no download size, always up to date automatically.",
   navLogIn:"Log in", navSignUp:"Sign up", navLogOut:"Log out", navAccountFallback:"My account",
   navLangLabel:"Language Exams", navLangOverview:"All language exams",
-  navMoreLabel:"More", navFAQ:"FAQ",
+  navMoreLabel:"More", navFAQ:"FAQ", navMenuLabel:"Menu",
   navTrustBadge:"Your account, your access, on any device",
   navContactLink:"Contact support",
   faqQ1:"How many questions are on the real Canadian citizenship test?",
@@ -1313,9 +1330,9 @@ en: {
 fr: {
   brandEn:"Redleaf Study", brandFr:"Préparation Redleaf",
   disclaimerStrip:"⚠ Ressource d'étude indépendante — <b>non</b> affiliée ni approuvée par le gouvernement du Canada ou IRCC. Vérifiez toujours les exigences actuelles sur canada.ca.",
-  eyebrow:"Préparation à l'examen de citoyenneté",
-  heroTitle:"Étudiez intelligemment pour votre examen de <em>citoyenneté canadienne</em>.",
-  heroLede:"Dix chapitres approfondis, quatre tests pratiques de 15 questions chacun, et deux examens finaux complets de 100 questions — conçus pour les personnes qui trouvent le guide officiel long et difficile à terminer. Chaque réponse offre une correction instantanée et une explication claire.",
+  eyebrow:"Votre boîte à outils pour l'immigration canadienne",
+  heroTitle:"Tout ce qu'il faut pour préparer votre <em>vie au Canada</em> — au même endroit.",
+  heroLede:"Préparation à l'examen de citoyenneté, pratique IELTS, CELPIP, PTE Core et TEF Canada, un outil photo pour passeport et visa, et un créateur de CV — conçu pour vous faire vraiment avancer dans les démarches, pas seulement vous dire quoi étudier. Chaque réponse inclut une explication claire, pas seulement vrai ou faux.",
   heroCta1:"Voir les chapitres", heroCta2:"Commencer le chapitre 1 →",
   statChapters:"chapitres", statTests:"tests pratiques", statQuestions:"questions au total", statFinal:"questions par examen final", statLang:"langues",
   calloutTitle:"Conçu pour ceux qui n'ont pas envie de lire tout le guide",
@@ -1338,10 +1355,10 @@ fr: {
   footerAboutHead:"À propos de ce site",
   footerBlogLink:"Lisez nos guides sur l'examen de citoyenneté →",
   footerAboutBody:"Une plateforme d'étude indépendante pour les personnes qui se préparent à l'immigration canadienne. Préparation à l'examen de citoyenneté, pratique IELTS, CELPIP, PTE Core et TEF Canada, un outil photo pour passeport et visa, et plus encore — le tout au même endroit, avec des explications complètes pour chaque réponse.",
-  footerPayHead:"Soutenir ce projet",
+  footerPayHead:"Accès Premium",
   footerSupportHead:"Besoin d'aide?",
-  footerPayBody:"Les chapitres 5 à 10, ainsi que les deux examens finaux de 100 questions, sont accessibles moyennant un paiement unique, ce qui aide à maintenir cette ressource à jour.",
-  fullDisclaimer:"Avis : Ce site web est un outil d'étude produit de façon indépendante et n'est affilié à, approuvé par, ni parrainé par le gouvernement du Canada, Immigration, Réfugiés et Citoyenneté Canada (IRCC), ou tout autre organisme gouvernemental. Il vise à appuyer — et non à remplacer — le matériel de préparation officiel. Le contenu de l'examen, les critères d'admissibilité et les exigences peuvent changer; vérifiez toujours l'information à jour sur canada.ca avant votre examen. Les résultats obtenus ici ne garantissent pas votre résultat à l'examen officiel.",
+  footerPayBody:"L'accès complet à la préparation citoyenneté, la pratique des examens de langue et nos outils se débloque avec un simple paiement unique — aucun abonnement, aucuns frais récurrents.",
+  fullDisclaimer:"Avis : Redleaf Study est une plateforme d'étude et de préparation produite de façon indépendante. Elle n'est affiliée à, approuvée par, ni parrainée par le gouvernement du Canada, Immigration, Réfugiés et Citoyenneté Canada (IRCC), les fournisseurs des examens IELTS, CELPIP, PTE Core ou TEF Canada, ni aucun organisme gouvernemental ou d'examen officiel. Rien sur ce site ne constitue un avis juridique, d'immigration ou professionnel. Le contenu des examens, les critères d'admissibilité, les exigences relatives aux photos et documents, et les procédures de demande peuvent changer à tout moment — vérifiez toujours l'information officielle à jour directement auprès d'IRCC, du fournisseur d'examen concerné, ou de l'autorité consulaire/de visa concernée. Les résultats pratiques, outils et documents générés sur ce site (y compris l'outil photo et le créateur de CV) sont fournis à titre indicatif seulement, ne sont pas garantis d'être acceptés par une institution ou autorité, et ne garantissent aucun résultat, y compris les résultats d'examen, l'approbation d'une demande ou un emploi. L'utilisation de ce site et de ses outils se fait à vos propres risques.",
   paywallTitle:"Débloquer tous les chapitres et les deux examens finaux",
   paywallBody:"Vous avez terminé les chapitres gratuits — bravo. Le reste du guide (gouvernement, élections, justice, symboles, économie et régions), ainsi que les deux examens finaux de 100 questions, sont accessibles avec un seul paiement unique.",
   paywallPoint1:"6 chapitres supplémentaires avec notes détaillées",
@@ -1356,7 +1373,7 @@ fr: {
   paywallFooterNote:"Vous serez redirigé vers une page de paiement Stripe sécurisée. Ce contenu se débloque automatiquement une fois le paiement confirmé.",
   sameDeviceNote:"Votre achat est lié à votre compte, donc il fonctionne sur n'importe quel appareil — connectez-vous simplement et le contenu débloqué sera là.",
   supportContactNote:"Des questions, ou besoin d'aide sur un nouvel appareil? Écrivez à careredleaf@yahoo.com — nous ne collectons ni ne conservons aucune information personnelle.",
-  toolsHead:"Outils d'étude gratuits", toolsSub:"Aucun paiement requis pour ceux-ci",
+  toolsHead:"Outils d'étude gratuits", toolsSub:"",
   exploreHead:"Tout sur Redleaf Study", exploreSub:"Accédez directement à ce dont vous avez besoin",
   exploreCitizenshipTitle:"Préparation citoyenneté", exploreCitizenshipDesc:"10 chapitres, 600 questions, tests pratiques et 2 examens finaux complets en anglais, français et espagnol.",
   exploreLangTitle:"Examens de langue", exploreLangDesc:"IELTS, CELPIP, PTE Core et TEF Canada — vocabulaire, grammaire, lecture et écoute.",
@@ -1382,6 +1399,9 @@ fr: {
   resumeBuilderMyResumesTitle:"Mes CV enregistrés", resumeBuilderNoSaved:"Vous n'avez encore enregistré aucun CV.",
   resumeBuilderExportLabel:"Télécharger en PDF", resumeBuilderExportDesc:"Export PDF propre, sans filigrane, prêt à envoyer aux employeurs.",
   resumeBuilderDownloadBtn:"Télécharger le PDF", resumeBuilderUnlockBtn:"Débloquer l'export PDF",
+  resumeBuilderJobCategoryLabel:"Pour quel type de poste est ce CV?", resumeBuilderJobCategoryHint:"Cela change les compétences et points suggérés ci-dessous — choisissez ce qui convient le mieux, ou Général si rien ne correspond.",
+  resumeBuilderSuggestedBullets:"Points suggérés — cliquez pour ajouter", resumeBuilderSuggestedSkills:"Compétences suggérées — cliquez pour ajouter",
+  resumeBuilderFinishBtn:"Terminer → Aller au téléchargement", resumeBuilderDownloadDocxBtn:"Télécharger le DOCX",
   photoToolTitle:"Outil photo passeport et visa", photoToolIntro:"Téléversez votre photo, choisissez le document exact requis, et recadrez-la aux bonnes dimensions — aperçu gratuit avec filigrane, ou débloquez un fichier haute résolution sans filigrane.",
   photoToolStep1:"1. Choisissez le type de document", photoToolStep2:"2. Téléversez votre photo", photoToolStep3:"3. Glissez pour repositionner, utilisez le curseur pour zoomer",
   photoToolDragHint:"Cliquez et glissez votre photo pour centrer votre visage dans le guide.",
@@ -1450,7 +1470,7 @@ fr: {
   installModalFootnote:"Une fois installée, elle s'ouvre en plein écran avec sa propre icône — aucune boutique d'applications, aucun téléchargement, toujours à jour automatiquement.",
   navLogIn:"Se connecter", navSignUp:"S'inscrire", navLogOut:"Se déconnecter", navAccountFallback:"Mon compte",
   navLangLabel:"Examens de langue", navLangOverview:"Tous les examens de langue",
-  navMoreLabel:"Plus", navFAQ:"FAQ",
+  navMoreLabel:"Plus", navFAQ:"FAQ", navMenuLabel:"Menu",
   navTrustBadge:"Votre compte, votre accès, sur tout appareil",
   navContactLink:"Contacter le support",
   faqQ1:"Combien de questions comporte le véritable examen de citoyenneté canadienne?",
@@ -1472,9 +1492,9 @@ fr: {
 es: {
   brandEn:"Redleaf Study", brandFr:"Redleaf Study",
   disclaimerStrip:"⚠ Recurso de estudio independiente — <b>no</b> afiliado ni respaldado por el Gobierno de Canadá ni por IRCC. Verifique siempre los requisitos actuales del examen en canada.ca.",
-  eyebrow:"Preparación para el examen de ciudadanía",
-  heroTitle:"Estudia de forma más inteligente para tu examen de <em>ciudadanía canadiense</em>.",
-  heroLede:"Diez capítulos detallados, cuatro exámenes de práctica de 15 preguntas cada uno, y dos exámenes finales completos de 100 preguntas — creado para quienes encuentran la guía oficial larga y difícil de terminar. Cada respuesta incluye retroalimentación instantánea y una explicación clara.",
+  eyebrow:"Tu caja de herramientas para la inmigración canadiense",
+  heroTitle:"Todo lo que necesitas para prepararte para tu <em>vida en Canadá</em> — en un solo lugar.",
+  heroLede:"Preparación para el examen de ciudadanía, práctica de IELTS, CELPIP, PTE Core y TEF Canada, una herramienta de fotos para pasaporte y visa, y un creador de currículum — creado para ayudarte realmente con los trámites, no solo decirte qué estudiar. Cada respuesta incluye una explicación clara, no solo correcto o incorrecto.",
   heroCta1:"Explorar capítulos", heroCta2:"Comenzar el Capítulo 1 →",
   statChapters:"capítulos", statTests:"exámenes de práctica", statQuestions:"preguntas en total", statFinal:"preguntas por examen final", statLang:"idiomas",
   calloutTitle:"Creado para quienes no tienen ganas de leer todo el libro",
@@ -1497,10 +1517,10 @@ es: {
   footerAboutHead:"Acerca de este sitio",
   footerBlogLink:"Lee nuestras guías del examen de ciudadanía →",
   footerAboutBody:"Una plataforma de estudio independiente para personas que se preparan para la inmigración canadiense. Preparación para el examen de ciudadanía, práctica de IELTS, CELPIP, PTE Core y TEF Canada, una herramienta de fotos para pasaporte y visa, y más — todo en un solo lugar, con explicaciones completas para cada respuesta.",
-  footerPayHead:"Apoya este proyecto",
+  footerPayHead:"Acceso Premium",
   footerSupportHead:"¿Necesitas ayuda?",
-  footerPayBody:"Los capítulos 5 a 10, además de ambos exámenes finales de 100 preguntas, están disponibles mediante un pago único, lo cual ayuda a mantener este recurso actualizado.",
-  fullDisclaimer:"Aviso: Este sitio web es una ayuda de estudio producida de forma independiente y no está afiliado, respaldado ni patrocinado por el Gobierno de Canadá, Inmigración, Refugiados y Ciudadanía Canadá (IRCC), ni por ningún organismo gubernamental. Su objetivo es apoyar — no reemplazar — los materiales de preparación oficiales. El contenido del examen, las reglas de elegibilidad y los requisitos pueden cambiar; verifique siempre la información actual en canada.ca antes de su examen. Los puntajes de práctica aquí no garantizan su resultado en el examen oficial de ciudadanía.",
+  footerPayBody:"El acceso completo a la preparación de ciudadanía, la práctica de exámenes de idioma y nuestras herramientas se desbloquea con un simple pago único — sin suscripción, sin cargos recurrentes.",
+  fullDisclaimer:"Aviso: Redleaf Study es una plataforma de estudio y preparación producida de forma independiente. No está afiliada, respaldada ni patrocinada por el Gobierno de Canadá, Inmigración, Refugiados y Ciudadanía Canadá (IRCC), los proveedores de los exámenes IELTS, CELPIP, PTE Core o TEF Canada, ni ningún organismo gubernamental o de examen oficial. Nada en este sitio constituye asesoría legal, de inmigración o profesional. El contenido de los exámenes, las reglas de elegibilidad, los requisitos de fotos y documentos, y los procedimientos de solicitud pueden cambiar en cualquier momento — verifique siempre la información oficial y actual directamente con IRCC, el proveedor del examen correspondiente, o la autoridad consular/de visa correspondiente. Los puntajes de práctica, herramientas y documentos generados en este sitio (incluyendo la herramienta de fotos y el creador de currículum) se proporcionan solo como guía general, no están garantizados para ser aceptados por ninguna institución o autoridad, y no garantizan ningún resultado, incluyendo resultados de exámenes, aprobación de solicitudes o empleo. El uso de este sitio y sus herramientas es bajo su propio riesgo.",
   paywallTitle:"Desbloquea todos los capítulos y ambos exámenes finales",
   paywallBody:"Has completado los capítulos gratuitos — muy bien. El resto de la guía (gobierno, elecciones, justicia, símbolos, economía y regiones), además de ambos exámenes finales de 100 preguntas, están disponibles con un solo pago único.",
   paywallPoint1:"6 capítulos adicionales con notas detalladas",
@@ -1515,7 +1535,7 @@ es: {
   paywallFooterNote:"Serás dirigido a una página de pago segura de Stripe. Este contenido se desbloquea automáticamente una vez confirmado el pago.",
   sameDeviceNote:"Tu compra está vinculada a tu cuenta, así que funciona en cualquier dispositivo — solo inicia sesión y el contenido desbloqueado estará ahí.",
   supportContactNote:"¿Preguntas, o necesitas ayuda en un dispositivo nuevo? Escribe a careredleaf@yahoo.com — no recopilamos ni almacenamos ninguna información personal.",
-  toolsHead:"Herramientas de estudio gratuitas", toolsSub:"No se necesita pago para ninguna de estas",
+  toolsHead:"Herramientas de estudio gratuitas", toolsSub:"",
   exploreHead:"Todo en Redleaf Study", exploreSub:"Ve directo a lo que necesitas",
   exploreCitizenshipTitle:"Preparación de ciudadanía", exploreCitizenshipDesc:"10 capítulos, 600 preguntas, exámenes de práctica y 2 exámenes finales completos en inglés, francés y español.",
   exploreLangTitle:"Exámenes de idioma", exploreLangDesc:"IELTS, CELPIP, PTE Core y TEF Canada — vocabulario, gramática, lectura y comprensión auditiva.",
@@ -1541,6 +1561,9 @@ es: {
   resumeBuilderMyResumesTitle:"Mis currículums guardados", resumeBuilderNoSaved:"Aún no has guardado ningún currículum.",
   resumeBuilderExportLabel:"Descargar como PDF", resumeBuilderExportDesc:"Exportación en PDF limpia, sin marca de agua, lista para enviar a empleadores.",
   resumeBuilderDownloadBtn:"Descargar PDF", resumeBuilderUnlockBtn:"Desbloquear exportación PDF",
+  resumeBuilderJobCategoryLabel:"¿Para qué tipo de puesto es este currículum?", resumeBuilderJobCategoryHint:"Esto cambia las habilidades y puntos sugeridos abajo — elige lo que mejor se adapte, o General si ninguno coincide.",
+  resumeBuilderSuggestedBullets:"Puntos sugeridos — haz clic para agregar", resumeBuilderSuggestedSkills:"Habilidades sugeridas — haz clic para agregar",
+  resumeBuilderFinishBtn:"Terminar → Ir a descargar", resumeBuilderDownloadDocxBtn:"Descargar DOCX",
   photoToolTitle:"Herramienta de foto de pasaporte y visa", photoToolIntro:"Sube tu foto, elige el documento exacto que necesitas, y recórtala al tamaño y proporciones correctas — vista previa gratuita con marca de agua, o desbloquea un archivo limpio en alta resolución.",
   photoToolStep1:"1. Elige el tipo de documento", photoToolStep2:"2. Sube tu foto", photoToolStep3:"3. Arrastra para reposicionar, usa el control deslizante para hacer zoom",
   photoToolDragHint:"Haz clic y arrastra tu foto para centrar tu rostro dentro de la guía.",
@@ -1609,7 +1632,7 @@ es: {
   installModalFootnote:"Una vez instalada, se abre en pantalla completa con su propio ícono — sin tienda de aplicaciones, sin descarga pesada, siempre actualizada automáticamente.",
   navLogIn:"Iniciar sesión", navSignUp:"Registrarse", navLogOut:"Cerrar sesión", navAccountFallback:"Mi cuenta",
   navLangLabel:"Exámenes de idioma", navLangOverview:"Todos los exámenes de idioma",
-  navMoreLabel:"Más", navFAQ:"Preguntas frecuentes",
+  navMoreLabel:"Más", navFAQ:"Preguntas frecuentes", navMenuLabel:"Menú",
   navTrustBadge:"Tu cuenta, tu acceso, en cualquier dispositivo",
   navContactLink:"Contactar soporte",
   faqQ1:"¿Cuántas preguntas tiene el examen real de ciudadanía canadiense?",
@@ -3447,8 +3470,122 @@ function renderPhotoToolSeoContent(){
 }
 
 /* ================= RESUME BUILDER (Step 1: builder + live preview, one template) ================= */
+const jobCategoryData = {
+  general: {
+    label: "General / Other",
+    technical: ["Microsoft Office", "Data entry", "Scheduling", "Record keeping", "Basic bookkeeping"],
+    soft: ["Communication", "Time management", "Problem-solving", "Teamwork", "Adaptability"],
+    bullets: [
+      "Managed daily tasks and priorities, consistently meeting deadlines",
+      "Collaborated with a team of [X] to complete projects on schedule",
+      "Improved a process that saved [X hours/week or $X]",
+      "Trained [X] new team members on standard procedures",
+    ]
+  },
+  tech: {
+    label: "Software / IT",
+    technical: ["JavaScript", "Python", "SQL", "React", "Git", "AWS/Cloud", "REST APIs", "Docker"],
+    soft: ["Problem-solving", "Cross-team collaboration", "Code review", "Technical documentation"],
+    bullets: [
+      "Built and shipped [feature] used by [X users/customers], improving [metric] by [X%]",
+      "Reduced page load time / API latency by [X%] through [specific optimization]",
+      "Led migration from [old system] to [new system], cutting [cost/time] by [X%]",
+      "Mentored [X] junior engineers on code quality and best practices",
+    ]
+  },
+  healthcare: {
+    label: "Healthcare / Nursing",
+    technical: ["Patient care", "Electronic Health Records (EHR)", "Vital signs monitoring", "Medication administration", "CPR/First Aid certified"],
+    soft: ["Empathy", "Attention to detail", "Crisis management", "Clear communication with patients and families"],
+    bullets: [
+      "Provided direct care to [X] patients per shift in a [unit type] setting",
+      "Maintained a [X%] patient satisfaction score over [time period]",
+      "Collaborated with a multidisciplinary team to develop and update care plans",
+      "Reduced medication errors by [X%] through improved verification procedures",
+    ]
+  },
+  sales: {
+    label: "Sales / Marketing",
+    technical: ["CRM software (Salesforce, HubSpot)", "Lead generation", "Email marketing", "Social media campaigns", "Analytics/reporting"],
+    soft: ["Persuasive communication", "Relationship building", "Negotiation", "Target-driven"],
+    bullets: [
+      "Exceeded quarterly sales targets by [X%], generating $[X] in new revenue",
+      "Managed a portfolio of [X] client accounts, maintaining a [X%] retention rate",
+      "Launched a campaign that increased [leads/conversions/traffic] by [X%]",
+      "Built and nurtured relationships with [X] new clients over [time period]",
+    ]
+  },
+  customer_service: {
+    label: "Customer Service / Retail",
+    technical: ["Point-of-sale (POS) systems", "Inventory management", "Order processing", "Cash handling"],
+    soft: ["Conflict resolution", "Active listening", "Patience under pressure", "Multitasking"],
+    bullets: [
+      "Resolved an average of [X] customer inquiries per day with a [X%] satisfaction rating",
+      "Trained [X] new staff on service standards and store procedures",
+      "Reduced customer complaint escalations by [X%] through improved first-contact resolution",
+      "Consistently met or exceeded upsell/cross-sell targets by [X%]",
+    ]
+  },
+  admin: {
+    label: "Administration / Office",
+    technical: ["Microsoft Office / Google Workspace", "Calendar management", "Travel coordination", "Expense reporting", "Filing systems"],
+    soft: ["Organization", "Discretion with confidential information", "Multitasking", "Proactive follow-up"],
+    bullets: [
+      "Managed calendars and scheduling for [X] executives, coordinating [X] meetings weekly",
+      "Streamlined the filing/document system, reducing retrieval time by [X%]",
+      "Processed and tracked [X] expense reports monthly with zero discrepancies",
+      "Coordinated travel arrangements for [X] staff, saving [$X/time] through better planning",
+    ]
+  },
+  education: {
+    label: "Education / Teaching",
+    technical: ["Curriculum development", "Learning management systems (LMS)", "Classroom management", "Assessment design"],
+    soft: ["Patience", "Adaptability to different learning styles", "Clear explanation of complex topics", "Mentorship"],
+    bullets: [
+      "Taught [subject] to [X] students across [X] grade levels/classes",
+      "Developed a new curriculum unit that improved test scores by [X%]",
+      "Mentored [X] students, with [X%] going on to [outcome]",
+      "Led parent-teacher communications, maintaining a [X%] engagement rate",
+    ]
+  },
+  hospitality: {
+    label: "Hospitality / Food Service",
+    technical: ["POS systems", "Food safety certification", "Inventory/stock management", "Reservation systems"],
+    soft: ["Working under pressure", "Team coordination during peak hours", "Customer-first attitude"],
+    bullets: [
+      "Served an average of [X] guests per shift while maintaining [X%] satisfaction scores",
+      "Trained [X] new staff on service standards and menu knowledge",
+      "Managed inventory and reduced food waste by [X%]",
+      "Coordinated with kitchen and front-of-house staff to maintain [X-minute] average service time",
+    ]
+  },
+  trades: {
+    label: "Trades / Construction",
+    technical: ["Blueprint reading", "Equipment operation", "Safety compliance (OSHA)", "Quality inspection"],
+    soft: ["Physical stamina", "Safety-first mindset", "Team coordination on-site", "Problem-solving under time pressure"],
+    bullets: [
+      "Completed [X] projects on time and within budget, totaling $[X]",
+      "Maintained a zero-incident safety record over [time period]",
+      "Trained [X] apprentices on proper technique and safety procedures",
+      "Reduced material waste by [X%] through improved planning and measurement",
+    ]
+  },
+  finance: {
+    label: "Finance / Accounting",
+    technical: ["Excel / financial modeling", "QuickBooks / accounting software", "Reconciliation", "Financial reporting", "Budgeting"],
+    soft: ["Attention to detail", "Analytical thinking", "Confidentiality", "Deadline-driven"],
+    bullets: [
+      "Managed monthly close process for [$X] in transactions, reducing close time by [X%]",
+      "Identified cost-saving opportunities totaling $[X] annually",
+      "Prepared and presented financial reports to [stakeholders] on a [frequency] basis",
+      "Reconciled [X] accounts monthly with zero discrepancies",
+    ]
+  }
+};
+
 let resumeDraft = {
   personalInfo: { fullName:'', title:'', email:'', phone:'', linkedin:'', github:'', portfolio:'', address:'', summary:'' },
+  jobCategory: 'general',
   education: [],
   experience: [],
   skills: { technical:'', soft:'', languages:'' },
@@ -3496,13 +3633,19 @@ function renderRbStep(){
   if(key === 'skills') html = renderRbSkillsForm();
   if(key === 'projects') html = renderRbProjectsForm();
 
+  const isLastStep = rbCurrentStep === rbSteps.length-1;
   html += `
     <div class="rb-wizard-nav">
       <button class="btn btn-ghost" onclick="rbPrev()" ${rbCurrentStep===0?'disabled style="opacity:.4;"':''}>← Back</button>
-      <button class="btn btn-primary" onclick="rbNext()" ${rbCurrentStep===rbSteps.length-1?'disabled style="opacity:.4;"':''}>Next →</button>
+      ${isLastStep
+        ? `<button class="btn btn-primary" onclick="rbFinishWizard()">${t('resumeBuilderFinishBtn')}</button>`
+        : `<button class="btn btn-primary" onclick="rbNext()">Next →</button>`}
     </div>
   `;
   el.innerHTML = html;
+}
+function rbFinishWizard(){
+  document.querySelector('.pt-result-unlock')?.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 function rbField(label, id, value, placeholder, type){
@@ -3511,7 +3654,13 @@ function rbField(label, id, value, placeholder, type){
 
 function renderRbPersonalInfoForm(){
   const p = resumeDraft.personalInfo;
+  const categoryOptions = Object.keys(jobCategoryData).map(key =>
+    `<option value="${key}" ${resumeDraft.jobCategory===key?'selected':''}>${jobCategoryData[key].label}</option>`
+  ).join('');
   return `
+    <label class="rb-field-label">${t('resumeBuilderJobCategoryLabel')}</label>
+    <select class="pt-select" id="rb-jobCategory" style="margin-bottom:16px;" onchange="resumeDraft.jobCategory = this.value; renderRbStep();">${categoryOptions}</select>
+    <p style="font-size:12px; color:var(--ink-70); margin-top:-10px; margin-bottom:16px;">${t('resumeBuilderJobCategoryHint')}</p>
     <div class="rb-field-row">
       ${rbField('Full Name','rb-fullName',p.fullName,'Jane Smith')}
       ${rbField('Professional Title','rb-title',p.title,'Software Engineer')}
@@ -3522,10 +3671,10 @@ function renderRbPersonalInfoForm(){
     </div>
     <div class="rb-field-row">
       ${rbField('LinkedIn','rb-linkedin',p.linkedin,'linkedin.com/in/jane')}
-      ${rbField('GitHub','rb-github',p.github,'github.com/jane')}
+      ${resumeDraft.jobCategory==='tech' ? rbField('GitHub','rb-github',p.github,'github.com/jane') : '<div></div>'}
     </div>
     <div class="rb-field-row">
-      ${rbField('Portfolio','rb-portfolio',p.portfolio,'janesmith.com')}
+      ${rbField('Portfolio / Website','rb-portfolio',p.portfolio,'janesmith.com')}
       ${rbField('Address','rb-address',p.address,'Toronto, ON')}
     </div>
     <label class="rb-field-label">Professional Summary</label>
@@ -3539,7 +3688,8 @@ function rbSyncPersonalInfo(){
   p.email = document.getElementById('rb-email').value;
   p.phone = document.getElementById('rb-phone').value;
   p.linkedin = document.getElementById('rb-linkedin').value;
-  p.github = document.getElementById('rb-github').value;
+  const githubEl = document.getElementById('rb-github');
+  if(githubEl) p.github = githubEl.value;
   p.portfolio = document.getElementById('rb-portfolio').value;
   p.address = document.getElementById('rb-address').value;
   p.summary = document.getElementById('rb-summary').value;
@@ -3569,7 +3719,14 @@ function renderRbEducationForm(){
 
 function renderRbExperienceForm(){
   const entries = resumeDraft.experience;
-  return entries.map((e, i) => `
+  const cat = jobCategoryData[resumeDraft.jobCategory] || jobCategoryData.general;
+  const suggestionsHtml = `
+    <div class="rb-suggestions">
+      <div class="rb-field-label" style="margin-bottom:8px;">${t('resumeBuilderSuggestedBullets')} (${cat.label})</div>
+      ${cat.bullets.map(b => `<button type="button" class="rb-chip" onclick="rbAddSuggestedBullet(${JSON.stringify(b).replace(/"/g,'&quot;')})">+ ${b}</button>`).join('')}
+    </div>
+  `;
+  return suggestionsHtml + entries.map((e, i) => `
     <div class="rb-entry-card">
       <button class="rb-entry-remove" onclick="rbRemoveEntry('experience', ${i})">✕ Remove</button>
       <div class="rb-field-row">
@@ -3585,14 +3742,30 @@ function renderRbExperienceForm(){
         <div><label class="rb-field-label">End</label><input class="rb-input" placeholder="Present" value="${(e.endDate||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('experience', ${i}, 'endDate', this.value)"></div>
       </div>
       <label class="rb-field-label">Responsibilities & Achievements (one per line)</label>
-      <textarea class="rb-textarea" style="min-height:90px;" oninput="rbUpdateEntry('experience', ${i}, 'bullets', this.value)">${e.bullets||''}</textarea>
+      <textarea class="rb-textarea" id="rb-exp-bullets-${i}" style="min-height:90px;" oninput="rbUpdateEntry('experience', ${i}, 'bullets', this.value)">${e.bullets||''}</textarea>
     </div>
   `).join('') + `<button class="rb-add-btn" onclick="rbAddEntry('experience')">+ Add experience</button>`;
+}
+function rbAddSuggestedBullet(text){
+  if(resumeDraft.experience.length === 0){ rbAddEntry('experience'); }
+  const lastIndex = resumeDraft.experience.length - 1;
+  const current = resumeDraft.experience[lastIndex].bullets || '';
+  resumeDraft.experience[lastIndex].bullets = current ? current + '\n' + text : text;
+  renderRbStep();
+  renderRbPreview();
 }
 
 function renderRbSkillsForm(){
   const s = resumeDraft.skills;
-  return `
+  const cat = jobCategoryData[resumeDraft.jobCategory] || jobCategoryData.general;
+  const chipsHtml = `
+    <div class="rb-suggestions">
+      <div class="rb-field-label" style="margin-bottom:8px;">${t('resumeBuilderSuggestedSkills')} (${cat.label})</div>
+      ${cat.technical.map(s2 => `<button type="button" class="rb-chip" onclick="rbAddSuggestedSkill('technical', ${JSON.stringify(s2).replace(/"/g,'&quot;')})">+ ${s2}</button>`).join('')}
+      ${cat.soft.map(s2 => `<button type="button" class="rb-chip rb-chip-soft" onclick="rbAddSuggestedSkill('soft', ${JSON.stringify(s2).replace(/"/g,'&quot;')})">+ ${s2}</button>`).join('')}
+    </div>
+  `;
+  return chipsHtml + `
     <label class="rb-field-label">Technical Skills (comma-separated)</label>
     <textarea class="rb-textarea" id="rb-technical" placeholder="JavaScript, React, Python, SQL" oninput="rbSyncSkills()">${s.technical||''}</textarea>
     <label class="rb-field-label">Soft Skills (comma-separated)</label>
@@ -3600,6 +3773,14 @@ function renderRbSkillsForm(){
     <label class="rb-field-label">Languages (comma-separated)</label>
     <textarea class="rb-textarea" id="rb-languages" placeholder="English (native), French (intermediate)" oninput="rbSyncSkills()">${s.languages||''}</textarea>
   `;
+}
+function rbAddSuggestedSkill(type, skill){
+  const current = resumeDraft.skills[type] || '';
+  const existing = current.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+  if(existing.includes(skill.toLowerCase())) return;
+  resumeDraft.skills[type] = current ? current + ', ' + skill : skill;
+  renderRbStep();
+  renderRbPreview();
 }
 function rbSyncSkills(){
   resumeDraft.skills.technical = document.getElementById('rb-technical').value;
@@ -3813,13 +3994,21 @@ async function rbDeleteResume(id){
 // for the Resume Builder ($3.99 CAD), created the same way as the Photo
 // Tool's link — see SETUP notes. Until this is a real link, the unlock
 // button below will not charge correctly.
-const RESUME_BUILDER_PAYMENT_LINK = "https://buy.stripe.com/REPLACE_WITH_REAL_RESUME_BUILDER_LINK";
+// Reuses the SAME real Stripe Payment Link as the Photo Tool — one $3.99
+// purchase now unlocks both the clean photo download and the resume PDF
+// export, since they share the identical price. See syncEntitlements()
+// and the webhook: purchasing this link now grants BOTH 'photo_tool' and
+// 'resume_builder' access together.
+const RESUME_BUILDER_PAYMENT_LINK = PHOTO_TOOL_PAYMENT_LINK;
 
 function renderRbExportCta(){
   const container = document.getElementById('rb-export-cta');
   if(!container) return;
   if(hasResumeBuilderAccess){
-    container.innerHTML = `<button class="btn btn-gold btn-block" onclick="rbDownloadPDF()">${t('resumeBuilderDownloadBtn')}</button>`;
+    container.innerHTML = `
+      <button class="btn btn-gold btn-block" onclick="rbDownloadPDF()">${t('resumeBuilderDownloadBtn')}</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="rbDownloadDOCX()">${t('resumeBuilderDownloadDocxBtn')}</button>
+    `;
   } else {
     const user = window.netlifyIdentity && netlifyIdentity.currentUser();
     if(!user){
@@ -3845,6 +4034,61 @@ function goToResumeBuilderPaymentLink(){
 // option in every modern browser's print dialog.
 function rbDownloadPDF(){
   window.print();
+}
+
+// DOCX export: built as a Word-compatible HTML document (the same
+// technique many resume tools use to avoid needing a full OOXML binary
+// library in the browser). It opens correctly in Microsoft Word, Google
+// Docs, and LibreOffice, and is fully editable there — genuinely usable
+// as a real .doc file, generated entirely client-side, no server needed.
+function rbDownloadDOCX(){
+  const p = resumeDraft.personalInfo;
+  const contactParts = [p.email, p.phone, p.linkedin, p.github, p.portfolio, p.address].filter(Boolean);
+
+  const eduHtml = resumeDraft.education.map(e => `
+    <p style="margin:4px 0 0;"><b>${e.university||''}</b> — ${[e.degree,e.major].filter(Boolean).join(', ')} ${e.gpa?'(GPA: '+e.gpa+')':''}<br>
+    <span style="color:#555; font-size:10pt;">${e.startDate||''} – ${e.endDate||''}</span></p>
+  `).join('');
+
+  const expHtml = resumeDraft.experience.map(e => `
+    <p style="margin:10px 0 0;"><b>${e.position||''} — ${e.company||''}</b><br>
+    <span style="color:#555; font-size:10pt;">${[e.location,e.employmentType].filter(Boolean).join(' · ')} · ${e.startDate||''} – ${e.endDate||''}</span></p>
+    ${e.bullets ? '<ul>' + e.bullets.split('\n').filter(Boolean).map(b=>`<li>${b.replace(/</g,'&lt;')}</li>`).join('') + '</ul>' : ''}
+  `).join('');
+
+  const skillsHtml = [
+    resumeDraft.skills.technical ? `<p><b>Technical:</b> ${resumeDraft.skills.technical}</p>` : '',
+    resumeDraft.skills.soft ? `<p><b>Soft Skills:</b> ${resumeDraft.skills.soft}</p>` : '',
+    resumeDraft.skills.languages ? `<p><b>Languages:</b> ${resumeDraft.skills.languages}</p>` : '',
+  ].join('');
+
+  const projectsHtml = resumeDraft.projects.map(e => `
+    <p style="margin:10px 0 0;"><b>${e.title||''}</b></p>
+    ${e.description ? `<p style="margin:2px 0;">${e.description.replace(/</g,'&lt;')}</p>` : ''}
+    ${(e.githubUrl||e.liveUrl) ? `<p style="margin:2px 0; font-size:10pt; color:#555;">${[e.githubUrl,e.liveUrl].filter(Boolean).join(' · ')}</p>` : ''}
+  `).join('');
+
+  const docHtml = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset='utf-8'><title>${p.fullName||'Resume'}</title></head>
+<body style="font-family:Calibri,Arial,sans-serif; font-size:11pt;">
+  <h1 style="margin-bottom:2px;">${p.fullName||''}</h1>
+  <p style="color:#0B4DA1; font-weight:bold; margin:0 0 4px;">${p.title||''}</p>
+  <p style="font-size:10pt; color:#555; margin:0 0 14px;">${contactParts.join(' · ')}</p>
+  ${p.summary ? `<h2 style="border-bottom:1px solid #ccc;">Summary</h2><p>${p.summary.replace(/</g,'&lt;')}</p>` : ''}
+  ${eduHtml ? `<h2 style="border-bottom:1px solid #ccc;">Education</h2>${eduHtml}` : ''}
+  ${expHtml ? `<h2 style="border-bottom:1px solid #ccc;">Experience</h2>${expHtml}` : ''}
+  ${skillsHtml ? `<h2 style="border-bottom:1px solid #ccc;">Skills</h2>${skillsHtml}` : ''}
+  ${projectsHtml ? `<h2 style="border-bottom:1px solid #ccc;">Projects</h2>${projectsHtml}` : ''}
+</body>
+</html>`;
+
+  const blob = new Blob(['\ufeff', docHtml], { type: 'application/msword' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${(rbCurrentResumeTitle||'resume').replace(/[^a-z0-9]/gi,'-')}.doc`;
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 /* ================= ACCOUNTS (Netlify Identity) =================
@@ -3888,8 +4132,12 @@ async function syncEntitlements(){
     const { products } = await res.json();
     if(products.includes('citizenship_prep')) isPaid = true;
     if(products.includes('language_premium')) hasLanguagePremium = true;
-    if(products.includes('photo_tool')) hasPhotoToolAccess = true;
-    if(products.includes('resume_builder')) hasResumeBuilderAccess = true;
+    // Photo Tool and Resume Builder now share the same $3.99 payment link,
+    // so either purchase record unlocks both.
+    if(products.includes('photo_tool') || products.includes('resume_builder')){
+      hasPhotoToolAccess = true;
+      hasResumeBuilderAccess = true;
+    }
     // Re-render whatever's currently on screen so newly-unlocked content shows immediately
     if(document.querySelector('[data-view="home"].active')) renderChapterGrid();
     if(document.querySelector('[data-view="ielts-hub"].active')) renderIeltsTabContent();

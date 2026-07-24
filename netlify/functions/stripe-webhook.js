@@ -80,14 +80,19 @@ exports.handler = async (event) => {
       return { statusCode: 200, body: 'ok (missing userId or unrecognized product, ignored)' };
     }
 
+    // The Photo Tool and Resume Builder currently share one $3.99 payment
+    // link, so a purchase of that price unlocks both — write one
+    // entitlement row per product rather than just the one detected.
+    const productsToGrant = product === 'photo_tool' ? ['photo_tool', 'resume_builder'] : [product];
+
     const { error } = await supabase
       .from('entitlements')
       .upsert(
-        {
+        productsToGrant.map(p => ({
           user_id: userId,
-          product: product,
+          product: p,
           stripe_session_id: session.id,
-        },
+        })),
         { onConflict: 'user_id,product' }
       );
 
