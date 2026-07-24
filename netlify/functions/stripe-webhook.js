@@ -24,6 +24,21 @@ const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
+// Maps a Stripe Price ID back to a product name. This is what makes a
+// PLAIN Stripe Payment Link work correctly (like the Photo Tool's fixed
+// link) — a Payment Link created in the Dashboard doesn't carry custom
+// metadata the way a dynamically-created Checkout Session does, so for
+// those purchases we identify the product by which price was actually
+// bought instead. Set STRIPE_PRICE_PHOTO_TOOL to the Price ID behind
+// that specific Payment Link (Stripe Dashboard -> Product catalog ->
+// the Photo Tool product -> its price -> copy the Price ID) for this
+// lookup to work.
+const PRICE_ID_TO_PRODUCT = {
+  [process.env.STRIPE_PRICE_CITIZENSHIP_PREP]: 'citizenship_prep',
+  [process.env.STRIPE_PRICE_LANGUAGE_PREMIUM]: 'language_premium',
+  [process.env.STRIPE_PRICE_PHOTO_TOOL]: 'photo_tool',
+};
+
 exports.handler = async (event) => {
   const signature = event.headers['stripe-signature'];
 
@@ -42,11 +57,26 @@ exports.handler = async (event) => {
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
     const userId = session.client_reference_id;
-    const product = session.metadata && session.metadata.product;
+    let product = session.metadata && session.metadata.product;
+
+    // Fallback for plain Payment Links (no custom metadata available):
+    // identify the product by which Stripe Price was actually purchased.
+    if (!product) {
+      try {
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+        const priceId = lineItems.data[0] && lineItems.data[0].price && lineItems.data[0].price.id;
+        product = PRICE_ID_TO_PRODUCT[priceId];
+        if (!product) {
+          console.error('Could not map price ID to a known product:', priceId, 'for session', session.id);
+        }
+      } catch (err) {
+        console.error('Failed to look up line items for session', session.id, err);
+      }
+    }
 
     if (!userId || !product) {
-      console.error('Missing userId or product in completed session metadata.', session.id);
-      return { statusCode: 200, body: 'ok (missing metadata, ignored)' };
+      console.error('Missing userId or could not determine product for session.', session.id, { userId, product });
+      return { statusCode: 200, body: 'ok (missing userId or unrecognized product, ignored)' };
     }
 
     const { error } = await supabase

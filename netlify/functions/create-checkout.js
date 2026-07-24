@@ -19,6 +19,7 @@ const { verifyUser } = require('./utils/verifyUser');
 const PRICE_IDS = {
   citizenship_prep: process.env.STRIPE_PRICE_CITIZENSHIP_PREP, // $12.99
   language_premium: process.env.STRIPE_PRICE_LANGUAGE_PREMIUM,  // $20.00
+  photo_tool: process.env.STRIPE_PRICE_PHOTO_TOOL,              // $4.99 (suggested — adjust in Stripe as you like)
 };
 
 exports.handler = async (event) => {
@@ -46,7 +47,7 @@ exports.handler = async (event) => {
   let priceId;
   let metadataProduct;
 
-  if (product === 'citizenship_prep' || product === 'language_premium') {
+  if (product === 'citizenship_prep' || product === 'language_premium' || product === 'photo_tool') {
     priceId = PRICE_IDS[product];
     metadataProduct = product;
   } else if (product === 'course' && coursePriceId && courseSlug) {

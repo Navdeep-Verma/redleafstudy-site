@@ -348,6 +348,31 @@
   .install-step-num{flex-shrink:0; width:24px; height:24px; border-radius:50%; background:var(--red); color:#fff; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center;}
   .install-modal-footnote{font-size:12px; color:var(--ink-45); margin-top:18px; margin-bottom:0;}
 
+  .photo-tool-layout{display:grid; grid-template-columns:300px 1fr; gap:24px; margin-top:24px;}
+  @media(max-width:800px){.photo-tool-layout{grid-template-columns:1fr;}}
+  .pt-label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-70); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; font-family:"IBM Plex Mono",monospace;}
+  .pt-select{width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:inherit; font-size:14px; background:#fff;}
+  .pt-spec-box{background:var(--paper-dark); border-radius:10px; padding:14px 16px; margin-top:10px; font-size:12.5px; line-height:1.7; color:var(--ink-70);}
+  .pt-spec-box strong{color:var(--ink);}
+  #pt-file-input{width:100%; padding:10px; border:1.5px dashed var(--line); border-radius:10px; font-size:13px; background:#fff;}
+  #pt-zoom-slider{width:100%;}
+  .photo-tool-canvas-wrap{background:var(--paper-dark); border-radius:16px; min-height:420px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;}
+  .pt-empty-state{text-align:center; color:var(--ink-45); padding:40px;}
+  .pt-empty-state svg{width:48px; height:48px; margin-bottom:12px; opacity:.5;}
+  .pt-empty-state p{font-size:13.5px;}
+  .pt-cropper-stage{position:relative; width:100%; height:420px; display:flex; align-items:center; justify-content:center; cursor:grab; touch-action:none;}
+  .pt-cropper-stage:active{cursor:grabbing;}
+  #pt-source-canvas{position:absolute; touch-action:none;}
+  .pt-crop-guide{position:absolute; border:2px solid var(--gold); box-shadow:0 0 0 2000px rgba(21,33,59,.55); pointer-events:none;}
+  .pt-crop-guide::after{content:''; position:absolute; inset:12%; border:1.5px dashed rgba(201,154,46,.7); border-radius:50%;}
+  .pt-result-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media(max-width:700px){.pt-result-grid{grid-template-columns:1fr;}}
+  .pt-result-card{background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:22px; text-align:center;}
+  .pt-result-label{font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-45); margin-bottom:12px;}
+  .pt-preview-canvas{max-width:100%; border-radius:8px; border:1px solid var(--line);}
+  .pt-result-unlock{background:var(--paper-dark); border-color:var(--gold);}
+  .pt-unlock-icon{font-size:32px; margin-bottom:8px;}
+  .pt-price{font-family:"IBM Plex Mono",monospace; font-size:28px; font-weight:800; color:var(--red-dark); margin-bottom:14px;}
   .paywall-card{background:var(--paper); max-width:480px; width:100%; border-radius:24px; border:1px solid var(--line); padding:36px 32px; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.35);}
   .paywall-card .close-x{position:absolute; top:18px; right:18px; background:none; border:none; font-size:22px; color:var(--ink-45);}
   .paywall-card .lock-stamp{width:64px; height:64px; border:2.5px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:18px; background:var(--paper-dark);}
@@ -444,6 +469,7 @@
     <button class="nav-item" onclick="navGo('citizenship-chapters')" data-i18n="chaptersHead"></button>
     <button class="nav-item" onclick="navGo('citizenship-exams')" data-i18n="navFinalExams"></button>
     <button class="nav-item" onclick="navGo('citizenship-tools')" data-i18n="toolsHead"></button>
+    <button class="nav-item" onclick="closeNavDrawer(); switchMode('citizenship'); openTool('phototool');" data-i18n="photoToolCardTitle"></button>
   </div>
 
   <div class="nav-section">
@@ -606,6 +632,11 @@
         <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 13h2M8 17h2M14 13h2M14 17h2"/></svg>
         <h4 data-i18n="toolTrackerTitle"></h4>
         <p data-i18n="toolTrackerDesc"></p>
+      </div>
+      <div class="tool-card" onclick="openTool('phototool')">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+        <h4 data-i18n="photoToolCardTitle"></h4>
+        <p data-i18n="photoToolCardDesc"></p>
       </div>
     </div>
 
@@ -837,6 +868,65 @@
   </div>
 </main>
 
+<main data-view="phototool" class="wrap">
+  <button class="back-link" onclick="goHome()">← <span data-i18n="backToChapters"></span></button>
+  <div class="chapter-title-block">
+    <div class="num" data-i18n="toolLabel"></div>
+    <h1 data-i18n="photoToolTitle"></h1>
+    <p style="color:var(--ink-70); font-size:14.5px; max-width:600px; margin-top:6px;" data-i18n="photoToolIntro"></p>
+  </div>
+
+  <div class="photo-tool-layout">
+    <div class="photo-tool-controls">
+      <label class="pt-label" data-i18n="photoToolStep1"></label>
+      <select id="pt-doc-select" class="pt-select" onchange="onPhotoDocChange()"></select>
+      <div id="pt-spec-box" class="pt-spec-box"></div>
+
+      <label class="pt-label" style="margin-top:18px;" data-i18n="photoToolStep2"></label>
+      <input type="file" id="pt-file-input" accept="image/*" onchange="onPhotoFileSelected(event)">
+
+      <div id="pt-crop-controls" style="display:none; margin-top:16px;">
+        <label class="pt-label" data-i18n="photoToolStep3"></label>
+        <input type="range" id="pt-zoom-slider" min="100" max="300" value="100" oninput="updatePhotoCropper()">
+        <p style="font-size:12px; color:var(--ink-70); margin-top:4px;" data-i18n="photoToolDragHint"></p>
+        <button class="btn btn-primary" style="margin-top:14px; width:100%;" onclick="generatePhotoPreview()" data-i18n="photoToolGenerateBtn"></button>
+      </div>
+    </div>
+
+    <div class="photo-tool-canvas-wrap">
+      <div id="pt-cropper-stage" class="pt-cropper-stage" style="display:none;">
+        <canvas id="pt-source-canvas"></canvas>
+        <div id="pt-crop-guide" class="pt-crop-guide"></div>
+      </div>
+      <div id="pt-empty-state" class="pt-empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+        <p data-i18n="photoToolEmptyState"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="pt-result-section" style="display:none; margin-top:32px;">
+    <div class="section-head"><h2 data-i18n="photoToolResultHead"></h2></div>
+    <div class="pt-result-grid">
+      <div class="pt-result-card">
+        <div class="pt-result-label" data-i18n="photoToolPreviewLabel"></div>
+        <canvas id="pt-preview-canvas" class="pt-preview-canvas"></canvas>
+        <button class="btn btn-ghost" style="width:100%; margin-top:12px;" onclick="downloadWatermarkedPreview()" data-i18n="photoToolDownloadPreview"></button>
+      </div>
+      <div class="pt-result-card pt-result-unlock">
+        <div class="pt-result-label" data-i18n="photoToolUnlockLabel"></div>
+        <div class="pt-unlock-icon">🔓</div>
+        <p style="font-size:13.5px; color:var(--ink-70); margin-bottom:16px;" data-i18n="photoToolUnlockDesc"></p>
+        <div class="pt-price" id="pt-price-display">$4.99</div>
+        <div id="pt-unlock-cta"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:48px;"><h2 data-i18n="photoToolSpecsHead"></h2></div>
+  <div id="pt-specs-seo-content"></div>
+</main>
+
 <main data-view="ielts-hub" class="wrap">
   <button class="back-link" onclick="switchMode('lang')">← Back to all exams</button>
   <div class="chapter-title-block">
@@ -996,6 +1086,16 @@ en: {
   toolFlashTitle:"Flashcards", toolFlashDesc:"Flip through key facts from every chapter for quick revision.",
   toolChecklistTitle:"Application Checklist (PDF)", toolChecklistDesc:"Download a printable checklist for your citizenship application.",
   toolTrackerTitle:"Application Progress Tracker", toolTrackerDesc:"Check off each stage of your citizenship application as you complete it.",
+  photoToolCardTitle:"Passport Photo Tool", photoToolCardDesc:"Resize your photo to the exact spec for passports, PR cards, OCI, US visas, and more.",
+  photoToolTitle:"Passport & Visa Photo Tool", photoToolIntro:"Upload your photo, pick the exact document you need it for, and crop it to the correct size and proportions — free preview with a watermark, or unlock a clean high-resolution file.",
+  photoToolStep1:"1. Choose your document type", photoToolStep2:"2. Upload your photo", photoToolStep3:"3. Drag to reposition, use the slider to zoom",
+  photoToolDragHint:"Click and drag your photo to centre your face within the guide.",
+  photoToolGenerateBtn:"Generate preview", photoToolEmptyState:"Your photo will appear here once uploaded.",
+  photoToolResultHead:"Your result", photoToolPreviewLabel:"Free preview (watermarked)", photoToolDownloadPreview:"Download watermarked preview",
+  photoToolUnlockLabel:"Clean, high-resolution file", photoToolUnlockDesc:"No watermark, exact pixel dimensions for your selected document, ready to upload or print.",
+  photoToolUnlockBtn:"Unlock clean download", photoToolDownloadClean:"Download clean photo",
+  photoToolSpecsHead:"Photo requirements by document type",
+  photoToolDisclaimer:"These specifications are cross-checked against multiple current sources for general guidance, but requirements can change and vary by individual application. Always do a final check against the official government portal or consulate instructions for your specific document before submitting.",
   trackerStep1:"Confirmed I meet basic eligibility (PR status, physical presence, tax filing)",
   trackerStep2:"Gathered required documents (PR card, passport, photos, travel history)",
   trackerStep3:"Completed the language requirement (if aged 18-54)",
@@ -1135,6 +1235,16 @@ fr: {
   toolFlashTitle:"Cartes-éclair", toolFlashDesc:"Parcourez les faits clés de chaque chapitre pour une révision rapide.",
   toolChecklistTitle:"Liste de vérification (PDF)", toolChecklistDesc:"Téléchargez une liste imprimable pour votre demande de citoyenneté.",
   toolTrackerTitle:"Suivi de la progression de la demande", toolTrackerDesc:"Cochez chaque étape de votre demande de citoyenneté au fur et à mesure.",
+  photoToolCardTitle:"Outil photo passeport", photoToolCardDesc:"Redimensionnez votre photo selon les normes exactes pour passeports, cartes RP, OCI, visas américains et plus.",
+  photoToolTitle:"Outil photo passeport et visa", photoToolIntro:"Téléversez votre photo, choisissez le document exact requis, et recadrez-la aux bonnes dimensions — aperçu gratuit avec filigrane, ou débloquez un fichier haute résolution sans filigrane.",
+  photoToolStep1:"1. Choisissez le type de document", photoToolStep2:"2. Téléversez votre photo", photoToolStep3:"3. Glissez pour repositionner, utilisez le curseur pour zoomer",
+  photoToolDragHint:"Cliquez et glissez votre photo pour centrer votre visage dans le guide.",
+  photoToolGenerateBtn:"Générer l'aperçu", photoToolEmptyState:"Votre photo apparaîtra ici une fois téléversée.",
+  photoToolResultHead:"Votre résultat", photoToolPreviewLabel:"Aperçu gratuit (avec filigrane)", photoToolDownloadPreview:"Télécharger l'aperçu avec filigrane",
+  photoToolUnlockLabel:"Fichier propre en haute résolution", photoToolUnlockDesc:"Sans filigrane, dimensions exactes en pixels pour votre document sélectionné, prêt à téléverser ou imprimer.",
+  photoToolUnlockBtn:"Débloquer le téléchargement propre", photoToolDownloadClean:"Télécharger la photo propre",
+  photoToolSpecsHead:"Exigences photo par type de document",
+  photoToolDisclaimer:"Ces spécifications sont vérifiées auprès de plusieurs sources actuelles à titre indicatif général, mais les exigences peuvent changer et varier selon la demande individuelle. Vérifiez toujours auprès du portail gouvernemental officiel ou des instructions consulaires pour votre document spécifique avant de soumettre.",
   trackerStep1:"Confirmé que je remplis les critères de base (statut de RP, présence physique, déclarations de revenus)",
   trackerStep2:"Rassemblé les documents requis (carte RP, passeport, photos, historique de voyage)",
   trackerStep3:"Complété l'exigence linguistique (si âgé de 18 à 54 ans)",
@@ -1274,6 +1384,16 @@ es: {
   toolFlashTitle:"Tarjetas de memoria", toolFlashDesc:"Repasa los datos clave de cada capítulo para un repaso rápido.",
   toolChecklistTitle:"Lista de verificación (PDF)", toolChecklistDesc:"Descarga una lista imprimible para tu solicitud de ciudadanía.",
   toolTrackerTitle:"Seguimiento del progreso de la solicitud", toolTrackerDesc:"Marca cada etapa de tu solicitud de ciudadanía a medida que la completas.",
+  photoToolCardTitle:"Herramienta de foto de pasaporte", photoToolCardDesc:"Redimensiona tu foto según las especificaciones exactas para pasaportes, tarjetas de RP, OCI, visas de EE.UU. y más.",
+  photoToolTitle:"Herramienta de foto de pasaporte y visa", photoToolIntro:"Sube tu foto, elige el documento exacto que necesitas, y recórtala al tamaño y proporciones correctas — vista previa gratuita con marca de agua, o desbloquea un archivo limpio en alta resolución.",
+  photoToolStep1:"1. Elige el tipo de documento", photoToolStep2:"2. Sube tu foto", photoToolStep3:"3. Arrastra para reposicionar, usa el control deslizante para hacer zoom",
+  photoToolDragHint:"Haz clic y arrastra tu foto para centrar tu rostro dentro de la guía.",
+  photoToolGenerateBtn:"Generar vista previa", photoToolEmptyState:"Tu foto aparecerá aquí una vez subida.",
+  photoToolResultHead:"Tu resultado", photoToolPreviewLabel:"Vista previa gratuita (con marca de agua)", photoToolDownloadPreview:"Descargar vista previa con marca de agua",
+  photoToolUnlockLabel:"Archivo limpio en alta resolución", photoToolUnlockDesc:"Sin marca de agua, dimensiones exactas en píxeles para tu documento seleccionado, listo para subir o imprimir.",
+  photoToolUnlockBtn:"Desbloquear descarga limpia", photoToolDownloadClean:"Descargar foto limpia",
+  photoToolSpecsHead:"Requisitos de foto por tipo de documento",
+  photoToolDisclaimer:"Estas especificaciones se verifican con múltiples fuentes actuales a modo de guía general, pero los requisitos pueden cambiar y variar según la solicitud individual. Siempre verifica con el portal gubernamental oficial o las instrucciones consulares para tu documento específico antes de enviarlo.",
   trackerStep1:"Confirmé que cumplo los requisitos básicos (estatus de RP, presencia física, declaraciones de impuestos)",
   trackerStep2:"Reuní los documentos requeridos (tarjeta de RP, pasaporte, fotos, historial de viajes)",
   trackerStep3:"Completé el requisito de idioma (si tengo entre 18 y 54 años)",
@@ -1369,6 +1489,7 @@ const PASS_THRESHOLD = 0.75;
 
 let isPaid = false;
 let hasLanguagePremium = false;
+let hasPhotoToolAccess = false;
 // NOTE: Real access is now determined ONLY by syncEntitlements(), which
 // asks the server (Supabase, via a Netlify Function) what the logged-in
 // user has actually paid for. There is deliberately no browser-based
@@ -2462,6 +2583,7 @@ function openTool(viewName){
   if(viewName === 'quiz-ready') renderReadyQuiz();
   if(viewName === 'flashcards') renderFlashcards();
   if(viewName === 'app-tracker') renderAppTracker();
+  if(viewName === 'phototool') initPhotoTool();
 }
 
 /* ================= CITIZENSHIP APPLICATION TRACKER ================= */
@@ -2738,6 +2860,292 @@ function downloadChecklist(){
   window.open('citizenship-checklist.pdf', '_blank');
 }
 
+/* ================= PHOTO TOOL =================
+   Specs cross-checked against multiple current sources for each
+   document type. These are general guidance, not a substitute for the
+   official government portal's own validation — always do a final
+   check against the official requirements before submitting. */
+const photoDocSpecs = {
+  ca_passport: {
+    label: "Canadian Passport / PR Card — 50×70mm",
+    aspectW: 50, aspectH: 70,
+    outputW: 420, outputH: 588,
+    bg: "Plain white or light-coloured background, no shadows",
+    headNote: "Head (chin to crown) must measure 31–36mm — about 56–65% of the photo height",
+    fileNote: "Printed photos required for standard applications; some online renewals accept a digital JPEG",
+    seo: "The Canadian passport and Permanent Resident (PR) Card both use the same 50 × 70mm photo size — noticeably taller and narrower than the US 2×2 inch format many people expect. The head must measure 31 to 36mm from the bottom of the chin to the top of the natural hairline (not including hair volume), against a plain white or light background with no shadows. Glasses are not permitted. Printed passport applications require a commercial photographer to sign the back of one photo; some online PR card and renewal submissions accept a digital upload instead — always confirm which route your specific application uses."
+  },
+  ca_visa: {
+    label: "Canadian Visa / Work / Study Permit — 35×45mm",
+    aspectW: 35, aspectH: 45,
+    outputW: 420, outputH: 540,
+    bg: "Plain white or light-coloured background, no shadows",
+    headNote: "Face should fill most of the frame, per IRCC visitor visa / permit photo guidance",
+    fileNote: "This is the international standard size — different from the Canadian passport's own 50×70mm size",
+    seo: "Temporary Resident Visas, work permits, and study permits use a 35 × 45mm photo — the more common international passport-photo size, and notably different from the Canadian passport's own unique 50 × 70mm format. Using the wrong one of these two sizes is one of the most common mistakes applicants make, since both are Canadian government photos but for different application types. Always double check which of the two sizes your specific application (passport vs. visa/permit) actually requires before submitting."
+  },
+  oci: {
+    label: "OCI Card (Overseas Citizen of India) — 51×51mm",
+    aspectW: 1, aspectH: 1,
+    outputW: 900, outputH: 900,
+    bg: "Plain light-coloured background (not white)",
+    headNote: "Head should fill about 80% of the frame (roughly 25–35mm)",
+    fileNote: "Digital upload: 200×200 to 900×900 pixels, JPEG, ideally under 200KB",
+    seo: "OCI (Overseas Citizen of India) card photos use a 51 × 51mm (2×2 inch) square format, uploaded as a JPEG between 200×200 and 900×900 pixels, ideally kept under 200KB for reliable portal uploads. One detail that trips people up: OCI specifically calls for a plain light-coloured background — not white, which is what the Indian passport and many other documents require. The head should fill roughly 80% of the frame. Since the OCI application process has moved to a fully digital system, getting the exact pixel dimensions and file size right on the first try meaningfully speeds up processing."
+  },
+  us_visa: {
+    label: "US Visa (DS-160) — 51×51mm / 2×2in",
+    aspectW: 1, aspectH: 1,
+    outputW: 600, outputH: 600,
+    bg: "Plain white background",
+    headNote: "Face should cover roughly 50–69% of the photo height",
+    fileNote: "Digital upload: square JPEG, 600×600 to 1200×1200 pixels, under 240KB",
+    seo: "US visa applications processed through the DS-160 form require a square photo, uploaded as a JPEG between 600×600 and 1200×1200 pixels and under 240KB, against a plain white background. This is the same 2×2 inch (51×51mm) format used for US passports. Glasses are not permitted, and the face should cover roughly 50–69% of the photo's height. The CEAC upload system checks these technical details automatically and will reject a file outside these bounds before your application can proceed, so getting the pixel dimensions and file size right on the first attempt avoids a frustrating back-and-forth."
+  },
+  in_surrender: {
+    label: "Indian Surrender / Renunciation Certificate — 51×51mm",
+    aspectW: 1, aspectH: 1,
+    outputW: 600, outputH: 600,
+    bg: "Plain white background",
+    headNote: "Front-facing pose, full face visible",
+    fileNote: "2×2 inch (51×51mm), color photo",
+    seo: "Surrendering an Indian passport or obtaining a Renunciation/Surrender Certificate after acquiring foreign citizenship requires a 2×2 inch (51×51mm) color photograph against a plain white background, in a front-facing pose. This is the same square format used for OCI and US visa applications, though OCI specifically calls for a light (non-white) background — worth double-checking which of the three you're actually preparing for, since the background requirement differs between them even though the size is the same."
+  }
+};
+
+let ptState = { img: null, zoom: 1, offsetX: 0, offsetY: 0, dragging: false, lastX: 0, lastY: 0, hasGenerated: false };
+
+function initPhotoTool(){
+  const select = document.getElementById('pt-doc-select');
+  select.innerHTML = Object.keys(photoDocSpecs).map(key =>
+    `<option value="${key}">${photoDocSpecs[key].label}</option>`
+  ).join('');
+  onPhotoDocChange();
+  renderPhotoToolSeoContent();
+}
+
+function onPhotoDocChange(){
+  const key = document.getElementById('pt-doc-select').value;
+  const spec = photoDocSpecs[key];
+  document.getElementById('pt-spec-box').innerHTML = `
+    <div><strong>Output size:</strong> ${spec.outputW} × ${spec.outputH}px</div>
+    <div style="margin-top:6px;"><strong>Background:</strong> ${spec.bg}</div>
+    <div style="margin-top:6px;"><strong>Head position:</strong> ${spec.headNote}</div>
+    <div style="margin-top:6px;"><strong>File:</strong> ${spec.fileNote}</div>
+  `;
+  updateCropGuideShape();
+  if(ptState.img) updatePhotoCropper();
+}
+
+function updateCropGuideShape(){
+  const key = document.getElementById('pt-doc-select').value;
+  const spec = photoDocSpecs[key];
+  const guide = document.getElementById('pt-crop-guide');
+  const ratio = spec.aspectW / spec.aspectH;
+  const maxH = 340;
+  let h = maxH, w = h * ratio;
+  if(w > 260){ w = 260; h = w / ratio; }
+  guide.style.width = w + 'px';
+  guide.style.height = h + 'px';
+  guide.style.left = '50%';
+  guide.style.top = '50%';
+  guide.style.transform = 'translate(-50%,-50%)';
+}
+
+function onPhotoFileSelected(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      ptState.img = img;
+      ptState.zoom = 1;
+      ptState.offsetX = 0;
+      ptState.offsetY = 0;
+      document.getElementById('pt-empty-state').style.display = 'none';
+      document.getElementById('pt-cropper-stage').style.display = 'flex';
+      document.getElementById('pt-crop-controls').style.display = 'block';
+      document.getElementById('pt-zoom-slider').value = 100;
+      updateCropGuideShape();
+      updatePhotoCropper();
+      setupCropperDrag();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function updatePhotoCropper(){
+  if(!ptState.img) return;
+  ptState.zoom = document.getElementById('pt-zoom-slider').value / 100;
+  const canvas = document.getElementById('pt-source-canvas');
+  const stage = document.getElementById('pt-cropper-stage');
+  const stageW = stage.clientWidth, stageH = stage.clientHeight;
+  const img = ptState.img;
+  const baseScale = Math.max(stageW / img.width, stageH / img.height);
+  const scale = baseScale * ptState.zoom;
+  const w = img.width * scale, h = img.height * scale;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.style.left = (stageW/2 - w/2 + ptState.offsetX) + 'px';
+  canvas.style.top = (stageH/2 - h/2 + ptState.offsetY) + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(img, 0, 0);
+}
+
+function setupCropperDrag(){
+  const stage = document.getElementById('pt-cropper-stage');
+  stage.onpointerdown = (e) => {
+    ptState.dragging = true;
+    ptState.lastX = e.clientX;
+    ptState.lastY = e.clientY;
+  };
+  window.onpointermove = (e) => {
+    if(!ptState.dragging) return;
+    ptState.offsetX += (e.clientX - ptState.lastX);
+    ptState.offsetY += (e.clientY - ptState.lastY);
+    ptState.lastX = e.clientX;
+    ptState.lastY = e.clientY;
+    updatePhotoCropper();
+  };
+  window.onpointerup = () => { ptState.dragging = false; };
+}
+
+function generatePhotoPreview(){
+  if(!ptState.img) return;
+  const key = document.getElementById('pt-doc-select').value;
+  const spec = photoDocSpecs[key];
+  const stage = document.getElementById('pt-cropper-stage');
+  const stageW = stage.clientWidth, stageH = stage.clientHeight;
+  const guide = document.getElementById('pt-crop-guide');
+  const guideRect = guide.getBoundingClientRect();
+  const stageRect = stage.getBoundingClientRect();
+  const sourceCanvas = document.getElementById('pt-source-canvas');
+  const img = ptState.img;
+  const baseScale = Math.max(stageW / img.width, stageH / img.height) * ptState.zoom;
+
+  // Figure out which part of the source image lies under the crop guide
+  const guideLeftInStage = guideRect.left - stageRect.left;
+  const guideTopInStage = guideRect.top - stageRect.top;
+  const canvasLeft = parseFloat(sourceCanvas.style.left);
+  const canvasTop = parseFloat(sourceCanvas.style.top);
+  const srcX = (guideLeftInStage - canvasLeft) / baseScale;
+  const srcY = (guideTopInStage - canvasTop) / baseScale;
+  const srcW = guideRect.width / baseScale;
+  const srcH = guideRect.height / baseScale;
+
+  const outCanvas = document.getElementById('pt-preview-canvas');
+  outCanvas.width = spec.outputW;
+  outCanvas.height = spec.outputH;
+  const ctx = outCanvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,spec.outputW,spec.outputH);
+  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, spec.outputW, spec.outputH);
+
+  drawWatermark(ctx, spec.outputW, spec.outputH);
+
+  ptState.hasGenerated = true;
+  ptState.lastSpec = spec;
+  document.getElementById('pt-result-section').style.display = 'block';
+  renderPhotoUnlockCta();
+  document.getElementById('pt-result-section').scrollIntoView({behavior:'smooth'});
+}
+
+function drawWatermark(ctx, w, h){
+  ctx.save();
+  ctx.globalAlpha = 0.28;
+  ctx.fillStyle = '#D52B1E';
+  ctx.font = `bold ${Math.round(w*0.09)}px sans-serif`;
+  ctx.translate(w/2, h/2);
+  ctx.rotate(-Math.PI/8);
+  ctx.textAlign = 'center';
+  ctx.fillText('Redleaf Study', 0, 0);
+  ctx.restore();
+}
+
+function downloadWatermarkedPreview(){
+  const canvas = document.getElementById('pt-preview-canvas');
+  const link = document.createElement('a');
+  link.download = 'redleafstudy-photo-preview.jpg';
+  link.href = canvas.toDataURL('image/jpeg', 0.92);
+  link.click();
+}
+
+const PHOTO_TOOL_PAYMENT_LINK = "https://buy.stripe.com/5kQcN61cD65YeDx7js3cc02";
+
+function renderPhotoUnlockCta(){
+  const container = document.getElementById('pt-unlock-cta');
+  if(hasPhotoToolAccess){
+    container.innerHTML = `<button class="btn btn-gold btn-block" onclick="downloadCleanPhoto()">${t('photoToolDownloadClean')}</button>`;
+  } else {
+    const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+    if(!user){
+      container.innerHTML = `<button class="btn btn-gold btn-block" onclick="netlifyIdentity.open('login')">${t('paywallLoginToUnlock')}</button>`;
+    } else {
+      container.innerHTML = `<button class="btn btn-gold btn-block" id="photo-checkout-btn" onclick="goToPhotoToolPaymentLink()">${t('photoToolUnlockBtn')}</button>`;
+    }
+  }
+}
+
+function goToPhotoToolPaymentLink(){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user){ netlifyIdentity.open('login'); return; }
+  // client_reference_id ties this specific payment link purchase back to
+  // the logged-in user, the same way the dynamic checkout does for the
+  // other two products — this is what lets the webhook and Supabase
+  // record "this exact account bought the photo tool," not just "someone
+  // paid." Without this, there'd be no way to unlock the right account.
+  const url = `${PHOTO_TOOL_PAYMENT_LINK}?client_reference_id=${encodeURIComponent(user.id)}&prefilled_email=${encodeURIComponent(user.email || '')}`;
+  window.location.href = url;
+}
+
+function downloadCleanPhoto(){
+  if(!ptState.hasGenerated) return;
+  const spec = ptState.lastSpec;
+  const stage = document.getElementById('pt-cropper-stage');
+  const guide = document.getElementById('pt-crop-guide');
+  const guideRect = guide.getBoundingClientRect();
+  const stageRect = stage.getBoundingClientRect();
+  const sourceCanvas = document.getElementById('pt-source-canvas');
+  const img = ptState.img;
+  const stageW = stage.clientWidth, stageH = stage.clientHeight;
+  const baseScale = Math.max(stageW / img.width, stageH / img.height) * ptState.zoom;
+  const guideLeftInStage = guideRect.left - stageRect.left;
+  const guideTopInStage = guideRect.top - stageRect.top;
+  const canvasLeft = parseFloat(sourceCanvas.style.left);
+  const canvasTop = parseFloat(sourceCanvas.style.top);
+  const srcX = (guideLeftInStage - canvasLeft) / baseScale;
+  const srcY = (guideTopInStage - canvasTop) / baseScale;
+  const srcW = guideRect.width / baseScale;
+  const srcH = guideRect.height / baseScale;
+
+  const cleanCanvas = document.createElement('canvas');
+  cleanCanvas.width = spec.outputW;
+  cleanCanvas.height = spec.outputH;
+  const ctx = cleanCanvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,spec.outputW,spec.outputH);
+  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, spec.outputW, spec.outputH);
+  const link = document.createElement('a');
+  link.download = 'redleafstudy-photo-final.jpg';
+  link.href = cleanCanvas.toDataURL('image/jpeg', 0.95);
+  link.click();
+}
+
+function renderPhotoToolSeoContent(){
+  const container = document.getElementById('pt-specs-seo-content');
+  container.innerHTML = Object.values(photoDocSpecs).map(spec => `
+    <div class="note-card">
+      <h3>${spec.label}</h3>
+      <p>${spec.seo}</p>
+    </div>
+  `).join('') + `<p class="full-disclaimer">${t('photoToolDisclaimer')}</p>`;
+}
+
 /* ================= ACCOUNTS (Netlify Identity) =================
    This wires up real login/signup. It does NOT yet gate any premium
    content by account — that's the next phase, once this is confirmed
@@ -2770,12 +3178,14 @@ async function syncEntitlements(){
     const { products } = await res.json();
     if(products.includes('citizenship_prep')) isPaid = true;
     if(products.includes('language_premium')) hasLanguagePremium = true;
+    if(products.includes('photo_tool')) hasPhotoToolAccess = true;
     // Re-render whatever's currently on screen so newly-unlocked content shows immediately
     if(document.querySelector('[data-view="home"].active')) renderChapterGrid();
     if(document.querySelector('[data-view="ielts-hub"].active')) renderIeltsTabContent();
     if(document.querySelector('[data-view="celpip-hub"].active')) renderCelpipTabContent();
     if(document.querySelector('[data-view="pte-hub"].active')) renderPteTabContent();
     if(document.querySelector('[data-view="tef-hub"].active')) renderTefTabContent();
+    if(document.querySelector('[data-view="phototool"].active') && ptState.hasGenerated) renderPhotoUnlockCta();
   }catch(e){
     console.error('Could not check entitlements:', e);
   }
