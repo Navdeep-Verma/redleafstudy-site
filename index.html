@@ -12,7 +12,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google-site-verification" content="IfFlvoHTvZxdnNNT0LVOgTkC6L-OiIK35rjwpc1zcz8" />
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23D52B1E'/%3E%3Cpath fill='%23FFFFFF' d='M50,20 L53,28 L61,24 L57,32 L68,30 L59,37 L66,45 L56,42 L59,52 L51,47 L53,62 L50,55 L47,62 L49,47 L41,52 L44,42 L34,45 L41,37 L32,30 L43,32 L39,24 L47,28 Z'/%3E%3C/svg%3E">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
 <title>Canadian Citizenship Test Prep | 600 Practice Questions & Mock Exams — Redleaf Study</title>
 <meta name="description" content="Free Canadian citizenship test prep with 10 in-depth chapters, 600 practice questions, and two full 100-question mock exams. Available in English, French, and Spanish. Start free — no signup required.">
 <meta name="robots" content="index, follow">
@@ -365,6 +367,7 @@
   #pt-source-canvas{position:absolute; touch-action:none;}
   .pt-crop-guide{position:absolute; border:2px solid var(--gold); box-shadow:0 0 0 2000px rgba(21,33,59,.55); pointer-events:none;}
   .pt-crop-guide::after{content:''; position:absolute; inset:12%; border:1.5px dashed rgba(201,154,46,.7); border-radius:50%;}
+  .pt-zoom-badge{position:absolute; bottom:14px; right:14px; background:rgba(21,33,59,.75); color:#fff; font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; padding:5px 11px; border-radius:999px; pointer-events:none; z-index:3;}
   .pt-result-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
   @media(max-width:700px){.pt-result-grid{grid-template-columns:1fr;}}
   .pt-result-card{background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:22px; text-align:center;}
@@ -374,6 +377,62 @@
   .pt-unlock-icon{font-size:32px; margin-bottom:8px;}
   .pt-price{font-family:"IBM Plex Mono",monospace; font-size:28px; font-weight:800; color:var(--red-dark); margin-bottom:14px;}
   .paywall-card{background:var(--paper); max-width:480px; width:100%; border-radius:24px; border:1px solid var(--line); padding:36px 32px; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.35);}
+
+  .rb-layout{display:grid; grid-template-columns:200px 1fr 1fr; gap:20px; margin-top:24px; align-items:start;}
+  @media(max-width:980px){.rb-layout{grid-template-columns:1fr;}}
+  .rb-step-sidebar{display:flex; flex-direction:column; gap:4px; position:sticky; top:20px;}
+  @media(max-width:980px){.rb-step-sidebar{flex-direction:row; overflow-x:auto; position:static;}}
+  .rb-step-item{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; font-size:13.5px; font-weight:600; color:var(--ink-70); cursor:pointer; white-space:nowrap;}
+  .rb-step-item.active{background:var(--paper-dark); color:var(--ink);}
+  .rb-step-item.done .rb-step-num{background:var(--green); color:#fff;}
+  .rb-step-num{width:22px; height:22px; border-radius:50%; background:var(--line); color:var(--ink-70); font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .rb-form-area{background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:26px; min-height:520px;}
+  .rb-field-label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-70); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; font-family:"IBM Plex Mono",monospace;}
+  .rb-input, .rb-textarea{width:100%; padding:10px 13px; border:1.5px solid var(--line); border-radius:9px; font-family:inherit; font-size:14px; margin-bottom:14px;}
+  .rb-textarea{resize:vertical; min-height:70px;}
+  .rb-field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media(max-width:600px){.rb-field-row{grid-template-columns:1fr;}}
+  .rb-entry-card{background:var(--paper-dark); border-radius:12px; padding:18px; margin-bottom:16px; position:relative;}
+  .rb-entry-remove{position:absolute; top:12px; right:12px; background:none; border:none; color:var(--red); font-size:13px; font-weight:700;}
+  .rb-add-btn{width:100%; border:1.5px dashed var(--line); background:none; border-radius:10px; padding:12px; font-weight:700; font-size:13.5px; color:var(--ink-70); margin-top:6px;}
+  .rb-wizard-nav{display:flex; justify-content:space-between; margin-top:22px;}
+  .rb-preview-area{background:var(--paper-dark); border-radius:16px; padding:16px; min-height:520px;}
+  @media(max-width:980px){.rb-preview-area{grid-column:1;}}
+  .rb-preview-toolbar{font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-45); margin-bottom:10px;}
+  .rb-preview-page{background:#fff; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.1); padding:34px 30px; min-height:480px; font-family:"Plus Jakarta Sans",sans-serif; color:#1a1a1a; font-size:12.5px; line-height:1.5;}
+  .rb-preview-page h1{font-size:19px; margin:0 0 3px; font-family:"Fraunces",serif;}
+  .rb-preview-page .rb-title{font-size:13px; color:#0B4DA1; font-weight:600; margin-bottom:8px;}
+  .rb-preview-page .rb-contact{font-size:10.5px; color:#555; margin-bottom:16px;}
+  .rb-preview-page h2{font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; border-bottom:1.5px solid #ddd; padding-bottom:4px; margin:16px 0 8px; color:#0B4DA1;}
+  .rb-preview-page .rb-entry{margin-bottom:10px;}
+  .rb-preview-page .rb-entry-head{display:flex; justify-content:space-between; font-weight:700; font-size:12.5px;}
+  .rb-preview-page .rb-entry-sub{font-size:11.5px; color:#555; margin-bottom:3px;}
+  .rb-preview-page ul{margin:4px 0 0; padding-left:16px;}
+  .rb-preview-page li{margin-bottom:2px;}
+  .rb-preview-empty{color:#999; font-style:italic; font-size:12px;}
+
+  /* Template: Classic — serif, traditional, black & white */
+  .rb-tpl-classic{font-family:Georgia,"Times New Roman",serif;}
+  .rb-tpl-classic h1{font-family:Georgia,serif; text-align:center; font-size:21px;}
+  .rb-tpl-classic .rb-title{text-align:center; color:#333; font-style:italic;}
+  .rb-tpl-classic .rb-contact{text-align:center;}
+  .rb-tpl-classic h2{color:#000; text-transform:uppercase; letter-spacing:.1em; font-size:11.5px; border-bottom:1px solid #000;}
+
+  /* Template: Minimal — thin lines, lots of whitespace, monospace dates */
+  .rb-tpl-minimal{font-family:"Plus Jakarta Sans",sans-serif; padding:40px 34px !important;}
+  .rb-tpl-minimal h1{font-weight:400; letter-spacing:.02em;}
+  .rb-tpl-minimal .rb-title{color:#888; font-weight:400;}
+  .rb-tpl-minimal h2{color:#999; border-bottom:none; font-weight:500; letter-spacing:.12em; padding-bottom:0;}
+  .rb-tpl-minimal .rb-entry-head span:last-child{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:#999;}
+  .rb-tpl-minimal .rb-entry{margin-bottom:16px;}
+  .rb-savebar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:18px 0 6px;}
+  .rb-save-status{font-size:12.5px; color:var(--green); font-weight:600;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #rb-preview-page, #rb-preview-page *{visibility:visible;}
+    #rb-preview-page{position:absolute; left:0; top:0; width:100%; box-shadow:none; border-radius:0;}
+  }
   .paywall-card .close-x{position:absolute; top:18px; right:18px; background:none; border:none; font-size:22px; color:var(--ink-45);}
   .paywall-card .lock-stamp{width:64px; height:64px; border:2.5px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:18px; background:var(--paper-dark);}
   .paywall-card h3{font-size:22px; margin-bottom:12px;}
@@ -441,8 +500,8 @@
         <button id="lang-es" onclick="setLang('es')">ES</button>
       </div>
       <div id="auth-logged-out" style="display:flex; gap:8px;">
-        <button class="btn-auth btn-auth-ghost" onclick="netlifyIdentity.open('login')" data-i18n="navLogIn"></button>
-        <button class="btn-auth btn-auth-solid" onclick="netlifyIdentity.open('signup')" data-i18n="navSignUp"></button>
+        <button class="btn-auth btn-auth-ghost" onclick="safeOpenLogin('login')" data-i18n="navLogIn"></button>
+        <button class="btn-auth btn-auth-solid" onclick="safeOpenLogin('signup')" data-i18n="navSignUp"></button>
       </div>
       <div id="auth-logged-in" style="display:none; align-items:center; gap:8px;">
         <span class="account-pill" id="account-email-pill"></span>
@@ -637,6 +696,12 @@
         <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
         <h4 data-i18n="photoToolCardTitle"></h4>
         <p data-i18n="photoToolCardDesc"></p>
+      </div>
+      <div class="tool-card" onclick="openTool('resumebuilder')">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h9l4 4v16H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+        <h4 data-i18n="resumeBuilderCardTitle"></h4>
+        <p data-i18n="resumeBuilderCardDesc"></p>
+        <div class="soon-badge" style="position:static; display:inline-block; margin-top:8px;" data-i18n="resumeBuilderBetaBadge"></div>
       </div>
     </div>
 
@@ -889,6 +954,18 @@
         <label class="pt-label" data-i18n="photoToolStep3"></label>
         <input type="range" id="pt-zoom-slider" min="100" max="300" value="100" oninput="updatePhotoCropper()">
         <p style="font-size:12px; color:var(--ink-70); margin-top:4px;" data-i18n="photoToolDragHint"></p>
+        <button class="btn btn-ghost" style="margin-top:10px; width:100%;" onclick="resetPhotoCropper()" data-i18n="photoToolResetBtn"></button>
+
+        <label class="pt-label" style="margin-top:18px;" data-i18n="photoToolFormatLabel"></label>
+        <select id="pt-format-select" class="pt-select">
+          <option value="jpeg">JPEG (.jpg) — smaller file, standard for most portals</option>
+          <option value="png">PNG (.png) — lossless, best for print</option>
+        </select>
+        <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; cursor:pointer;">
+          <input type="checkbox" id="pt-print-sheet-toggle">
+          <span data-i18n="photoToolPrintSheetLabel"></span>
+        </label>
+
         <button class="btn btn-primary" style="margin-top:14px; width:100%;" onclick="generatePhotoPreview()" data-i18n="photoToolGenerateBtn"></button>
       </div>
     </div>
@@ -897,6 +974,7 @@
       <div id="pt-cropper-stage" class="pt-cropper-stage" style="display:none;">
         <canvas id="pt-source-canvas"></canvas>
         <div id="pt-crop-guide" class="pt-crop-guide"></div>
+        <div id="pt-zoom-badge" class="pt-zoom-badge">100%</div>
       </div>
       <div id="pt-empty-state" class="pt-empty-state">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
@@ -917,7 +995,7 @@
         <div class="pt-result-label" data-i18n="photoToolUnlockLabel"></div>
         <div class="pt-unlock-icon">🔓</div>
         <p style="font-size:13.5px; color:var(--ink-70); margin-bottom:16px;" data-i18n="photoToolUnlockDesc"></p>
-        <div class="pt-price" id="pt-price-display">$4.99</div>
+        <div class="pt-price" id="pt-price-display">$3.99 CAD</div>
         <div id="pt-unlock-cta"></div>
       </div>
     </div>
@@ -926,6 +1004,56 @@
   <div class="section-head" style="margin-top:48px;"><h2 data-i18n="photoToolSpecsHead"></h2></div>
   <div id="pt-specs-seo-content"></div>
 </main>
+
+<main data-view="resumebuilder" class="wrap">
+  <button class="back-link" onclick="goHome()">← <span data-i18n="backToChapters"></span></button>
+  <div class="chapter-title-block">
+    <div class="num" data-i18n="toolLabel"></div>
+    <h1 data-i18n="resumeBuilderTitle"></h1>
+    <p style="color:var(--ink-70); font-size:14.5px; max-width:600px; margin-top:6px;" data-i18n="resumeBuilderIntro"></p>
+  </div>
+
+  <div class="rb-savebar">
+    <input type="text" id="rb-resume-title" class="rb-input" style="margin-bottom:0; max-width:260px;" value="Untitled Resume" oninput="rbCurrentResumeTitle = this.value">
+    <select id="rb-template-select" class="pt-select" style="max-width:200px;" onchange="rbCurrentTemplate = this.value; renderRbPreview();">
+      <option value="modern">Modern template</option>
+      <option value="classic">Classic template</option>
+      <option value="minimal">Minimal template</option>
+    </select>
+    <button class="btn btn-primary" onclick="rbSaveResume()" data-i18n="resumeBuilderSaveBtn"></button>
+    <button class="btn btn-ghost" onclick="rbOpenMyResumes()" data-i18n="resumeBuilderMyResumesBtn"></button>
+    <span id="rb-save-status" class="rb-save-status"></span>
+  </div>
+
+  <div class="rb-layout">
+    <div class="rb-step-sidebar" id="rb-step-sidebar"></div>
+    <div class="rb-form-area" id="rb-form-area"></div>
+    <div class="rb-preview-area">
+      <div class="rb-preview-toolbar">
+        <span data-i18n="resumeBuilderPreviewLabel"></span>
+      </div>
+      <div class="rb-preview-page" id="rb-preview-page"></div>
+    </div>
+  </div>
+
+  <div class="pt-result-grid" style="margin-top:24px;">
+    <div class="pt-result-card pt-result-unlock">
+      <div class="pt-result-label" data-i18n="resumeBuilderExportLabel"></div>
+      <div class="pt-unlock-icon">📄</div>
+      <p style="font-size:13.5px; color:var(--ink-70); margin-bottom:16px;" data-i18n="resumeBuilderExportDesc"></p>
+      <div class="pt-price">$3.99 CAD</div>
+      <div id="rb-export-cta"></div>
+    </div>
+  </div>
+</main>
+
+<div class="overlay" id="rb-myresumes-overlay">
+  <div class="install-modal-card">
+    <button class="close-x" onclick="rbCloseMyResumes()">✕</button>
+    <h3 data-i18n="resumeBuilderMyResumesTitle"></h3>
+    <div id="rb-myresumes-list" style="text-align:left; margin-top:14px;"></div>
+  </div>
+</div>
 
 <main data-view="ielts-hub" class="wrap">
   <button class="back-link" onclick="switchMode('lang')">← Back to all exams</button>
@@ -1050,7 +1178,7 @@ en: {
   quizHead:"Practice tests", prevChapter:"Previous chapter", nextChapter:"Next chapter",
   footerAboutHead:"About this site",
   footerBlogLink:"Read our citizenship test guides →",
-  footerAboutBody:"An independent study companion for people preparing for the Canadian citizenship test. Content is written to cover the same topics as the official study guide, in original wording, with detailed notes, practice tests, and full explanations for every answer.",
+  footerAboutBody:"An independent study platform for people preparing for Canadian immigration. Citizenship test prep, IELTS, CELPIP, PTE Core, and TEF Canada practice, a passport and visa photo tool, and more — all in one place, with detailed notes and full explanations for every answer.",
   footerPayHead:"Support this project",
   footerSupportHead:"Need help?",
   footerPayBody:"Chapters 5 through 10, plus both 100-question final exams, are available for a one-time payment, which helps keep this resource running and up to date.",
@@ -1087,10 +1215,20 @@ en: {
   toolChecklistTitle:"Application Checklist (PDF)", toolChecklistDesc:"Download a printable checklist for your citizenship application.",
   toolTrackerTitle:"Application Progress Tracker", toolTrackerDesc:"Check off each stage of your citizenship application as you complete it.",
   photoToolCardTitle:"Passport Photo Tool", photoToolCardDesc:"Resize your photo to the exact spec for passports, PR cards, OCI, US visas, and more.",
+  resumeBuilderCardTitle:"Resume Builder", resumeBuilderCardDesc:"Build a clean, professional resume with a live preview as you type.",
+  resumeBuilderBetaBadge:"New",
+  resumeBuilderTitle:"Resume Builder", resumeBuilderIntro:"Fill in your details below and watch your resume take shape on the right, in real time.",
+  resumeBuilderPreviewLabel:"Live Preview",
+  resumeBuilderSaveBtn:"Save", resumeBuilderMyResumesBtn:"My Resumes",
+  resumeBuilderMyResumesTitle:"My Saved Resumes", resumeBuilderNoSaved:"You haven't saved any resumes yet.",
+  resumeBuilderExportLabel:"Download as PDF", resumeBuilderExportDesc:"Clean, watermark-free PDF export, ready to send to employers.",
+  resumeBuilderDownloadBtn:"Download PDF", resumeBuilderUnlockBtn:"Unlock PDF export",
   photoToolTitle:"Passport & Visa Photo Tool", photoToolIntro:"Upload your photo, pick the exact document you need it for, and crop it to the correct size and proportions — free preview with a watermark, or unlock a clean high-resolution file.",
   photoToolStep1:"1. Choose your document type", photoToolStep2:"2. Upload your photo", photoToolStep3:"3. Drag to reposition, use the slider to zoom",
   photoToolDragHint:"Click and drag your photo to centre your face within the guide.",
   photoToolGenerateBtn:"Generate preview", photoToolEmptyState:"Your photo will appear here once uploaded.",
+  photoToolResetBtn:"Reset position & zoom", photoToolFormatLabel:"4. Choose file format",
+  photoToolPrintSheetLabel:"Also generate a 4×6in print sheet (multiple copies)",
   photoToolResultHead:"Your result", photoToolPreviewLabel:"Free preview (watermarked)", photoToolDownloadPreview:"Download watermarked preview",
   photoToolUnlockLabel:"Clean, high-resolution file", photoToolUnlockDesc:"No watermark, exact pixel dimensions for your selected document, ready to upload or print.",
   photoToolUnlockBtn:"Unlock clean download", photoToolDownloadClean:"Download clean photo",
@@ -1154,7 +1292,7 @@ en: {
   navLogIn:"Log in", navSignUp:"Sign up", navLogOut:"Log out", navAccountFallback:"My account",
   navLangLabel:"Language Exams", navLangOverview:"All language exams",
   navMoreLabel:"More", navFAQ:"FAQ",
-  navTrustBadge:"No account or personal data required",
+  navTrustBadge:"Your account, your access, on any device",
   navContactLink:"Contact support",
   faqQ1:"How many questions are on the real Canadian citizenship test?",
   faqA1:"The official test has 20 questions, and you need at least 15 correct (75%) to pass. This site's practice tests use more questions per chapter (15 each) so you get broader repetition and coverage while studying, and the two 100-question final exams are designed as thorough review tools rather than a copy of the real test's length.",
@@ -1199,7 +1337,7 @@ fr: {
   quizHead:"Tests pratiques", prevChapter:"Chapitre précédent", nextChapter:"Chapitre suivant",
   footerAboutHead:"À propos de ce site",
   footerBlogLink:"Lisez nos guides sur l'examen de citoyenneté →",
-  footerAboutBody:"Un compagnon d'étude indépendant pour les personnes qui se préparent à l'examen de citoyenneté canadienne. Le contenu couvre les mêmes sujets que le guide officiel, rédigé de façon originale, avec des notes détaillées, des tests pratiques et des explications complètes pour chaque réponse.",
+  footerAboutBody:"Une plateforme d'étude indépendante pour les personnes qui se préparent à l'immigration canadienne. Préparation à l'examen de citoyenneté, pratique IELTS, CELPIP, PTE Core et TEF Canada, un outil photo pour passeport et visa, et plus encore — le tout au même endroit, avec des explications complètes pour chaque réponse.",
   footerPayHead:"Soutenir ce projet",
   footerSupportHead:"Besoin d'aide?",
   footerPayBody:"Les chapitres 5 à 10, ainsi que les deux examens finaux de 100 questions, sont accessibles moyennant un paiement unique, ce qui aide à maintenir cette ressource à jour.",
@@ -1236,10 +1374,20 @@ fr: {
   toolChecklistTitle:"Liste de vérification (PDF)", toolChecklistDesc:"Téléchargez une liste imprimable pour votre demande de citoyenneté.",
   toolTrackerTitle:"Suivi de la progression de la demande", toolTrackerDesc:"Cochez chaque étape de votre demande de citoyenneté au fur et à mesure.",
   photoToolCardTitle:"Outil photo passeport", photoToolCardDesc:"Redimensionnez votre photo selon les normes exactes pour passeports, cartes RP, OCI, visas américains et plus.",
+  resumeBuilderCardTitle:"Créateur de CV", resumeBuilderCardDesc:"Créez un CV professionnel et épuré avec un aperçu en direct pendant que vous tapez.",
+  resumeBuilderBetaBadge:"Nouveau",
+  resumeBuilderTitle:"Créateur de CV", resumeBuilderIntro:"Remplissez vos informations ci-dessous et regardez votre CV prendre forme à droite, en temps réel.",
+  resumeBuilderPreviewLabel:"Aperçu en direct",
+  resumeBuilderSaveBtn:"Enregistrer", resumeBuilderMyResumesBtn:"Mes CV",
+  resumeBuilderMyResumesTitle:"Mes CV enregistrés", resumeBuilderNoSaved:"Vous n'avez encore enregistré aucun CV.",
+  resumeBuilderExportLabel:"Télécharger en PDF", resumeBuilderExportDesc:"Export PDF propre, sans filigrane, prêt à envoyer aux employeurs.",
+  resumeBuilderDownloadBtn:"Télécharger le PDF", resumeBuilderUnlockBtn:"Débloquer l'export PDF",
   photoToolTitle:"Outil photo passeport et visa", photoToolIntro:"Téléversez votre photo, choisissez le document exact requis, et recadrez-la aux bonnes dimensions — aperçu gratuit avec filigrane, ou débloquez un fichier haute résolution sans filigrane.",
   photoToolStep1:"1. Choisissez le type de document", photoToolStep2:"2. Téléversez votre photo", photoToolStep3:"3. Glissez pour repositionner, utilisez le curseur pour zoomer",
   photoToolDragHint:"Cliquez et glissez votre photo pour centrer votre visage dans le guide.",
   photoToolGenerateBtn:"Générer l'aperçu", photoToolEmptyState:"Votre photo apparaîtra ici une fois téléversée.",
+  photoToolResetBtn:"Réinitialiser la position et le zoom", photoToolFormatLabel:"4. Choisissez le format de fichier",
+  photoToolPrintSheetLabel:"Générer aussi une planche d'impression 4×6po (copies multiples)",
   photoToolResultHead:"Votre résultat", photoToolPreviewLabel:"Aperçu gratuit (avec filigrane)", photoToolDownloadPreview:"Télécharger l'aperçu avec filigrane",
   photoToolUnlockLabel:"Fichier propre en haute résolution", photoToolUnlockDesc:"Sans filigrane, dimensions exactes en pixels pour votre document sélectionné, prêt à téléverser ou imprimer.",
   photoToolUnlockBtn:"Débloquer le téléchargement propre", photoToolDownloadClean:"Télécharger la photo propre",
@@ -1303,7 +1451,7 @@ fr: {
   navLogIn:"Se connecter", navSignUp:"S'inscrire", navLogOut:"Se déconnecter", navAccountFallback:"Mon compte",
   navLangLabel:"Examens de langue", navLangOverview:"Tous les examens de langue",
   navMoreLabel:"Plus", navFAQ:"FAQ",
-  navTrustBadge:"Aucun compte ni donnée personnelle requis",
+  navTrustBadge:"Votre compte, votre accès, sur tout appareil",
   navContactLink:"Contacter le support",
   faqQ1:"Combien de questions comporte le véritable examen de citoyenneté canadienne?",
   faqA1:"L'examen officiel comporte 20 questions, et il faut au moins 15 bonnes réponses (75 %) pour réussir. Les tests pratiques de ce site utilisent plus de questions par chapitre (15 chacun) pour offrir une répétition et une couverture plus larges pendant l'étude, et les deux examens finaux de 100 questions sont conçus comme des outils de révision approfondis plutôt qu'une copie de la longueur de l'examen réel.",
@@ -1348,7 +1496,7 @@ es: {
   quizHead:"Exámenes de práctica", prevChapter:"Capítulo anterior", nextChapter:"Capítulo siguiente",
   footerAboutHead:"Acerca de este sitio",
   footerBlogLink:"Lee nuestras guías del examen de ciudadanía →",
-  footerAboutBody:"Un compañero de estudio independiente para personas que se preparan para el examen de ciudadanía canadiense. El contenido está escrito para cubrir los mismos temas que la guía oficial, con redacción original, notas detalladas, exámenes de práctica y explicaciones completas para cada respuesta.",
+  footerAboutBody:"Una plataforma de estudio independiente para personas que se preparan para la inmigración canadiense. Preparación para el examen de ciudadanía, práctica de IELTS, CELPIP, PTE Core y TEF Canada, una herramienta de fotos para pasaporte y visa, y más — todo en un solo lugar, con explicaciones completas para cada respuesta.",
   footerPayHead:"Apoya este proyecto",
   footerSupportHead:"¿Necesitas ayuda?",
   footerPayBody:"Los capítulos 5 a 10, además de ambos exámenes finales de 100 preguntas, están disponibles mediante un pago único, lo cual ayuda a mantener este recurso actualizado.",
@@ -1385,10 +1533,20 @@ es: {
   toolChecklistTitle:"Lista de verificación (PDF)", toolChecklistDesc:"Descarga una lista imprimible para tu solicitud de ciudadanía.",
   toolTrackerTitle:"Seguimiento del progreso de la solicitud", toolTrackerDesc:"Marca cada etapa de tu solicitud de ciudadanía a medida que la completas.",
   photoToolCardTitle:"Herramienta de foto de pasaporte", photoToolCardDesc:"Redimensiona tu foto según las especificaciones exactas para pasaportes, tarjetas de RP, OCI, visas de EE.UU. y más.",
+  resumeBuilderCardTitle:"Creador de currículum", resumeBuilderCardDesc:"Crea un currículum limpio y profesional con vista previa en vivo mientras escribes.",
+  resumeBuilderBetaBadge:"Nuevo",
+  resumeBuilderTitle:"Creador de currículum", resumeBuilderIntro:"Completa tus datos a continuación y observa cómo tu currículum toma forma a la derecha, en tiempo real.",
+  resumeBuilderPreviewLabel:"Vista previa en vivo",
+  resumeBuilderSaveBtn:"Guardar", resumeBuilderMyResumesBtn:"Mis currículums",
+  resumeBuilderMyResumesTitle:"Mis currículums guardados", resumeBuilderNoSaved:"Aún no has guardado ningún currículum.",
+  resumeBuilderExportLabel:"Descargar como PDF", resumeBuilderExportDesc:"Exportación en PDF limpia, sin marca de agua, lista para enviar a empleadores.",
+  resumeBuilderDownloadBtn:"Descargar PDF", resumeBuilderUnlockBtn:"Desbloquear exportación PDF",
   photoToolTitle:"Herramienta de foto de pasaporte y visa", photoToolIntro:"Sube tu foto, elige el documento exacto que necesitas, y recórtala al tamaño y proporciones correctas — vista previa gratuita con marca de agua, o desbloquea un archivo limpio en alta resolución.",
   photoToolStep1:"1. Elige el tipo de documento", photoToolStep2:"2. Sube tu foto", photoToolStep3:"3. Arrastra para reposicionar, usa el control deslizante para hacer zoom",
   photoToolDragHint:"Haz clic y arrastra tu foto para centrar tu rostro dentro de la guía.",
   photoToolGenerateBtn:"Generar vista previa", photoToolEmptyState:"Tu foto aparecerá aquí una vez subida.",
+  photoToolResetBtn:"Restablecer posición y zoom", photoToolFormatLabel:"4. Elige el formato de archivo",
+  photoToolPrintSheetLabel:"También generar una hoja de impresión de 4×6in (copias múltiples)",
   photoToolResultHead:"Tu resultado", photoToolPreviewLabel:"Vista previa gratuita (con marca de agua)", photoToolDownloadPreview:"Descargar vista previa con marca de agua",
   photoToolUnlockLabel:"Archivo limpio en alta resolución", photoToolUnlockDesc:"Sin marca de agua, dimensiones exactas en píxeles para tu documento seleccionado, listo para subir o imprimir.",
   photoToolUnlockBtn:"Desbloquear descarga limpia", photoToolDownloadClean:"Descargar foto limpia",
@@ -1452,7 +1610,7 @@ es: {
   navLogIn:"Iniciar sesión", navSignUp:"Registrarse", navLogOut:"Cerrar sesión", navAccountFallback:"Mi cuenta",
   navLangLabel:"Exámenes de idioma", navLangOverview:"Todos los exámenes de idioma",
   navMoreLabel:"Más", navFAQ:"Preguntas frecuentes",
-  navTrustBadge:"No se requiere cuenta ni datos personales",
+  navTrustBadge:"Tu cuenta, tu acceso, en cualquier dispositivo",
   navContactLink:"Contactar soporte",
   faqQ1:"¿Cuántas preguntas tiene el examen real de ciudadanía canadiense?",
   faqA1:"El examen oficial tiene 20 preguntas, y necesitas al menos 15 correctas (75%) para aprobar. Los exámenes de práctica de este sitio usan más preguntas por capítulo (15 cada uno) para ofrecer una repetición y cobertura más amplias durante el estudio, y los dos exámenes finales de 100 preguntas están diseñados como herramientas de repaso exhaustivo, no como una copia de la duración del examen real.",
@@ -1490,6 +1648,7 @@ const PASS_THRESHOLD = 0.75;
 let isPaid = false;
 let hasLanguagePremium = false;
 let hasPhotoToolAccess = false;
+let hasResumeBuilderAccess = false;
 // NOTE: Real access is now determined ONLY by syncEntitlements(), which
 // asks the server (Supabase, via a Netlify Function) what the logged-in
 // user has actually paid for. There is deliberately no browser-based
@@ -2584,6 +2743,7 @@ function openTool(viewName){
   if(viewName === 'flashcards') renderFlashcards();
   if(viewName === 'app-tracker') renderAppTracker();
   if(viewName === 'phototool') initPhotoTool();
+  if(viewName === 'resumebuilder') initResumeBuilder();
 }
 
 /* ================= CITIZENSHIP APPLICATION TRACKER ================= */
@@ -2910,6 +3070,51 @@ const photoDocSpecs = {
     headNote: "Front-facing pose, full face visible",
     fileNote: "2×2 inch (51×51mm), color photo",
     seo: "Surrendering an Indian passport or obtaining a Renunciation/Surrender Certificate after acquiring foreign citizenship requires a 2×2 inch (51×51mm) color photograph against a plain white background, in a front-facing pose. This is the same square format used for OCI and US visa applications, though OCI specifically calls for a light (non-white) background — worth double-checking which of the three you're actually preparing for, since the background requirement differs between them even though the size is the same."
+  },
+  us_passport: {
+    label: "US Passport — 51×51mm / 2×2in",
+    aspectW: 1, aspectH: 1,
+    outputW: 600, outputH: 600,
+    bg: "Plain white background",
+    headNote: "Face should cover roughly 50–69% of the photo height",
+    fileNote: "Same 2×2in square format as the US visa (DS-160) photo",
+    seo: "US passport photos use the same 2×2 inch (51×51mm) square format as the DS-160 visa photo, against a plain white background with the face covering roughly 50–69% of the frame. Glasses are not permitted. If you already have a compliant US visa photo, it will generally also work for a US passport application, since both follow the identical size and background standard."
+  },
+  uk_passport: {
+    label: "UK Passport / Visa — 35×45mm",
+    aspectW: 35, aspectH: 45,
+    outputW: 413, outputH: 531,
+    bg: "Plain light grey or cream background (not pure white)",
+    headNote: "Head (chin to crown) must measure 29–34mm",
+    fileNote: "Digital: at least 600×750px, JPEG, 50KB–10MB",
+    seo: "UK passport and visa photos use the international 35 × 45mm size, but with a specific quirk that catches many applicants out: HM Passport Office wants a light grey or cream background, not pure white — a white background is one of the more common reasons UK photos get rejected. Head height should measure 29 to 34mm from chin to crown. For digital applications, the file needs to be at least 600×750 pixels. UK visas (UKVI) sometimes accept a white background depending on the route, but using light grey or cream satisfies both passport and visa requirements safely."
+  },
+  schengen: {
+    label: "Schengen Visa (EU) — 35×45mm",
+    aspectW: 35, aspectH: 45,
+    outputW: 413, outputH: 531,
+    bg: "Plain white or light background",
+    headNote: "Face (chin to crown) should measure 32–36mm — about 70–80% of the frame",
+    fileNote: "300 DPI print recommended; exact digital rules vary slightly by consulate",
+    seo: "Schengen visa photos follow the common 35 × 45mm European standard used across most of the 27 member states, with a plain white or light background and the face measuring roughly 32 to 36mm from chin to crown. Because Schengen visas are processed by the individual consulate of the country you're applying through rather than one central EU authority, small details can vary — always check that specific country's visa centre instructions alongside this general standard before submitting."
+  },
+  australia: {
+    label: "Australian Passport / Visa — 35×45mm",
+    aspectW: 35, aspectH: 45,
+    outputW: 413, outputH: 531,
+    bg: "Plain light-coloured background (light grey preferred)",
+    headNote: "Head (chin to crown) must measure 32–36mm",
+    fileNote: "Two identical printed photos generally required, taken within the last 6 months",
+    seo: "Australian passport and visa photos use the 35 × 45mm size shared with the UK and most Schengen countries, with the head measuring 32 to 36mm from chin to crown against a plain, light-coloured background. The Australian Passport Office is strict about recency — photos must be taken within the last 6 months — and passport applications typically require two identical printed photos, with one endorsed (signed) on the back by an approved guarantor."
+  },
+  china_visa: {
+    label: "China Visa — 33×48mm",
+    aspectW: 33, aspectH: 48,
+    outputW: 413, outputH: 600,
+    bg: "Plain white or light blue background",
+    headNote: "Face should cover a large portion of the frame, front-facing, neutral expression",
+    fileNote: "A size unique to China — do not reuse a US or Schengen-format photo",
+    seo: "Chinese visa photos use their own distinct 33 × 48mm size, different from both the US 2×2 inch square and the common 35×45mm European standard — reusing a photo prepared for another country's application is one of the most frequent mistakes with Chinese visa submissions. The background is typically plain white, though light blue is sometimes accepted depending on the visa service centre. Given how easy it is to default to a more familiar size, it's worth double-checking this one specifically before submitting."
   }
 };
 
@@ -2995,6 +3200,16 @@ function updatePhotoCropper(){
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(img, 0, 0);
+  const badge = document.getElementById('pt-zoom-badge');
+  if(badge) badge.textContent = document.getElementById('pt-zoom-slider').value + '%';
+}
+
+function resetPhotoCropper(){
+  if(!ptState.img) return;
+  ptState.offsetX = 0;
+  ptState.offsetY = 0;
+  document.getElementById('pt-zoom-slider').value = 100;
+  updatePhotoCropper();
 }
 
 function setupCropperDrag(){
@@ -3013,12 +3228,46 @@ function setupCropperDrag(){
     updatePhotoCropper();
   };
   window.onpointerup = () => { ptState.dragging = false; };
+
+  stage.onwheel = (e) => {
+    e.preventDefault();
+    const slider = document.getElementById('pt-zoom-slider');
+    const step = 8;
+    let newVal = parseInt(slider.value) + (e.deltaY < 0 ? step : -step);
+    newVal = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newVal));
+    slider.value = newVal;
+    updatePhotoCropper();
+  };
+
+  let pinchStartDist = null;
+  let pinchStartZoom = null;
+  stage.ontouchstart = (e) => {
+    if(e.touches.length === 2){
+      pinchStartDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      pinchStartZoom = parseInt(document.getElementById('pt-zoom-slider').value);
+    }
+  };
+  stage.ontouchmove = (e) => {
+    if(e.touches.length === 2 && pinchStartDist){
+      e.preventDefault();
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const slider = document.getElementById('pt-zoom-slider');
+      let newVal = Math.round(pinchStartZoom * (dist / pinchStartDist));
+      newVal = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newVal));
+      slider.value = newVal;
+      updatePhotoCropper();
+    }
+  };
+  stage.ontouchend = () => { pinchStartDist = null; };
 }
 
-function generatePhotoPreview(){
-  if(!ptState.img) return;
-  const key = document.getElementById('pt-doc-select').value;
-  const spec = photoDocSpecs[key];
+function getCropSourceRect(){
   const stage = document.getElementById('pt-cropper-stage');
   const stageW = stage.clientWidth, stageH = stage.clientHeight;
   const guide = document.getElementById('pt-crop-guide');
@@ -3027,16 +3276,31 @@ function generatePhotoPreview(){
   const sourceCanvas = document.getElementById('pt-source-canvas');
   const img = ptState.img;
   const baseScale = Math.max(stageW / img.width, stageH / img.height) * ptState.zoom;
-
-  // Figure out which part of the source image lies under the crop guide
   const guideLeftInStage = guideRect.left - stageRect.left;
   const guideTopInStage = guideRect.top - stageRect.top;
   const canvasLeft = parseFloat(sourceCanvas.style.left);
   const canvasTop = parseFloat(sourceCanvas.style.top);
-  const srcX = (guideLeftInStage - canvasLeft) / baseScale;
-  const srcY = (guideTopInStage - canvasTop) / baseScale;
-  const srcW = guideRect.width / baseScale;
-  const srcH = guideRect.height / baseScale;
+  return {
+    x: (guideLeftInStage - canvasLeft) / baseScale,
+    y: (guideTopInStage - canvasTop) / baseScale,
+    w: guideRect.width / baseScale,
+    h: guideRect.height / baseScale,
+  };
+}
+
+function getSelectedFormat(){
+  const el = document.getElementById('pt-format-select');
+  return el ? el.value : 'jpeg';
+}
+function formatToMime(format){ return format === 'png' ? 'image/png' : 'image/jpeg'; }
+function formatToExt(format){ return format === 'png' ? 'png' : 'jpg'; }
+
+function generatePhotoPreview(){
+  if(!ptState.img) return;
+  const key = document.getElementById('pt-doc-select').value;
+  const spec = photoDocSpecs[key];
+  const src = getCropSourceRect();
+  const img = ptState.img;
 
   const outCanvas = document.getElementById('pt-preview-canvas');
   outCanvas.width = spec.outputW;
@@ -3044,12 +3308,14 @@ function generatePhotoPreview(){
   const ctx = outCanvas.getContext('2d');
   ctx.fillStyle = '#fff';
   ctx.fillRect(0,0,spec.outputW,spec.outputH);
-  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, spec.outputW, spec.outputH);
+  ctx.drawImage(img, src.x, src.y, src.w, src.h, 0, 0, spec.outputW, spec.outputH);
 
   drawWatermark(ctx, spec.outputW, spec.outputH);
 
   ptState.hasGenerated = true;
   ptState.lastSpec = spec;
+  ptState.lastFormat = getSelectedFormat();
+  ptState.lastPrintSheet = document.getElementById('pt-print-sheet-toggle').checked;
   document.getElementById('pt-result-section').style.display = 'block';
   renderPhotoUnlockCta();
   document.getElementById('pt-result-section').scrollIntoView({behavior:'smooth'});
@@ -3069,9 +3335,10 @@ function drawWatermark(ctx, w, h){
 
 function downloadWatermarkedPreview(){
   const canvas = document.getElementById('pt-preview-canvas');
+  const format = ptState.lastFormat || 'jpeg';
   const link = document.createElement('a');
-  link.download = 'redleafstudy-photo-preview.jpg';
-  link.href = canvas.toDataURL('image/jpeg', 0.92);
+  link.download = `redleafstudy-photo-preview.${formatToExt(format)}`;
+  link.href = canvas.toDataURL(formatToMime(format), 0.92);
   link.click();
 }
 
@@ -3084,7 +3351,7 @@ function renderPhotoUnlockCta(){
   } else {
     const user = window.netlifyIdentity && netlifyIdentity.currentUser();
     if(!user){
-      container.innerHTML = `<button class="btn btn-gold btn-block" onclick="netlifyIdentity.open('login')">${t('paywallLoginToUnlock')}</button>`;
+      container.innerHTML = `<button class="btn btn-gold btn-block" onclick="safeOpenLogin('login')">${t('paywallLoginToUnlock')}</button>`;
     } else {
       container.innerHTML = `<button class="btn btn-gold btn-block" id="photo-checkout-btn" onclick="goToPhotoToolPaymentLink()">${t('photoToolUnlockBtn')}</button>`;
     }
@@ -3093,7 +3360,7 @@ function renderPhotoUnlockCta(){
 
 function goToPhotoToolPaymentLink(){
   const user = window.netlifyIdentity && netlifyIdentity.currentUser();
-  if(!user){ netlifyIdentity.open('login'); return; }
+  if(!user){ safeOpenLogin('login'); return; }
   // client_reference_id ties this specific payment link purchase back to
   // the logged-in user, the same way the dynamic checkout does for the
   // other two products — this is what lets the webhook and Supabase
@@ -3103,37 +3370,70 @@ function goToPhotoToolPaymentLink(){
   window.location.href = url;
 }
 
-function downloadCleanPhoto(){
-  if(!ptState.hasGenerated) return;
+function buildCleanPhotoCanvas(){
   const spec = ptState.lastSpec;
-  const stage = document.getElementById('pt-cropper-stage');
-  const guide = document.getElementById('pt-crop-guide');
-  const guideRect = guide.getBoundingClientRect();
-  const stageRect = stage.getBoundingClientRect();
-  const sourceCanvas = document.getElementById('pt-source-canvas');
+  const src = getCropSourceRect();
   const img = ptState.img;
-  const stageW = stage.clientWidth, stageH = stage.clientHeight;
-  const baseScale = Math.max(stageW / img.width, stageH / img.height) * ptState.zoom;
-  const guideLeftInStage = guideRect.left - stageRect.left;
-  const guideTopInStage = guideRect.top - stageRect.top;
-  const canvasLeft = parseFloat(sourceCanvas.style.left);
-  const canvasTop = parseFloat(sourceCanvas.style.top);
-  const srcX = (guideLeftInStage - canvasLeft) / baseScale;
-  const srcY = (guideTopInStage - canvasTop) / baseScale;
-  const srcW = guideRect.width / baseScale;
-  const srcH = guideRect.height / baseScale;
-
   const cleanCanvas = document.createElement('canvas');
   cleanCanvas.width = spec.outputW;
   cleanCanvas.height = spec.outputH;
   const ctx = cleanCanvas.getContext('2d');
   ctx.fillStyle = '#fff';
   ctx.fillRect(0,0,spec.outputW,spec.outputH);
-  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, spec.outputW, spec.outputH);
+  ctx.drawImage(img, src.x, src.y, src.w, src.h, 0, 0, spec.outputW, spec.outputH);
+  return cleanCanvas;
+}
+
+// Tiles the finished photo onto a 4x6in sheet at 300 DPI (1200x1800px) —
+// the same "print sheet" format photo labs and passport-photo kiosks use,
+// so a customer can print one sheet and cut out several identical copies
+// instead of paying per single photo.
+function buildPrintSheetCanvas(photoCanvas, spec){
+  const sheetW = 1200, sheetH = 1800, margin = 20, gap = 12;
+  const sheet = document.createElement('canvas');
+  sheet.width = sheetW; sheet.height = sheetH;
+  const ctx = sheet.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,sheetW,sheetH);
+
+  const aspect = spec.outputW / spec.outputH;
+  let tileH = 450; // a reasonable print tile height in px at 300dpi (~1.5in)
+  let tileW = Math.round(tileH * aspect);
+  const cols = Math.max(1, Math.floor((sheetW - margin*2 + gap) / (tileW + gap)));
+  const rows = Math.max(1, Math.floor((sheetH - margin*2 + gap) / (tileH + gap)));
+
+  for(let r=0; r<rows; r++){
+    for(let c=0; c<cols; c++){
+      const x = margin + c*(tileW+gap);
+      const y = margin + r*(tileH+gap);
+      ctx.drawImage(photoCanvas, x, y, tileW, tileH);
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, tileW, tileH);
+    }
+  }
+  return sheet;
+}
+
+function downloadCleanPhoto(){
+  if(!ptState.hasGenerated) return;
+  const format = ptState.lastFormat || 'jpeg';
+  const cleanCanvas = buildCleanPhotoCanvas();
+
   const link = document.createElement('a');
-  link.download = 'redleafstudy-photo-final.jpg';
-  link.href = cleanCanvas.toDataURL('image/jpeg', 0.95);
+  link.download = `redleafstudy-photo-final.${formatToExt(format)}`;
+  link.href = cleanCanvas.toDataURL(formatToMime(format), 0.95);
   link.click();
+
+  if(ptState.lastPrintSheet){
+    const sheet = buildPrintSheetCanvas(cleanCanvas, ptState.lastSpec);
+    setTimeout(() => {
+      const sheetLink = document.createElement('a');
+      sheetLink.download = `redleafstudy-photo-print-sheet.${formatToExt(format)}`;
+      sheetLink.href = sheet.toDataURL(formatToMime(format), 0.95);
+      sheetLink.click();
+    }, 400);
+  }
 }
 
 function renderPhotoToolSeoContent(){
@@ -3146,11 +3446,421 @@ function renderPhotoToolSeoContent(){
   `).join('') + `<p class="full-disclaimer">${t('photoToolDisclaimer')}</p>`;
 }
 
+/* ================= RESUME BUILDER (Step 1: builder + live preview, one template) ================= */
+let resumeDraft = {
+  personalInfo: { fullName:'', title:'', email:'', phone:'', linkedin:'', github:'', portfolio:'', address:'', summary:'' },
+  education: [],
+  experience: [],
+  skills: { technical:'', soft:'', languages:'' },
+  projects: []
+};
+let rbCurrentStep = 0;
+const rbSteps = ['personalInfo','education','experience','skills','projects'];
+const rbStepLabels = ['Personal Info','Education','Experience','Skills','Projects'];
+let rbCurrentTemplate = 'modern';
+let rbCurrentResumeTitle = 'Untitled Resume';
+let rbCurrentResumeId = null;
+
+function initResumeBuilder(){
+  renderRbSidebar();
+  renderRbStep();
+  renderRbPreview();
+  renderRbExportCta();
+}
+
+function renderRbSidebar(){
+  const el = document.getElementById('rb-step-sidebar');
+  el.innerHTML = rbSteps.map((key, i) => `
+    <div class="rb-step-item ${i===rbCurrentStep?'active':''} ${i<rbCurrentStep?'done':''}" onclick="rbGoToStep(${i})">
+      <span class="rb-step-num">${i<rbCurrentStep ? '✓' : i+1}</span>
+      <span>${rbStepLabels[i]}</span>
+    </div>
+  `).join('');
+}
+
+function rbGoToStep(i){
+  rbCurrentStep = i;
+  renderRbSidebar();
+  renderRbStep();
+}
+function rbNext(){ if(rbCurrentStep < rbSteps.length-1){ rbCurrentStep++; renderRbSidebar(); renderRbStep(); } }
+function rbPrev(){ if(rbCurrentStep > 0){ rbCurrentStep--; renderRbSidebar(); renderRbStep(); } }
+
+function renderRbStep(){
+  const el = document.getElementById('rb-form-area');
+  const key = rbSteps[rbCurrentStep];
+  let html = '';
+  if(key === 'personalInfo') html = renderRbPersonalInfoForm();
+  if(key === 'education') html = renderRbEducationForm();
+  if(key === 'experience') html = renderRbExperienceForm();
+  if(key === 'skills') html = renderRbSkillsForm();
+  if(key === 'projects') html = renderRbProjectsForm();
+
+  html += `
+    <div class="rb-wizard-nav">
+      <button class="btn btn-ghost" onclick="rbPrev()" ${rbCurrentStep===0?'disabled style="opacity:.4;"':''}>← Back</button>
+      <button class="btn btn-primary" onclick="rbNext()" ${rbCurrentStep===rbSteps.length-1?'disabled style="opacity:.4;"':''}>Next →</button>
+    </div>
+  `;
+  el.innerHTML = html;
+}
+
+function rbField(label, id, value, placeholder, type){
+  return `<label class="rb-field-label">${label}</label><input class="rb-input" type="${type||'text'}" id="${id}" value="${(value||'').replace(/"/g,'&quot;')}" placeholder="${placeholder||''}" oninput="rbSyncPersonalInfo()">`;
+}
+
+function renderRbPersonalInfoForm(){
+  const p = resumeDraft.personalInfo;
+  return `
+    <div class="rb-field-row">
+      ${rbField('Full Name','rb-fullName',p.fullName,'Jane Smith')}
+      ${rbField('Professional Title','rb-title',p.title,'Software Engineer')}
+    </div>
+    <div class="rb-field-row">
+      ${rbField('Email','rb-email',p.email,'jane@email.com','email')}
+      ${rbField('Phone','rb-phone',p.phone,'+1 555 123 4567')}
+    </div>
+    <div class="rb-field-row">
+      ${rbField('LinkedIn','rb-linkedin',p.linkedin,'linkedin.com/in/jane')}
+      ${rbField('GitHub','rb-github',p.github,'github.com/jane')}
+    </div>
+    <div class="rb-field-row">
+      ${rbField('Portfolio','rb-portfolio',p.portfolio,'janesmith.com')}
+      ${rbField('Address','rb-address',p.address,'Toronto, ON')}
+    </div>
+    <label class="rb-field-label">Professional Summary</label>
+    <textarea class="rb-textarea" id="rb-summary" placeholder="A brief 2-3 sentence summary of your experience and goals..." oninput="rbSyncPersonalInfo()">${p.summary||''}</textarea>
+  `;
+}
+function rbSyncPersonalInfo(){
+  const p = resumeDraft.personalInfo;
+  p.fullName = document.getElementById('rb-fullName').value;
+  p.title = document.getElementById('rb-title').value;
+  p.email = document.getElementById('rb-email').value;
+  p.phone = document.getElementById('rb-phone').value;
+  p.linkedin = document.getElementById('rb-linkedin').value;
+  p.github = document.getElementById('rb-github').value;
+  p.portfolio = document.getElementById('rb-portfolio').value;
+  p.address = document.getElementById('rb-address').value;
+  p.summary = document.getElementById('rb-summary').value;
+  renderRbPreview();
+}
+
+function renderRbEducationForm(){
+  const entries = resumeDraft.education;
+  return entries.map((e, i) => `
+    <div class="rb-entry-card">
+      <button class="rb-entry-remove" onclick="rbRemoveEntry('education', ${i})">✕ Remove</button>
+      <div class="rb-field-row">
+        <div><label class="rb-field-label">University</label><input class="rb-input" value="${(e.university||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('education', ${i}, 'university', this.value)"></div>
+        <div><label class="rb-field-label">Degree</label><input class="rb-input" value="${(e.degree||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('education', ${i}, 'degree', this.value)"></div>
+      </div>
+      <div class="rb-field-row">
+        <div><label class="rb-field-label">Major</label><input class="rb-input" value="${(e.major||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('education', ${i}, 'major', this.value)"></div>
+        <div><label class="rb-field-label">GPA</label><input class="rb-input" value="${(e.gpa||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('education', ${i}, 'gpa', this.value)"></div>
+      </div>
+      <div class="rb-field-row">
+        <div><label class="rb-field-label">Start</label><input class="rb-input" placeholder="Sep 2019" value="${(e.startDate||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('education', ${i}, 'startDate', this.value)"></div>
+        <div><label class="rb-field-label">End</label><input class="rb-input" placeholder="Jun 2023" value="${(e.endDate||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('education', ${i}, 'endDate', this.value)"></div>
+      </div>
+    </div>
+  `).join('') + `<button class="rb-add-btn" onclick="rbAddEntry('education')">+ Add education</button>`;
+}
+
+function renderRbExperienceForm(){
+  const entries = resumeDraft.experience;
+  return entries.map((e, i) => `
+    <div class="rb-entry-card">
+      <button class="rb-entry-remove" onclick="rbRemoveEntry('experience', ${i})">✕ Remove</button>
+      <div class="rb-field-row">
+        <div><label class="rb-field-label">Company</label><input class="rb-input" value="${(e.company||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('experience', ${i}, 'company', this.value)"></div>
+        <div><label class="rb-field-label">Position</label><input class="rb-input" value="${(e.position||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('experience', ${i}, 'position', this.value)"></div>
+      </div>
+      <div class="rb-field-row">
+        <div><label class="rb-field-label">Location</label><input class="rb-input" value="${(e.location||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('experience', ${i}, 'location', this.value)"></div>
+        <div><label class="rb-field-label">Employment Type</label><input class="rb-input" placeholder="Full-time" value="${(e.employmentType||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('experience', ${i}, 'employmentType', this.value)"></div>
+      </div>
+      <div class="rb-field-row">
+        <div><label class="rb-field-label">Start</label><input class="rb-input" placeholder="Jan 2022" value="${(e.startDate||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('experience', ${i}, 'startDate', this.value)"></div>
+        <div><label class="rb-field-label">End</label><input class="rb-input" placeholder="Present" value="${(e.endDate||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('experience', ${i}, 'endDate', this.value)"></div>
+      </div>
+      <label class="rb-field-label">Responsibilities & Achievements (one per line)</label>
+      <textarea class="rb-textarea" style="min-height:90px;" oninput="rbUpdateEntry('experience', ${i}, 'bullets', this.value)">${e.bullets||''}</textarea>
+    </div>
+  `).join('') + `<button class="rb-add-btn" onclick="rbAddEntry('experience')">+ Add experience</button>`;
+}
+
+function renderRbSkillsForm(){
+  const s = resumeDraft.skills;
+  return `
+    <label class="rb-field-label">Technical Skills (comma-separated)</label>
+    <textarea class="rb-textarea" id="rb-technical" placeholder="JavaScript, React, Python, SQL" oninput="rbSyncSkills()">${s.technical||''}</textarea>
+    <label class="rb-field-label">Soft Skills (comma-separated)</label>
+    <textarea class="rb-textarea" id="rb-soft" placeholder="Leadership, Communication, Problem-solving" oninput="rbSyncSkills()">${s.soft||''}</textarea>
+    <label class="rb-field-label">Languages (comma-separated)</label>
+    <textarea class="rb-textarea" id="rb-languages" placeholder="English (native), French (intermediate)" oninput="rbSyncSkills()">${s.languages||''}</textarea>
+  `;
+}
+function rbSyncSkills(){
+  resumeDraft.skills.technical = document.getElementById('rb-technical').value;
+  resumeDraft.skills.soft = document.getElementById('rb-soft').value;
+  resumeDraft.skills.languages = document.getElementById('rb-languages').value;
+  renderRbPreview();
+}
+
+function renderRbProjectsForm(){
+  const entries = resumeDraft.projects;
+  return entries.map((e, i) => `
+    <div class="rb-entry-card">
+      <button class="rb-entry-remove" onclick="rbRemoveEntry('projects', ${i})">✕ Remove</button>
+      <label class="rb-field-label">Title</label>
+      <input class="rb-input" value="${(e.title||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('projects', ${i}, 'title', this.value)">
+      <label class="rb-field-label">Description</label>
+      <textarea class="rb-textarea" oninput="rbUpdateEntry('projects', ${i}, 'description', this.value)">${e.description||''}</textarea>
+      <div class="rb-field-row">
+        <div><label class="rb-field-label">GitHub Link</label><input class="rb-input" value="${(e.githubUrl||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('projects', ${i}, 'githubUrl', this.value)"></div>
+        <div><label class="rb-field-label">Live Link</label><input class="rb-input" value="${(e.liveUrl||'').replace(/"/g,'&quot;')}" oninput="rbUpdateEntry('projects', ${i}, 'liveUrl', this.value)"></div>
+      </div>
+    </div>
+  `).join('') + `<button class="rb-add-btn" onclick="rbAddEntry('projects')">+ Add project</button>`;
+}
+
+function rbAddEntry(section){
+  resumeDraft[section].push({});
+  renderRbStep();
+  renderRbPreview();
+}
+function rbRemoveEntry(section, i){
+  resumeDraft[section].splice(i, 1);
+  renderRbStep();
+  renderRbPreview();
+}
+function rbUpdateEntry(section, i, field, value){
+  resumeDraft[section][i][field] = value;
+  renderRbPreview();
+}
+
+function renderRbPreview(){
+  const el = document.getElementById('rb-preview-page');
+  if(!el) return;
+  el.className = 'rb-preview-page rb-tpl-' + rbCurrentTemplate;
+  const p = resumeDraft.personalInfo;
+  const hasAnyContent = p.fullName || resumeDraft.education.length || resumeDraft.experience.length || resumeDraft.projects.length;
+  if(!hasAnyContent){
+    el.innerHTML = `<p class="rb-preview-empty">Your resume preview will appear here as you fill in the form.</p>`;
+    return;
+  }
+  const contactParts = [p.email, p.phone, p.linkedin, p.github, p.portfolio, p.address].filter(Boolean);
+
+  const eduHtml = resumeDraft.education.map(e => `
+    <div class="rb-entry">
+      <div class="rb-entry-head"><span>${e.university||''}</span><span>${e.startDate||''} – ${e.endDate||''}</span></div>
+      <div class="rb-entry-sub">${[e.degree, e.major].filter(Boolean).join(', ')}${e.gpa ? ' · GPA: '+e.gpa : ''}</div>
+    </div>
+  `).join('');
+
+  const expHtml = resumeDraft.experience.map(e => `
+    <div class="rb-entry">
+      <div class="rb-entry-head"><span>${e.position||''} — ${e.company||''}</span><span>${e.startDate||''} – ${e.endDate||''}</span></div>
+      <div class="rb-entry-sub">${[e.location, e.employmentType].filter(Boolean).join(' · ')}</div>
+      ${e.bullets ? '<ul>' + e.bullets.split('\n').filter(Boolean).map(b => `<li>${b.replace(/</g,'&lt;')}</li>`).join('') + '</ul>' : ''}
+    </div>
+  `).join('');
+
+  const skillsHtml = [
+    resumeDraft.skills.technical ? `<div><strong>Technical:</strong> ${resumeDraft.skills.technical}</div>` : '',
+    resumeDraft.skills.soft ? `<div><strong>Soft Skills:</strong> ${resumeDraft.skills.soft}</div>` : '',
+    resumeDraft.skills.languages ? `<div><strong>Languages:</strong> ${resumeDraft.skills.languages}</div>` : '',
+  ].filter(Boolean).join('');
+
+  const projectsHtml = resumeDraft.projects.map(e => `
+    <div class="rb-entry">
+      <div class="rb-entry-head"><span>${e.title||''}</span></div>
+      ${e.description ? `<div class="rb-entry-sub">${e.description.replace(/</g,'&lt;')}</div>` : ''}
+      ${(e.githubUrl||e.liveUrl) ? `<div class="rb-entry-sub">${[e.githubUrl,e.liveUrl].filter(Boolean).join(' · ')}</div>` : ''}
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    ${p.fullName ? `<h1>${p.fullName}</h1>` : ''}
+    ${p.title ? `<div class="rb-title">${p.title}</div>` : ''}
+    ${contactParts.length ? `<div class="rb-contact">${contactParts.join(' · ')}</div>` : ''}
+    ${p.summary ? `<h2>Summary</h2><p>${p.summary.replace(/</g,'&lt;')}</p>` : ''}
+    ${eduHtml ? `<h2>Education</h2>${eduHtml}` : ''}
+    ${expHtml ? `<h2>Experience</h2>${expHtml}` : ''}
+    ${skillsHtml ? `<h2>Skills</h2>${skillsHtml}` : ''}
+    ${projectsHtml ? `<h2>Projects</h2>${projectsHtml}` : ''}
+  `;
+}
+
+async function rbSaveResume(){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user){ safeOpenLogin('login'); return; }
+  const statusEl = document.getElementById('rb-save-status');
+  statusEl.textContent = 'Saving...';
+  statusEl.style.color = 'var(--ink-70)';
+  try{
+    const token = await user.jwt();
+    const res = await fetch('/.netlify/functions/resumes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        id: rbCurrentResumeId,
+        title: rbCurrentResumeTitle,
+        template: rbCurrentTemplate,
+        content: resumeDraft,
+      }),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Save failed');
+    rbCurrentResumeId = data.resume.id;
+    statusEl.textContent = 'Saved ✓';
+    statusEl.style.color = 'var(--green)';
+    setTimeout(()=>{ statusEl.textContent = ''; }, 2500);
+  }catch(e){
+    console.error('Save resume failed:', e);
+    statusEl.textContent = 'Could not save — please try again.';
+    statusEl.style.color = 'var(--red)';
+  }
+}
+
+async function rbOpenMyResumes(){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  document.getElementById('rb-myresumes-overlay').classList.add('show');
+  const listEl = document.getElementById('rb-myresumes-list');
+  if(!user){
+    listEl.innerHTML = `<button class="btn btn-gold btn-block" onclick="safeOpenLogin('login')">${t('paywallLoginToUnlock')}</button>`;
+    return;
+  }
+  listEl.innerHTML = `<p style="font-size:13px; color:var(--ink-70);">Loading...</p>`;
+  try{
+    const token = await user.jwt();
+    const res = await fetch('/.netlify/functions/resumes?action=list', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if(!data.resumes || !data.resumes.length){
+      listEl.innerHTML = `<p style="font-size:13px; color:var(--ink-70);">${t('resumeBuilderNoSaved')}</p>`;
+      return;
+    }
+    listEl.innerHTML = data.resumes.map(r => `
+      <div class="rb-entry-card" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div>
+          <div style="font-weight:700; font-size:13.5px;">${(r.title||'Untitled').replace(/</g,'&lt;')}</div>
+          <div style="font-size:11.5px; color:var(--ink-70);">${r.template} · ${new Date(r.updated_at).toLocaleDateString()}</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-ghost" style="padding:6px 12px; font-size:12px;" onclick="rbLoadResume('${r.id}')">Load</button>
+          <button class="btn btn-ghost" style="padding:6px 12px; font-size:12px; color:var(--red);" onclick="rbDeleteResume('${r.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){
+    console.error('List resumes failed:', e);
+    listEl.innerHTML = `<p style="font-size:13px; color:var(--red);">Could not load your resumes right now.</p>`;
+  }
+}
+function rbCloseMyResumes(){
+  document.getElementById('rb-myresumes-overlay').classList.remove('show');
+}
+
+async function rbLoadResume(id){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user) return;
+  try{
+    const token = await user.jwt();
+    const res = await fetch(`/.netlify/functions/resumes?action=load&id=${encodeURIComponent(id)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Load failed');
+    resumeDraft = data.resume.content;
+    rbCurrentResumeId = data.resume.id;
+    rbCurrentResumeTitle = data.resume.title;
+    rbCurrentTemplate = data.resume.template;
+    document.getElementById('rb-resume-title').value = rbCurrentResumeTitle;
+    document.getElementById('rb-template-select').value = rbCurrentTemplate;
+    rbCurrentStep = 0;
+    rbCloseMyResumes();
+    renderRbSidebar();
+    renderRbStep();
+    renderRbPreview();
+  }catch(e){
+    console.error('Load resume failed:', e);
+    alert('Could not load that resume. Please try again.');
+  }
+}
+
+async function rbDeleteResume(id){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user) return;
+  if(!confirm('Delete this resume? This cannot be undone.')) return;
+  try{
+    const token = await user.jwt();
+    await fetch(`/.netlify/functions/resumes?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if(rbCurrentResumeId === id){ rbCurrentResumeId = null; }
+    rbOpenMyResumes();
+  }catch(e){
+    console.error('Delete resume failed:', e);
+    alert('Could not delete that resume. Please try again.');
+  }
+}
+
+// IMPORTANT: replace this placeholder with your real Stripe Payment Link
+// for the Resume Builder ($3.99 CAD), created the same way as the Photo
+// Tool's link — see SETUP notes. Until this is a real link, the unlock
+// button below will not charge correctly.
+const RESUME_BUILDER_PAYMENT_LINK = "https://buy.stripe.com/REPLACE_WITH_REAL_RESUME_BUILDER_LINK";
+
+function renderRbExportCta(){
+  const container = document.getElementById('rb-export-cta');
+  if(!container) return;
+  if(hasResumeBuilderAccess){
+    container.innerHTML = `<button class="btn btn-gold btn-block" onclick="rbDownloadPDF()">${t('resumeBuilderDownloadBtn')}</button>`;
+  } else {
+    const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+    if(!user){
+      container.innerHTML = `<button class="btn btn-gold btn-block" onclick="safeOpenLogin('login')">${t('paywallLoginToUnlock')}</button>`;
+    } else {
+      container.innerHTML = `<button class="btn btn-gold btn-block" onclick="goToResumeBuilderPaymentLink()">${t('resumeBuilderUnlockBtn')}</button>`;
+    }
+  }
+}
+
+function goToResumeBuilderPaymentLink(){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user){ safeOpenLogin('login'); return; }
+  // Same pattern as the Photo Tool: client_reference_id ties this purchase
+  // to the logged-in account, so the webhook can attribute it correctly.
+  const url = `${RESUME_BUILDER_PAYMENT_LINK}?client_reference_id=${encodeURIComponent(user.id)}&prefilled_email=${encodeURIComponent(user.email || '')}`;
+  window.location.href = url;
+}
+
+// PDF export uses the browser's own print-to-PDF, scoped to just the
+// resume preview via print CSS — reliable across browsers, no external
+// library or server needed. "Save as PDF" is a standard destination
+// option in every modern browser's print dialog.
+function rbDownloadPDF(){
+  window.print();
+}
+
 /* ================= ACCOUNTS (Netlify Identity) =================
    This wires up real login/signup. It does NOT yet gate any premium
    content by account — that's the next phase, once this is confirmed
    working. Today's paywall (Stripe link + same-device unlock) is
    untouched and keeps working exactly as before during this transition. */
+// Safe wrapper around netlifyIdentity.open() — used everywhere instead of
+// calling netlifyIdentity directly, so a failed/slow script load (ad
+// blocker, network hiccup, etc.) shows a friendly message instead of an
+// uncaught error.
+function safeOpenLogin(mode){
+  if(window.netlifyIdentity){ netlifyIdentity.open(mode || 'login'); }
+  else { alert('Login isn\'t available right now — please refresh the page and try again.'); }
+}
+
 function updateAuthUI(user){
   const loggedOutEl = document.getElementById('auth-logged-out');
   const loggedInEl = document.getElementById('auth-logged-in');
@@ -3179,6 +3889,7 @@ async function syncEntitlements(){
     if(products.includes('citizenship_prep')) isPaid = true;
     if(products.includes('language_premium')) hasLanguagePremium = true;
     if(products.includes('photo_tool')) hasPhotoToolAccess = true;
+    if(products.includes('resume_builder')) hasResumeBuilderAccess = true;
     // Re-render whatever's currently on screen so newly-unlocked content shows immediately
     if(document.querySelector('[data-view="home"].active')) renderChapterGrid();
     if(document.querySelector('[data-view="ielts-hub"].active')) renderIeltsTabContent();
@@ -3186,6 +3897,7 @@ async function syncEntitlements(){
     if(document.querySelector('[data-view="pte-hub"].active')) renderPteTabContent();
     if(document.querySelector('[data-view="tef-hub"].active')) renderTefTabContent();
     if(document.querySelector('[data-view="phototool"].active') && ptState.hasGenerated) renderPhotoUnlockCta();
+    if(document.querySelector('[data-view="resumebuilder"].active')) renderRbExportCta();
   }catch(e){
     console.error('Could not check entitlements:', e);
   }
@@ -3194,7 +3906,7 @@ async function syncEntitlements(){
 async function startCheckout(product){
   const user = window.netlifyIdentity && netlifyIdentity.currentUser();
   if(!user){
-    netlifyIdentity.open('login');
+    safeOpenLogin('login');
     return;
   }
   const btn = document.getElementById('paywall-checkout-btn');
@@ -3225,7 +3937,7 @@ function renderPaywallCta(){
   if(!container) return;
   const user = window.netlifyIdentity && netlifyIdentity.currentUser();
   if(!user){
-    container.innerHTML = `<button class="btn btn-gold btn-block" onclick="netlifyIdentity.open('login')">${t('paywallLoginToUnlock')}</button>`;
+    container.innerHTML = `<button class="btn btn-gold btn-block" onclick="safeOpenLogin('login')">${t('paywallLoginToUnlock')}</button>`;
   } else {
     container.innerHTML = `<button class="btn btn-gold btn-block" id="paywall-checkout-btn" onclick="startCheckout('${currentPaywallProduct}')">${t('paywallCta')}</button>`;
   }

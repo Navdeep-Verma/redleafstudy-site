@@ -40,6 +40,23 @@ CREATE TABLE courses (
 ALTER TABLE entitlements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE courses ENABLE ROW LEVEL SECURITY;
 
+-- Resume Builder: stores each saved resume tied to a logged-in user.
+-- content is stored as JSON so the whole draft (personal info, education,
+-- experience, skills, projects) is one flexible blob, matching how the
+-- frontend already structures resumeDraft.
+CREATE TABLE resumes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT NOT NULL,
+  title TEXT NOT NULL DEFAULT 'Untitled Resume',
+  template TEXT NOT NULL DEFAULT 'modern',
+  content JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX idx_resumes_user_id ON resumes(user_id);
+ALTER TABLE resumes ENABLE ROW LEVEL SECURITY;
+
 -- Example: once you add your first real course, insert it like this:
 -- INSERT INTO courses (slug, title, description, price_cents, stripe_price_id, is_published)
 -- VALUES ('ielts-writing-masterclass', 'IELTS Writing Masterclass', 'A structured video course...', 2999, 'price_XXXXXXXXXXXX', true);

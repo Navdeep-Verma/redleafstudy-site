@@ -37,6 +37,7 @@ const PRICE_ID_TO_PRODUCT = {
   [process.env.STRIPE_PRICE_CITIZENSHIP_PREP]: 'citizenship_prep',
   [process.env.STRIPE_PRICE_LANGUAGE_PREMIUM]: 'language_premium',
   [process.env.STRIPE_PRICE_PHOTO_TOOL]: 'photo_tool',
+  [process.env.STRIPE_PRICE_RESUME_BUILDER]: 'resume_builder',
 };
 
 exports.handler = async (event) => {
