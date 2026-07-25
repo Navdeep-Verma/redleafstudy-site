@@ -38,6 +38,8 @@ const PRICE_ID_TO_PRODUCT = {
   [process.env.STRIPE_PRICE_LANGUAGE_PREMIUM]: 'language_premium',
   [process.env.STRIPE_PRICE_PHOTO_TOOL]: 'photo_tool',
   [process.env.STRIPE_PRICE_RESUME_BUILDER]: 'resume_builder',
+  [process.env.STRIPE_PRICE_DISPATCH_COURSE]: 'dispatch_course',
+  [process.env.STRIPE_PRICE_FREIGHT_COURSE]: 'freight_course',
 };
 
 exports.handler = async (event) => {

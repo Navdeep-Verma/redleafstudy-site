@@ -328,6 +328,7 @@
   .overlay.show{display:flex;}
   .install-banner{position:relative; overflow:hidden; background:linear-gradient(135deg,#0a1226,var(--ink) 55%,#1c2f5c); border-radius:24px; padding:30px 32px; margin:28px 0 8px; display:flex; align-items:center; gap:22px; box-shadow:0 20px 50px rgba(10,18,38,.35);}
   .install-banner.hide{display:none;}
+  .dc-promo-banner.hide{display:none;}
   .install-banner-glow{position:absolute; inset:0; background:radial-gradient(circle at 15% 50%, rgba(201,154,46,.35), transparent 55%), radial-gradient(circle at 85% 30%, rgba(11,77,161,.3), transparent 50%); animation:installGlowPulse 5s ease-in-out infinite; pointer-events:none;}
   @keyframes installGlowPulse{0%,100%{opacity:.7; transform:scale(1);} 50%{opacity:1; transform:scale(1.08);}}
   .install-banner-close{position:absolute; top:14px; right:16px; background:rgba(255,255,255,.1); border:none; color:rgba(255,255,255,.7); width:28px; height:28px; border-radius:50%; font-size:13px; z-index:2;}
@@ -379,42 +380,128 @@
   .pt-price{font-family:"IBM Plex Mono",monospace; font-size:28px; font-weight:800; color:var(--red-dark); margin-bottom:14px;}
   .paywall-card{background:var(--paper); max-width:480px; width:100%; border-radius:24px; border:1px solid var(--line); padding:36px 32px; position:relative; box-shadow:0 30px 80px rgba(0,0,0,.35);}
 
-  .rb-layout{display:grid; grid-template-columns:200px 1fr 1fr; gap:20px; margin-top:24px; align-items:start;}
+  :root{--rb-primary:#4F46E5; --rb-primary-dark:#3730A3; --rb-accent:#10B981; --rb-bg:#F8F9FC; --rb-card:#fff; --rb-border:#E5E7F0; --rb-text:#1E1B4B; --rb-text-soft:#6B7280;}
+  .rb-layout{display:grid; grid-template-columns:210px 1fr 1fr; gap:22px; margin-top:24px; align-items:start; font-family:"Plus Jakarta Sans",sans-serif;}
   @media(max-width:980px){.rb-layout{grid-template-columns:1fr;}}
-  .rb-step-sidebar{display:flex; flex-direction:column; gap:4px; position:sticky; top:20px;}
+  .rb-step-sidebar{display:flex; flex-direction:column; gap:6px; position:sticky; top:20px; background:var(--rb-card); border-radius:18px; padding:10px; border:1px solid var(--rb-border); box-shadow:0 2px 8px rgba(79,70,229,.05);}
   @media(max-width:980px){.rb-step-sidebar{flex-direction:row; overflow-x:auto; position:static;}}
-  .rb-step-item{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; font-size:13.5px; font-weight:600; color:var(--ink-70); cursor:pointer; white-space:nowrap;}
-  .rb-step-item.active{background:var(--paper-dark); color:var(--ink);}
-  .rb-step-item.done .rb-step-num{background:var(--green); color:#fff;}
-  .rb-step-num{width:22px; height:22px; border-radius:50%; background:var(--line); color:var(--ink-70); font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
-  .rb-form-area{background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:26px; min-height:520px;}
-  .rb-field-label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-70); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; font-family:"IBM Plex Mono",monospace;}
-  .rb-input, .rb-textarea{width:100%; padding:10px 13px; border:1.5px solid var(--line); border-radius:9px; font-family:inherit; font-size:14px; margin-bottom:14px;}
+  .rb-step-item{display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:12px; font-size:13.5px; font-weight:600; color:var(--rb-text-soft); cursor:pointer; white-space:nowrap; transition:background .15s,color .15s;}
+  .rb-step-item.active{background:linear-gradient(135deg,var(--rb-primary),#7C3AED); color:#fff; box-shadow:0 4px 12px rgba(79,70,229,.3);}
+  .rb-step-item:not(.active):hover{background:#F1F0FE;}
+  .rb-step-item.done .rb-step-num{background:var(--rb-accent); color:#fff;}
+  .rb-step-num{width:22px; height:22px; border-radius:50%; background:#E5E7F0; color:var(--rb-text-soft); font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .rb-step-item.active .rb-step-num{background:rgba(255,255,255,.25); color:#fff;}
+  .rb-form-area{background:var(--rb-card); border:1px solid var(--rb-border); border-radius:20px; padding:28px; min-height:520px; box-shadow:0 2px 10px rgba(79,70,229,.05);}
+  .rb-field-label{display:block; font-size:12.5px; font-weight:700; color:var(--rb-text); margin-bottom:7px; font-family:"Plus Jakarta Sans",sans-serif;}
+  .rb-input, .rb-textarea{width:100%; padding:12px 14px; border:1.5px solid var(--rb-border); border-radius:12px; font-family:inherit; font-size:14px; margin-bottom:14px; background:#FBFBFD; transition:border-color .15s, box-shadow .15s;}
+  .rb-input:focus, .rb-textarea:focus{outline:none; border-color:var(--rb-primary); box-shadow:0 0 0 3px rgba(79,70,229,.12); background:#fff;}
   .rb-textarea{resize:vertical; min-height:70px;}
   .rb-field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   @media(max-width:600px){.rb-field-row{grid-template-columns:1fr;}}
-  .rb-entry-card{background:var(--paper-dark); border-radius:12px; padding:18px; margin-bottom:16px; position:relative;}
-  .rb-entry-remove{position:absolute; top:12px; right:12px; background:none; border:none; color:var(--red); font-size:13px; font-weight:700;}
-  .rb-add-btn{width:100%; border:1.5px dashed var(--line); background:none; border-radius:10px; padding:12px; font-weight:700; font-size:13.5px; color:var(--ink-70); margin-top:6px;}
-  .rb-wizard-nav{display:flex; justify-content:space-between; margin-top:22px;}
-  .rb-preview-area{background:var(--paper-dark); border-radius:16px; padding:16px; min-height:520px;}
+  .rb-entry-card{background:#F8F9FC; border:1px solid var(--rb-border); border-radius:16px; padding:20px; margin-bottom:16px; position:relative;}
+  .rb-entry-remove{position:absolute; top:14px; right:14px; background:#FEE2E2; border:none; color:#DC2626; font-size:12px; font-weight:700; padding:5px 11px; border-radius:999px;}
+  .rb-add-btn{width:100%; border:1.5px dashed #C7D2FE; background:#F5F3FF; border-radius:14px; padding:13px; font-weight:700; font-size:13.5px; color:var(--rb-primary); margin-top:6px;}
+  .rb-add-btn:hover{background:#EDE9FE;}
+  .rb-wizard-nav{display:flex; justify-content:space-between; margin-top:24px;}
+  .rb-wizard-nav .btn-primary{background:linear-gradient(135deg,var(--rb-primary),#7C3AED); border:none; box-shadow:0 4px 14px rgba(79,70,229,.3);}
+  .rb-wizard-nav .btn-ghost{background:#fff; border:1.5px solid var(--rb-border); color:var(--rb-text-soft);}
+  .rb-preview-area{background:var(--rb-bg); border-radius:20px; padding:18px; min-height:520px; border:1px solid var(--rb-border);}
   @media(max-width:980px){.rb-preview-area{grid-column:1;}}
-  .rb-preview-toolbar{font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-45); margin-bottom:10px;}
-  .rb-preview-page{background:#fff; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.1); padding:34px 30px; min-height:480px; font-family:"Plus Jakarta Sans",sans-serif; color:#1a1a1a; font-size:12.5px; line-height:1.5;}
-  .rb-preview-page h1{font-size:19px; margin:0 0 3px; font-family:"Fraunces",serif;}
-  .rb-preview-page .rb-title{font-size:13px; color:#0B4DA1; font-weight:600; margin-bottom:8px;}
-  .rb-preview-page .rb-contact{font-size:10.5px; color:#555; margin-bottom:16px;}
-  .rb-preview-page h2{font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; border-bottom:1.5px solid #ddd; padding-bottom:4px; margin:16px 0 8px; color:#0B4DA1;}
-  .rb-preview-page .rb-entry{margin-bottom:10px;}
+  .rb-preview-toolbar{font-family:"Plus Jakarta Sans",sans-serif; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--rb-primary); margin-bottom:12px;}
+  .rb-preview-page{background:#fff; border-radius:10px; box-shadow:0 10px 30px rgba(79,70,229,.12); padding:34px 30px; min-height:480px; font-family:"Plus Jakarta Sans",sans-serif; color:#1a1a1a; font-size:12.5px; line-height:1.5;}
+  .rb-preview-page h1{font-size:20px; margin:0 0 3px; font-family:"Plus Jakarta Sans",sans-serif; font-weight:800;}
+  .rb-preview-page .rb-title{font-size:13px; color:var(--rb-primary); font-weight:600; margin-bottom:8px;}
+  .rb-preview-page .rb-contact{font-size:10.5px; color:#666; margin-bottom:16px;}
+  .rb-preview-page h2{font-size:12px; text-transform:uppercase; letter-spacing:.08em; border-bottom:2px solid #EDE9FE; padding-bottom:5px; margin:18px 0 9px; color:var(--rb-primary); font-weight:800;}
+  .rb-preview-page .rb-entry{margin-bottom:11px;}
   .rb-preview-page .rb-entry-head{display:flex; justify-content:space-between; font-weight:700; font-size:12.5px;}
-  .rb-preview-page .rb-entry-sub{font-size:11.5px; color:#555; margin-bottom:3px;}
+  .rb-preview-page .rb-entry-sub{font-size:11.5px; color:#666; margin-bottom:3px;}
   .rb-preview-page ul{margin:4px 0 0; padding-left:16px;}
   .rb-preview-page li{margin-bottom:2px;}
-  .rb-preview-empty{color:#999; font-style:italic; font-size:12px;}
-  .rb-suggestions{background:var(--paper-dark); border-radius:12px; padding:16px; margin-bottom:18px;}
-  .rb-chip{display:inline-block; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:6px 13px; font-size:12.5px; margin:0 6px 6px 0; cursor:pointer; color:var(--ink);}
-  .rb-chip:hover{border-color:var(--red); color:var(--red);}
-  .rb-chip-soft{border-color:#bcd; }
+  .rb-preview-empty{color:#9CA3AF; font-style:italic; font-size:12.5px; text-align:center; padding:60px 20px;}
+  .rb-suggestions{background:linear-gradient(135deg,#F5F3FF,#EEF2FF); border:1px solid #E0E7FF; border-radius:16px; padding:18px; margin-bottom:20px;}
+  .rb-chip{display:inline-block; background:#fff; border:1.5px solid #C7D2FE; border-radius:999px; padding:7px 14px; font-size:12.5px; margin:0 7px 7px 0; cursor:pointer; color:var(--rb-primary); font-weight:600; transition:all .15s;}
+  .rb-chip:hover{background:var(--rb-primary); border-color:var(--rb-primary); color:#fff; transform:translateY(-1px);}
+  .rb-chip-soft{border-color:#A7F3D0; color:var(--rb-accent);}
+  .rb-chip-soft:hover{background:var(--rb-accent); border-color:var(--rb-accent); color:#fff;}
+
+  /* ============ Dispatcher Course — distinct navy & amber design ============ */
+  :root{--dc-navy:#0B1B33; --dc-navy-light:#16294A; --dc-amber:#F59E0B; --dc-amber-dark:#B45309; --dc-bg:#F7F8FA; --dc-text-soft:#64748B;}
+  .dc-hero{background:linear-gradient(135deg,var(--dc-navy),var(--dc-navy-light)); border-radius:24px; padding:44px 40px; margin-top:24px; color:#fff; position:relative; overflow:hidden;}
+  .dc-hero::after{content:''; position:absolute; right:-60px; bottom:-60px; width:240px; height:240px; background:radial-gradient(circle, rgba(245,158,11,.25), transparent 70%);}
+  .dc-hero-badge{display:inline-block; background:rgba(245,158,11,.18); border:1px solid rgba(245,158,11,.4); color:var(--dc-amber); font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:999px; margin-bottom:16px;}
+  .dc-hero h1{font-family:"Plus Jakarta Sans",sans-serif; font-size:32px; font-weight:800; margin:0 0 14px; color:#fff; max-width:600px;}
+  .dc-hero-lede{font-size:15px; color:rgba(255,255,255,.75); max-width:560px; margin:0 0 28px; line-height:1.6;}
+  .dc-hero-stats{display:flex; gap:36px; position:relative; z-index:1;}
+  .dc-hero-stats div{display:flex; flex-direction:column;}
+  .dc-hero-stats strong{font-size:26px; font-weight:800; color:var(--dc-amber);}
+  .dc-hero-stats span{font-size:12px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.06em; margin-top:2px;}
+  .dc-layout{display:grid; grid-template-columns:1fr 300px; gap:26px; margin-top:36px; align-items:start;}
+  @media(max-width:900px){.dc-layout{grid-template-columns:1fr;}}
+  .dc-learn-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media(max-width:600px){.dc-learn-grid{grid-template-columns:1fr;}}
+  .dc-learn-item{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; font-size:13.5px; font-weight:600; color:var(--dc-navy);}
+  .dc-chapter-card{display:flex; align-items:center; gap:16px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px; margin-bottom:12px; cursor:pointer; transition:box-shadow .15s, transform .15s;}
+  .dc-chapter-card:hover{box-shadow:0 8px 20px rgba(11,27,51,.1); transform:translateY(-1px);}
+  .dc-chapter-num{width:38px; height:38px; border-radius:50%; background:var(--dc-navy); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex-shrink:0;}
+  .dc-chapter-card.locked .dc-chapter-num{background:#E2E8F0; color:var(--dc-text-soft);}
+  .dc-chapter-info{flex:1;}
+  .dc-chapter-info h4{margin:0 0 3px; font-size:14.5px; font-family:"Plus Jakarta Sans",sans-serif;}
+  .dc-chapter-info p{margin:0; font-size:12.5px; color:var(--dc-text-soft);}
+  .dc-chapter-badge{font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; flex-shrink:0;}
+  .dc-chapter-badge.free{background:#DCFCE7; color:#15803D;}
+  .dc-chapter-badge.locked{background:#F1F5F9; color:var(--dc-text-soft);}
+  .dc-price-card{background:#fff; border:1.5px solid var(--dc-amber); border-radius:20px; padding:26px; text-align:center; box-shadow:0 8px 24px rgba(245,158,11,.12);}
+  .dc-price-amount{font-family:"Plus Jakarta Sans",sans-serif; font-size:32px; font-weight:800; color:var(--dc-navy);}
+  .dc-price-amount span{font-size:15px; font-weight:600; color:var(--dc-text-soft);}
+  .dc-price-note{font-size:12px; color:var(--dc-text-soft); margin:4px 0 18px;}
+  .dc-included-list{list-style:none; padding:0; margin:18px 0 0; text-align:left; font-size:13px; color:var(--dc-text-soft);}
+  .dc-included-list li{margin-bottom:8px;}
+  .dc-expect-card{background:var(--dc-navy); color:#fff; border-radius:20px; padding:22px; margin-top:18px;}
+  .dc-expect-card h3{font-family:"Plus Jakarta Sans",sans-serif; color:var(--dc-amber); font-size:15px; margin:0 0 10px;}
+  .dc-expect-card p{font-size:13px; color:rgba(255,255,255,.8); margin:0; line-height:1.6;}
+  .dc-btn-enroll{width:100%; background:linear-gradient(135deg,var(--dc-amber),var(--dc-amber-dark)); color:#fff; border:none; padding:14px; border-radius:14px; font-weight:800; font-size:14.5px; box-shadow:0 6px 16px rgba(245,158,11,.35);}
+  .dc-reader{max-width:740px; margin:24px auto 0;}
+  .dc-reader-eyebrow{color:var(--dc-amber-dark); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;}
+  .dc-reader h1{font-family:"Plus Jakarta Sans",sans-serif; font-size:26px; margin:0 0 8px;}
+  .dc-reader-intro{color:var(--dc-text-soft); font-size:14.5px; margin-bottom:26px;}
+  .dc-reader-content{font-size:15.5px; line-height:1.75; color:#1a2436;}
+  .dc-reader-content h3{font-family:"Plus Jakarta Sans",sans-serif; font-size:17px; margin:26px 0 10px; color:var(--dc-navy);}
+  .dc-reader-content ul{padding-left:22px;}
+  .dc-reader-content li{margin-bottom:8px;}
+  .dc-reader-nav{display:flex; justify-content:space-between; margin-top:32px; padding-top:22px; border-top:1.5px solid var(--line);}
+  .dc-locked-box{background:#fff; border:1.5px dashed var(--dc-amber); border-radius:20px; padding:40px 30px; text-align:center; margin-top:24px;}
+  .dc-locked-box .lock-icon{font-size:34px; margin-bottom:10px;}
+  .dc-promo-banner{position:relative; overflow:hidden; background:linear-gradient(120deg,var(--dc-navy),#1E3A5F); border-radius:24px; padding:26px 30px; margin:18px 0 8px; display:flex; align-items:center; gap:20px; box-shadow:0 16px 40px rgba(11,27,51,.3); border:1px solid rgba(245,158,11,.25);}
+  .dc-promo-banner::after{content:''; position:absolute; right:-40px; top:-40px; width:180px; height:180px; background:radial-gradient(circle, rgba(245,158,11,.3), transparent 70%);}
+  .dc-promo-close{position:absolute; top:12px; right:14px; background:rgba(255,255,255,.1); border:none; color:rgba(255,255,255,.7); width:26px; height:26px; border-radius:50%; font-size:12px; z-index:2;}
+  .dc-promo-icon{font-size:38px; flex-shrink:0; position:relative; z-index:1;}
+  .dc-promo-text{flex:1; min-width:200px; position:relative; z-index:1;}
+  .dc-promo-eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--dc-amber); font-weight:700; margin-bottom:6px;}
+  .dc-promo-text h2{color:#fff; font-size:18px; margin:0 0 6px; font-family:"Plus Jakarta Sans",sans-serif; font-weight:800;}
+  .dc-promo-text p{color:rgba(255,255,255,.75); font-size:13px; margin:0; line-height:1.5;}
+  .dc-promo-btn{position:relative; z-index:1; background:linear-gradient(135deg,var(--dc-amber),var(--dc-amber-dark)); color:#fff; border:none; font-weight:800; padding:13px 22px; border-radius:999px; white-space:nowrap; font-size:13.5px; box-shadow:0 4px 14px rgba(245,158,11,.4); flex-shrink:0;}
+  @media(max-width:680px){.dc-promo-banner{flex-wrap:wrap; padding:22px 20px;} .dc-promo-btn{width:100%;}}
+  .dc-cert-card{background:linear-gradient(135deg,var(--dc-navy),var(--dc-navy-light)); color:#fff; border-radius:20px; padding:24px; margin-top:18px; text-align:center;}
+  .dc-cert-card.dc-cert-locked{opacity:.85;}
+  .dc-cert-icon{font-size:32px; margin-bottom:8px;}
+  .dc-cert-card h3{font-family:"Plus Jakarta Sans",sans-serif; color:var(--dc-amber); font-size:16px; margin:0 0 8px;}
+  .dc-cert-card p{font-size:12.5px; color:rgba(255,255,255,.75); margin:0 0 6px; line-height:1.5;}
+  .dc-cert-progress-bar{height:7px; background:rgba(255,255,255,.15); border-radius:999px; overflow:hidden; margin-top:14px;}
+  .dc-cert-progress-fill{height:100%; background:var(--dc-amber); transition:width .3s;}
+  .dc-cert-card .rb-input{background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25); color:#fff; text-align:center;}
+  .dc-cert-card .rb-input::placeholder{color:rgba(255,255,255,.5);}
+  .dc-catalog-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:24px;}
+  @media(max-width:800px){.dc-catalog-grid{grid-template-columns:1fr;}}
+  .dc-catalog-card{background:linear-gradient(135deg,var(--dc-navy),var(--dc-navy-light)); border-radius:22px; padding:30px; color:#fff; cursor:pointer; transition:transform .18s, box-shadow .18s; position:relative; overflow:hidden;}
+  .dc-catalog-card:hover{transform:translateY(-3px); box-shadow:0 16px 40px rgba(11,27,51,.3);}
+  .dc-catalog-card::after{content:''; position:absolute; right:-50px; bottom:-50px; width:200px; height:200px; background:radial-gradient(circle, rgba(245,158,11,.25), transparent 70%);}
+  .dc-catalog-icon{font-size:34px; margin-bottom:12px; position:relative; z-index:1;}
+  .dc-catalog-card h3{font-family:"Plus Jakarta Sans",sans-serif; font-size:19px; margin:0 0 8px; position:relative; z-index:1;}
+  .dc-catalog-card p{font-size:13px; color:rgba(255,255,255,.75); margin:0 0 16px; line-height:1.5; position:relative; z-index:1;}
+  .dc-catalog-meta{display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1;}
+  .dc-catalog-price{font-weight:800; color:var(--dc-amber); font-size:15px;}
+  .dc-catalog-link{font-size:12.5px; font-weight:700; color:#fff;}
 
   /* Template: Classic — serif, traditional, black & white */
   .rb-tpl-classic{font-family:Georgia,"Times New Roman",serif;}
@@ -576,6 +663,17 @@
       <button class="btn install-banner-btn" onclick="openInstallModal()" data-i18n="installBtn"></button>
     </div>
 
+    <div class="dc-promo-banner" id="dc-promo-banner-inline">
+      <button class="dc-promo-close" onclick="dismissCourseBanner()" aria-label="Dismiss">✕</button>
+      <div class="dc-promo-icon">🚛</div>
+      <div class="dc-promo-text">
+        <div class="dc-promo-eyebrow">2 New Courses · Free chapters to start</div>
+        <h2>Truck Dispatcher &amp; Freight Forwarding Training</h2>
+        <p>Real chapters, real practice questions, and a certificate of completion for each. Learn what these logistics careers actually look like, day one.</p>
+      </div>
+      <button class="btn dc-promo-btn" onclick="switchMode('courses')">Browse both courses →</button>
+    </div>
+
     <section class="hero">
       <div class="hero-content">
         <div class="eyebrow" data-i18n="eyebrow"></div>
@@ -624,9 +722,8 @@
         <p data-i18n="exploreBlogDesc"></p>
         <span class="explore-link" data-i18n="exploreArrow"></span>
       </div>
-      <div class="explore-card explore-card-soon" onclick="switchMode('courses')">
+      <div class="explore-card" onclick="switchMode('courses')">
         <div class="explore-icon" style="background:#F1EAFB;"><svg viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M9 7h6M9 11h6"/></svg></div>
-        <div class="soon-badge" data-i18n="comingSoonBadge"></div>
         <h3 data-i18n="exploreCoursesTitle"></h3>
         <p data-i18n="exploreCoursesDesc"></p>
         <span class="explore-link" data-i18n="exploreArrow"></span>
@@ -934,17 +1031,52 @@
 
 <main data-view="courses" class="wrap">
   <button class="back-link" onclick="goHome()">← <span data-i18n="backToChapters"></span></button>
-  <div class="courses-hero">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" stroke-width="1.4"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M9 7h6M9 11h6"/></svg>
-    <div class="eyebrow" data-i18n="coursesEyebrow"></div>
-    <h1 data-i18n="coursesTitle"></h1>
-    <p class="lede" data-i18n="coursesBody"></p>
-    <div class="courses-notify">
-      <input type="email" id="courses-email" placeholder="you@example.com">
-      <button class="btn btn-primary" onclick="notifyCourses()" data-i18n="coursesNotifyBtn"></button>
-    </div>
-    <p id="courses-notify-msg" style="font-size:13px; color:var(--green); margin-top:10px; font-weight:600;"></p>
+  <div class="chapter-title-block">
+    <div class="num" data-i18n="toolLabel"></div>
+    <h1>Courses</h1>
+    <p style="color:var(--ink-70); font-size:14.5px; max-width:600px; margin-top:6px;">Complete, practical courses — real chapters, real practice questions, and a certificate when you finish. A few chapters free to start on every course.</p>
   </div>
+  <div id="dc-catalog-grid" class="dc-catalog-grid"></div>
+</main>
+
+<main data-view="coursedetail" class="wrap">
+  <button class="back-link" onclick="switchMode('courses')">← Back to all courses</button>
+
+  <div class="dc-hero" id="dc-detail-hero">
+    <div class="dc-hero-badge" id="dc-detail-badge"></div>
+    <h1 id="dc-detail-title"></h1>
+    <p class="dc-hero-lede" id="dc-detail-lede"></p>
+    <div class="dc-hero-stats" id="dc-detail-stats"></div>
+  </div>
+
+  <div class="dc-layout">
+    <div class="dc-main">
+      <div class="section-head"><h2>What You'll Learn</h2></div>
+      <div class="dc-learn-grid" id="dc-detail-learn"></div>
+
+      <div class="section-head" style="margin-top:40px;"><h2>Course Content</h2></div>
+      <div id="dc-chapter-list"></div>
+    </div>
+
+    <div class="dc-sidebar">
+      <div class="dc-price-card">
+        <div class="dc-price-amount" id="dc-detail-price"></div>
+        <div class="dc-price-note">One-time payment · lifetime access</div>
+        <div id="dc-enroll-cta"></div>
+        <ul class="dc-included-list" id="dc-detail-included"></ul>
+      </div>
+      <div class="dc-expect-card">
+        <h3>Is this course for you?</h3>
+        <p id="dc-detail-expect"></p>
+      </div>
+      <div id="dc-certificate-section"></div>
+    </div>
+  </div>
+</main>
+
+<main data-view="coursechapter" class="wrap">
+  <button class="back-link" onclick="openCourseDetail(currentCourseKey)">← Back to course</button>
+  <div id="dc-chapter-reader"></div>
 </main>
 
 <main data-view="phototool" class="wrap">
@@ -1217,7 +1349,7 @@ en: {
   exploreLangTitle:"Language Exams", exploreLangDesc:"IELTS, CELPIP, PTE Core, and TEF Canada — vocabulary, grammar, reading, and listening practice.",
   exploreToolsTitle:"Free Study Tools", exploreToolsDesc:"Physical presence calculator, flashcards, study plans, and an application tracker.",
   exploreBlogTitle:"Blog & Guides", exploreBlogDesc:"In-depth articles on test formats, scoring, and what to expect on exam day.",
-  exploreCoursesTitle:"Courses", exploreCoursesDesc:"Structured video courses are in the works — get notified when they launch.",
+  exploreCoursesTitle:"Courses", exploreCoursesDesc:"2 new courses: Truck Dispatcher and Freight Forwarding — free chapters to start.",
   exploreArrow:"Explore →", comingSoonBadge:"Coming soon",
   coursesEyebrow:"New — coming soon", coursesTitle:"Structured courses are on the way.",
   coursesBody:"We're building guided video courses to go alongside the practice questions you already have here. Leave your email and we'll let you know the moment they're available.",
@@ -1379,7 +1511,7 @@ fr: {
   exploreLangTitle:"Examens de langue", exploreLangDesc:"IELTS, CELPIP, PTE Core et TEF Canada — vocabulaire, grammaire, lecture et écoute.",
   exploreToolsTitle:"Outils d'étude gratuits", exploreToolsDesc:"Calculateur de présence physique, cartes-éclair, plans d'étude et suivi de demande.",
   exploreBlogTitle:"Blogue et guides", exploreBlogDesc:"Articles approfondis sur les formats d'examen, la notation et le jour de l'examen.",
-  exploreCoursesTitle:"Cours", exploreCoursesDesc:"Des cours vidéo structurés sont en préparation — soyez avisé de leur lancement.",
+  exploreCoursesTitle:"Cours", exploreCoursesDesc:"2 nouveaux cours : répartiteur de camions et transitaire — chapitres gratuits pour commencer.",
   exploreArrow:"Découvrir →", comingSoonBadge:"Bientôt disponible",
   coursesEyebrow:"Nouveau — bientôt disponible", coursesTitle:"Des cours structurés arrivent bientôt.",
   coursesBody:"Nous préparons des cours vidéo guidés pour accompagner les questions pratiques déjà disponibles ici. Laissez votre courriel et nous vous aviserons dès qu'ils seront prêts.",
@@ -1541,7 +1673,7 @@ es: {
   exploreLangTitle:"Exámenes de idioma", exploreLangDesc:"IELTS, CELPIP, PTE Core y TEF Canada — vocabulario, gramática, lectura y comprensión auditiva.",
   exploreToolsTitle:"Herramientas de estudio gratuitas", exploreToolsDesc:"Calculadora de presencia física, tarjetas de memoria, planes de estudio y seguimiento de solicitud.",
   exploreBlogTitle:"Blog y guías", exploreBlogDesc:"Artículos detallados sobre formatos de examen, puntuación y qué esperar el día del examen.",
-  exploreCoursesTitle:"Cursos", exploreCoursesDesc:"Cursos en video estructurados están en camino — recibe una notificación cuando se lancen.",
+  exploreCoursesTitle:"Cursos", exploreCoursesDesc:"2 cursos nuevos: despachador de camiones y transitario — capítulos gratis para empezar.",
   exploreArrow:"Explorar →", comingSoonBadge:"Próximamente",
   coursesEyebrow:"Nuevo — próximamente", coursesTitle:"Cursos estructurados están en camino.",
   coursesBody:"Estamos creando cursos en video guiados para acompañar las preguntas de práctica que ya tienes aquí. Deja tu correo y te avisaremos en cuanto estén disponibles.",
@@ -1802,7 +1934,7 @@ function switchMode(mode){
   stopLangTimer();
   document.getElementById('exam-start-overlay')?.remove();
   if(mode === 'citizenship'){ goHome(); }
-  else if(mode === 'courses'){ showView("courses"); window.scrollTo({top:0, behavior:"smooth"}); }
+  else if(mode === 'courses'){ showView("courses"); window.scrollTo({top:0, behavior:"smooth"}); initCourseCatalog(); }
   else { showView("lang-home"); window.scrollTo({top:0, behavior:"smooth"}); }
 }
 
@@ -1901,26 +2033,179 @@ function openExamHub(examCode){
 }
 
 /* ================= LANGUAGE EXAM MODULES (IELTS / CELPIP / PTE / TEF) ================= */
+const englishStudyNotes = [
+  {
+    title: "Verb Tenses: The Ones That Actually Trip People Up",
+    body: "Most test-takers know present, past, and future — the tenses that cause real problems are the ones that combine time with completeness. <strong>Present perfect</strong> ('I have lived here for five years') connects the past to now — use it when the timeframe is still open. <strong>Past perfect</strong> ('I had already left when she called') describes something completed before another past event — it exists purely to show sequence between two past actions. <strong>Present perfect continuous</strong> ('I have been studying since 9am') emphasizes an ongoing action with duration. A simple test: if you can add 'right now' and it still makes sense, you probably don't need perfect or continuous forms at all."
+  },
+  {
+    title: "Articles (a / an / the) — the Rule Non-Native Speakers Struggle With Most",
+    body: "Use 'a/an' for something non-specific or mentioned for the first time ('I saw a dog'). Use 'the' once something has already been identified, or when there's only one of it ('the dog barked' — now we know which dog; 'the sun'). A common test trap: general/plural statements about a category usually take no article at all ('Dogs are loyal,' not 'The dogs are loyal,' unless you mean a specific, already-identified group of dogs)."
+  },
+  {
+    title: "Subject-Verb Agreement With Tricky Subjects",
+    body: "The verb should match the true subject, not whatever noun happens to sit closest to it. 'The list of items <em>is</em> long' — the subject is 'list' (singular), not 'items.' Collective nouns like 'team,' 'committee,' and 'family' are usually treated as singular in North American English ('the team is winning'). Indefinite pronouns like 'everyone,' 'each,' and 'neither' are grammatically singular even when they refer to multiple people: 'Everyone <em>has</em> their own opinion,' not 'have.'"
+  },
+  {
+    title: "Conditionals: Matching the Right 'If' to the Right Situation",
+    body: "<strong>Zero conditional</strong> (if + present, present) states general facts: 'If you heat water, it boils.' <strong>First conditional</strong> (if + present, will + verb) describes a realistic future possibility: 'If it rains, I will bring an umbrella.' <strong>Second conditional</strong> (if + past, would + verb) describes something hypothetical or unlikely: 'If I won the lottery, I would travel.' <strong>Third conditional</strong> (if + past perfect, would have + past participle) talks about an unreal past — something that didn't actually happen: 'If I had studied, I would have passed.' Mixing up second and third conditional is one of the single most common errors on these exams."
+  },
+  {
+    title: "Prepositions of Time: In, On, At",
+    body: "'At' for specific times and points ('at 9pm', 'at the airport'). 'On' for days and dates ('on Monday', 'on July 4th'). 'In' for longer periods — months, years, seasons ('in July', 'in 2026', 'in the morning', but 'at night' is an exception worth memorizing). There's no shortcut rule that covers every case — these are worth memorizing as fixed patterns rather than derived logically."
+  },
+  {
+    title: "Common Word-Form Mistakes",
+    body: "Many test questions hinge on choosing the correct part of speech, not just the correct meaning. 'The company announced a significant <em>improvement</em>' (noun) vs. 'Sales <em>improved</em> significantly' (verb) vs. 'a significantly <em>improved</em> product' (adjective). When a sentence has a gap, first identify what part of speech the sentence structure actually needs before thinking about which word fits the meaning — grammar position often narrows the answer before vocabulary does."
+  }
+];
+
+const tefStudyNotes = [
+  {
+    title: "Le passé composé vs l'imparfait — la vraie règle",
+    body: "Le passé composé décrit une action <strong>terminée</strong> et ponctuelle : 'Hier, j'ai mangé au restaurant.' L'imparfait décrit un état, une habitude, ou une action <strong>en cours</strong> dans le passé, sans limite précise : 'Quand j'étais jeune, je mangeais souvent au restaurant.' Une astuce simple : si l'action a un début et une fin clairs et ponctuels, utilisez le passé composé. Si c'est une toile de fond, une description, ou une répétition habituelle, utilisez l'imparfait."
+  },
+  {
+    title: "Le subjonctif : quand l'utiliser vraiment",
+    body: "Le subjonctif s'utilise après des expressions de doute, de nécessité, de souhait, ou d'émotion : 'Il faut que tu <em>viennes</em>', 'Je doute qu'il <em>soit</em> prêt', 'Je suis content que tu <em>sois</em> là'. Une erreur fréquente : après des expressions de certitude ('je pense que', 'je suis sûr que'), on utilise l'indicatif, pas le subjonctif — sauf à la forme négative ou interrogative, où le doute réapparaît."
+  },
+  {
+    title: "Les pronoms relatifs : qui, que, dont, où",
+    body: "'Qui' remplace le sujet : 'L'homme <em>qui</em> parle est mon voisin.' 'Que' remplace l'objet direct : 'Le livre <em>que</em> je lis est intéressant.' 'Dont' remplace un complément introduit par 'de' : 'Le sujet <em>dont</em> je parle est complexe.' 'Où' indique un lieu ou un temps : 'La ville <em>où</em> j'habite.' Le choix entre 'qui' et 'que' dépend uniquement de la fonction grammaticale dans la proposition relative, pas du sens général de la phrase."
+  },
+  {
+    title: "L'accord du participe passé avec avoir",
+    body: "Avec l'auxiliaire 'avoir', le participe passé s'accorde avec le complément d'objet direct (COD) seulement si celui-ci est placé <strong>avant</strong> le verbe : 'J'ai vu <em>les filles</em>' (pas d'accord, COD après) mais '<em>Les filles</em> que j'ai vu<strong>es</strong>' (accord, COD avant, remplacé par 'que'). C'est l'une des règles les plus souvent testées et les plus souvent mal appliquées, même par des locuteurs avancés."
+  },
+  {
+    title: "Les prépositions avec les verbes courants",
+    body: "Certains verbes français exigent une préposition spécifique qui ne correspond pas toujours à l'anglais : 'penser à quelque chose', 'se souvenir de quelque chose', 'téléphoner à quelqu'un' (jamais 'téléphoner quelqu'un'). Ces associations verbe-préposition doivent être mémorisées individuellement plutôt que déduites logiquement, car elles varient beaucoup d'un verbe à l'autre."
+  }
+];
+
+// Additional study note categories: vocabulary building, reading
+// strategy, and listening strategy — real explanatory material, not
+// more quiz questions, addressing the specific request for genuine
+// study content across every module, not just grammar.
+
+const englishVocabNotes = [
+  {
+    title: "Word Families: One Root, Four Forms",
+    body: "Test writers frequently test whether you know all forms of a word, not just one. Take 'decide': the noun is <em>decision</em>, the adjective is <em>decisive</em>, the adverb is <em>decisively</em>, and the negative form is <em>indecisive</em>. When you learn a new word, spend ten extra seconds learning its whole family — this single habit pays off more than memorizing isolated words, because exams constantly ask you to pick the correct form, not just the correct meaning."
+  },
+  {
+    title: "Collocations: Words That Travel Together",
+    body: "Native-sounding English relies heavily on collocations — word pairings that simply 'sound right' together, even when a synonym would be technically correct. You <em>make</em> a decision (not 'do a decision'), you <em>take</em> a risk (not 'make a risk'), you have a <em>strong</em> chance (not a 'powerful' chance). These pairings don't follow logical rules — they're memorized through exposure. When you write down new vocabulary, write down the words that typically surround it, not just the word alone."
+  },
+  {
+    title: "Formal vs. Informal Register",
+    body: "Higher band scores reward matching your vocabulary to the right level of formality for the context. 'Get' is informal — 'obtain,' 'acquire,' or 'receive' are more formal alternatives depending on context. 'A lot of' is conversational — 'numerous,' 'considerable,' or 'substantial' read as more formal in writing. This doesn't mean always choosing the fanciest word — it means being deliberate about matching your vocabulary to whether you're writing a formal essay or describing a casual conversation."
+  },
+  {
+    title: "Synonyms Aren't Always Interchangeable",
+    body: "Many words that share a dictionary definition carry different connotations. 'Thin,' 'slim,' and 'skinny' can all describe the same physical trait, but 'slim' is generally positive, 'skinny' can sound negative or overly blunt, and 'thin' is neutral. Reading passages and listening exams frequently test whether you catch this shade of meaning, not just the literal definition — pay attention to whether a word in context feels positive, negative, or neutral."
+  }
+];
+
+const englishReadingStrategyNotes = [
+  {
+    title: "Skim First, Then Read for Detail",
+    body: "Before answering any question, spend 30-60 seconds skimming the passage: read the title, the first sentence of each paragraph, and the last paragraph. This builds a mental map of where different information lives, so when a question asks about a specific detail, you already know roughly which paragraph to search rather than re-reading the whole passage from the start."
+  },
+  {
+    title: "Match Question Keywords to Passage Keywords — Carefully",
+    body: "Reading questions often replace a word from the passage with a synonym. If a question asks about 'obstacles,' the passage might use 'challenges' or 'difficulties' instead of the word 'obstacles' itself. Train yourself to scan for meaning, not exact word matches — the correct answer is frequently a paraphrase, not a literal quote from the passage."
+  },
+  {
+    title: "Watch for Absolute Words in Answer Choices",
+    body: "Answer choices containing words like 'always,' 'never,' 'all,' or 'completely' are frequently incorrect, because passages rarely make such absolute claims. Choices using softer language — 'often,' 'may,' 'some,' 'generally' — are statistically more likely to accurately reflect a passage's actual claims. This isn't a guaranteed rule, but it's a useful check when you're deciding between two close options."
+  },
+  {
+    title: "True/False/Not Given Questions: The Trap Category",
+    body: "'Not Given' is the answer test-takers get wrong most often, because it's tempting to mark something 'False' when it's actually just never mentioned. If the passage doesn't address a claim at all — doesn't confirm it, doesn't deny it — the answer is 'Not Given,' not 'False.' Only mark something 'False' if the passage directly contradicts the statement."
+  }
+];
+
+const englishListeningStrategyNotes = [
+  {
+    title: "Read the Questions Before the Audio Starts",
+    body: "Whenever you have prep time before a listening section begins, use every second of it to read the questions first. This tells you exactly what to listen for — names, numbers, reasons, opinions — so you're listening actively for specific information instead of trying to absorb and remember everything at once."
+  },
+  {
+    title: "Numbers and Names Are Usually Said Once — Write Them Immediately",
+    body: "Specific details like phone numbers, dates, and proper names are typically stated only one time in a listening passage, often quickly. The moment you hear one, jot it down immediately rather than waiting, since the audio moves on regardless of whether you caught it. Don't worry about neat handwriting during this — just capture the information before it's gone."
+  },
+  {
+    title: "Distractors: When the Audio Corrects Itself",
+    body: "Listening passages often include a speaker who states something, then corrects themselves: 'The meeting is at 3pm — actually, sorry, it's been moved to 4.' The exam is testing whether you catch the correction, not just the first thing said. Listen for words like 'actually,' 'sorry,' 'I mean,' and 'let me correct that' as signals that the real answer is coming next."
+  },
+  {
+    title: "You Don't Need Every Word — You Need the Answer",
+    body: "Trying to understand 100% of what's said usually backfires, because you'll fall behind while mentally translating or processing one difficult word. Focus on understanding enough to answer the specific question being asked, and let unfamiliar words go if they're not central to what you need. Perfectionism is the most common reason strong listeners still lose points."
+  }
+];
+
+const tefVocabNotes = [
+  {
+    title: "Les familles de mots : une racine, plusieurs formes",
+    body: "Les examinateurs testent souvent si vous connaissez toutes les formes d'un mot. Prenez 'décider' : le nom est <em>décision</em>, l'adjectif est <em>décisif</em>, l'adverbe est <em>décisivement</em>. Quand vous apprenez un nouveau mot, prenez quelques secondes de plus pour apprendre toute sa famille — cette habitude aide énormément, car les examens demandent souvent de choisir la bonne forme grammaticale, pas seulement le bon sens."
+  },
+  {
+    title: "Les expressions figées et les collocations",
+    body: "Le français naturel repose beaucoup sur des associations de mots qui 'sonnent juste' ensemble. On <em>prend</em> une décision, on <em>fait</em> attention, on <em>a</em> raison ou tort. Ces associations ne suivent pas toujours une logique — elles se mémorisent par exposition répétée. Notez les mots qui accompagnent typiquement un nouveau mot, pas seulement le mot isolé."
+  },
+  {
+    title: "Le registre : familier, courant, soutenu",
+    body: "Un meilleur score récompense l'usage d'un vocabulaire adapté au contexte. 'Un truc' est familier — 'un élément' ou 'une chose' sont plus neutres. 'Bosser' est familier — 'travailler' est courant. Cela ne signifie pas toujours choisir le mot le plus soutenu, mais d'être conscient du registre attendu selon la situation, à l'écrit comme à l'oral."
+  }
+];
+
+const tefReadingStrategyNotes = [
+  {
+    title: "Survolez avant de lire en détail",
+    body: "Avant de répondre aux questions, prenez 30 à 60 secondes pour survoler le texte : lisez le titre, la première phrase de chaque paragraphe, et la conclusion. Cela crée une carte mentale de où se trouve l'information, pour que vous sachiez déjà où chercher quand une question porte sur un détail précis."
+  },
+  {
+    title: "Les questions reformulent rarement mot pour mot",
+    body: "Les questions de compréhension écrite remplacent souvent un mot du texte par un synonyme. Si une question parle d''obstacles', le texte pourrait utiliser 'difficultés' ou 'défis'. Entraînez-vous à repérer le sens, pas seulement les mots exacts — la bonne réponse est souvent une reformulation, pas une citation littérale."
+  }
+];
+
+const tefListeningStrategyNotes = [
+  {
+    title: "Lisez les questions avant l'écoute",
+    body: "Chaque fois que vous avez du temps de préparation avant une section d'écoute, utilisez-le pour lire les questions d'abord. Cela vous indique exactement quoi écouter — noms, chiffres, raisons, opinions — plutôt que d'essayer de tout mémoriser en même temps."
+  },
+  {
+    title: "Les chiffres et noms propres ne sont dits qu'une seule fois",
+    body: "Les détails précis comme les numéros de téléphone, les dates, et les noms propres sont généralement énoncés une seule fois, souvent rapidement. Dès que vous en entendez un, notez-le immédiatement plutôt que d'attendre, car l'enregistrement continue peu importe si vous l'avez bien saisi."
+  }
+];
+
 const examTabConfigs = {
   ielts: [
+    {key:'notes', label:'Study Notes'},
     {key:'vocabulary', label:'Vocabulary'}, {key:'grammar', label:'Grammar'},
     {key:'reading', label:'Reading'}, {key:'listening', label:'Listening'},
     {key:'fulltest', label:'Full Test'},
     {key:'calculator', label:'Score Calculator'}, {key:'studyplan', label:'Study Plan'}
   ],
   celpip: [
+    {key:'notes', label:'Study Notes'},
     {key:'vocabulary', label:'Vocabulary'}, {key:'grammar', label:'Grammar'},
     {key:'reading', label:'Reading'}, {key:'listening', label:'Listening'},
     {key:'fulltest', label:'Full Test'},
     {key:'calculator', label:'Score Calculator'}, {key:'studyplan', label:'Study Plan'}
   ],
   pte: [
+    {key:'notes', label:'Study Notes'},
     {key:'vocabulary', label:'Vocabulary'}, {key:'grammar', label:'Grammar'},
     {key:'reading', label:'Reading'}, {key:'listening', label:'Listening'},
     {key:'fulltest', label:'Full Test'},
     {key:'calculator', label:'Score Calculator'}, {key:'studyplan', label:'Study Plan'}
   ],
   tef: [
+    {key:'notes', label:'Guide de révision'},
     {key:'vocabulary', label:'Vocabulaire'}, {key:'grammar', label:'Grammaire'},
     {key:'reading', label:'Compréhension écrite'}, {key:'listening', label:'Compréhension orale'},
     {key:'fulltest', label:'Test complet'},
@@ -1987,6 +2272,31 @@ function renderExamTabContent(examCode){
   if(tab === 'calculator') return renderExamCalculator(examCode, el);
   if(tab === 'studyplan') return renderExamStudyPlan(examCode, el);
   if(tab === 'fulltest') return renderLangFullTestTab(examCode, el);
+  if(tab === 'notes') return renderExamStudyNotes(examCode, el);
+}
+
+function renderExamStudyNotes(examCode, el){
+  const isTef = examCode === 'tef';
+  const grammar = isTef ? tefStudyNotes : englishStudyNotes;
+  const vocab = isTef ? tefVocabNotes : englishVocabNotes;
+  const reading = isTef ? tefReadingStrategyNotes : englishReadingStrategyNotes;
+  const listening = isTef ? tefListeningStrategyNotes : englishListeningStrategyNotes;
+
+  const section = (label, notes) => `
+    <div class="section-head" style="margin-top:32px;"><h2 style="font-size:19px;">${label}</h2></div>
+    ${notes.map(n => `<div class="note-card"><h3>${n.title}</h3><p>${n.body}</p></div>`).join('')}
+  `;
+
+  el.innerHTML = `
+    <div class="callout" style="margin-bottom:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#C99A2E" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      <div><h3>${isTef ? 'Comment utiliser ce guide' : 'How to use this guide'}</h3><p>${isTef ? "Lisez chaque règle et son exemple avant de passer aux questions pratiques — la plupart des erreurs viennent d'une règle mal comprise, pas d'un manque de vocabulaire." : "Read through each section before jumping into practice questions — most mistakes come from a misunderstood rule or missed strategy, not a vocabulary gap."}</p></div>
+    </div>
+    ${section(isTef ? 'Grammaire' : 'Grammar Rules', grammar)}
+    ${section(isTef ? 'Vocabulaire et registre' : 'Vocabulary & Word Choice', vocab)}
+    ${section(isTef ? 'Stratégies de lecture' : 'Reading Strategy', reading)}
+    ${section(isTef ? "Stratégies d'écoute" : 'Listening Strategy', listening)}
+  `;
 }
 
 function renderLangFullTestTab(examCode, el){
@@ -3583,6 +3893,574 @@ const jobCategoryData = {
   }
 };
 
+const dispatchCourse = {
+  chapters: [
+    {
+      id: 1, free: true,
+      title: "What a Truck Dispatcher Actually Does",
+      intro: "Start here if you're brand new to the industry — this chapter covers the real, day-to-day version of the job, not just the job title.",
+      content: `
+        <p>"Truck dispatcher" and "freight dispatcher" mean the same thing — the terms are used interchangeably across the industry, and you'll see both on job postings. At its core, a dispatcher is the coordination hub between drivers, the trucks they drive, and the freight that needs to move. If a driver is the one physically moving a shipment, the dispatcher is the one making sure that driver always knows where to go next, has a legal and profitable load to carry, and isn't sitting idle burning time and money.</p>
+        <p>A dispatcher's core responsibilities include:</p>
+        <ul>
+          <li>Managing driver schedules and assigning routes</li>
+          <li>Finding and booking loads for available trucks</li>
+          <li>Tracking shipments from pickup to delivery</li>
+          <li>Monitoring driver hours-of-service to keep assignments legal</li>
+          <li>Resolving problems in real time — delays, breakdowns, missed appointments</li>
+          <li>Maintaining clear, constant communication with drivers, carriers, and customers</li>
+          <li>Keeping accurate records of loads, rates, and driver activity</li>
+        </ul>
+        <p>What makes dispatching different from a lot of office jobs is the pace. A calm morning can turn into three simultaneous problems by 11am — a truck breaks down, a receiver changes their delivery window, and a driver is about to run out of legal driving hours 200 miles from the nearest delivery point. Good dispatchers aren't the ones who never have a bad day — they're the ones who stay organized and communicate clearly when the bad day happens.</p>
+        <p>One thing that surprises people entering this field: dispatching is almost entirely office-based or remote. You don't need a commercial driver's license, and you don't need to have driven a truck yourself, though understanding the driver's side of the job (covered later in this course) makes you a far better dispatcher. Many companies in both Canada and the US now hire dispatchers who work entirely remotely, which is part of why this has become an accessible entry point into the logistics industry.</p>
+      `,
+      quiz: [
+        {q:"What is the main difference between a 'truck dispatcher' and a 'freight dispatcher'?", opts:["They are the same role, just different names","Freight dispatchers only work with international freight","Truck dispatchers require a commercial driver's license","Freight dispatchers work only with rail freight"], correct:0, ex:"The terms are used interchangeably across the industry — same role, same responsibilities, same training."},
+        {q:"Which of these is NOT typically a core dispatcher responsibility?", opts:["Assigning routes to drivers","Physically driving the truck","Monitoring hours-of-service compliance","Resolving delivery delays in real time"], correct:1, ex:"Dispatchers coordinate and support drivers — they don't drive the trucks themselves."},
+        {q:"Why do dispatchers need to track driver hours-of-service?", opts:["To calculate driver pay only","To keep assignments legal and avoid regulatory violations","It's optional unless crossing into another province","Only long-haul drivers have hours-of-service rules"], correct:1, ex:"Assigning a route that would push a driver past their legal hours creates a compliance violation, which is a serious problem for the carrier."},
+        {q:"What does the text suggest makes someone good at dispatching?", opts:["Never having a difficult day","Staying organized and communicating clearly when problems happen","Working faster than everyone else","Avoiding contact with drivers"], correct:1, ex:"The job inherently involves solving unexpected problems — the skill is in handling them calmly and communicating clearly, not avoiding them."},
+        {q:"Is a commercial driver's license required to become a dispatcher?", opts:["Yes, always","No — dispatching is primarily an office-based or remote role","Only in Canada","Only for international freight"], correct:1, ex:"Dispatching doesn't require a CDL — it's an office or remote role, though understanding driving operations helps."}
+      ]
+    },
+    {
+      id: 2, free: true,
+      title: "The Trucking Industry: Canada, USA, and the Border Between Them",
+      intro: "Understanding how freight actually moves across North America — and why the Canada-US border is so central to this industry.",
+      content: `
+        <p>North America moves over 70% of all freight by truck, and the trade relationship between Canada and the United States is enormous — a truck crosses the Canada-US border roughly every 2.5 seconds. Understanding this scale matters, because it explains why dispatching is such a consistently in-demand role: as long as goods need to move between these two countries (and within each of them), someone needs to coordinate that movement.</p>
+        <p>The industry is generally structured around a few key player types:</p>
+        <ul>
+          <li><strong>Carriers</strong> — companies that own trucks and employ or contract drivers to physically move freight</li>
+          <li><strong>Brokers</strong> — companies that connect shippers who need freight moved with carriers who have available trucks, without owning trucks themselves</li>
+          <li><strong>Shippers</strong> — the companies whose goods are actually being transported</li>
+          <li><strong>Owner-operators</strong> — independent drivers who own their own truck and often work with a dispatcher (sometimes an independent contractor themselves) to find loads</li>
+        </ul>
+        <p>A dispatcher's exact role shifts depending on which of these you work for. A dispatcher employed directly by a carrier is usually managing that company's own fleet and drivers. An independent dispatcher, by contrast, often works as a contractor supporting one or more owner-operators, earning a commission (commonly 5-10% per load) rather than a fixed salary — this path has become increasingly common as remote dispatching has grown.</p>
+        <p>Cross-border freight adds another layer entirely. A load moving from Toronto to Chicago, for example, has to clear customs at the border, which means the dispatcher (or a dedicated customs broker working alongside them) needs the right paperwork in order before the truck ever reaches the crossing. We'll cover this in more depth in the regulations chapters later in the course, but it's worth understanding from day one that cross-border loads carry extra complexity — and often pay a premium because of it.</p>
+      `,
+      quiz: [
+        {q:"Roughly how often does a truck cross the Canada-US border?", opts:["Every hour","Every 2.5 seconds","Once a day per crossing point","Only during business hours"], correct:1, ex:"The scale of cross-border trucking traffic is enormous — a crossing roughly every 2.5 seconds reflects just how central trucking is to Canada-US trade."},
+        {q:"What's the key difference between a carrier and a broker?", opts:["Carriers own trucks; brokers connect shippers and carriers without owning trucks","Brokers only work internationally","Carriers only work with owner-operators","There is no meaningful difference"], correct:0, ex:"Carriers physically own/operate trucks and employ drivers; brokers act as a connector between shippers and carriers."},
+        {q:"How do independent dispatchers commonly get paid?", opts:["A fixed annual salary only","Commission, commonly 5-10% per load","Hourly wage set by the government","They are not paid until the owner-operator retires"], correct:1, ex:"Independent dispatchers working with owner-operators typically earn a percentage commission per load, not a fixed salary."},
+        {q:"What extra complexity does cross-border freight add?", opts:["None, it's identical to domestic freight","Customs clearance and additional paperwork requirements","Only the language on the invoice changes","Cross-border loads are illegal without a special license"], correct:1, ex:"Cross-border loads need to clear customs, meaning the right paperwork has to be in place before the truck reaches the border."},
+        {q:"What is an owner-operator?", opts:["A dispatcher who owns the dispatch company","An independent driver who owns their own truck","A government inspector at the border","A type of freight broker"], correct:1, ex:"An owner-operator is an independent driver who owns their own truck, often working with a dispatcher to find loads."}
+      ]
+    },
+    {
+      id: 3, free: true,
+      title: "A Day in the Life: What to Actually Expect",
+      intro: "What the job genuinely feels like hour to hour — set realistic expectations before you go further.",
+      content: `
+        <p>Job postings describe dispatcher duties in tidy bullet points. The real job is less tidy and more reactive. Here's a realistic version of how a day can unfold, so you walk into this career with accurate expectations rather than a sanitized job description.</p>
+        <p><strong>Morning:</strong> Most dispatchers start by checking overnight messages and driver check-ins — where is every truck right now, is anyone behind schedule, did anything happen overnight that needs immediate attention. This is also when you're often searching load boards for upcoming freight to keep trucks moving without gaps.</p>
+        <p><strong>Midday:</strong> This is typically when problems surface — a receiver pushes back a delivery window, a driver reports a mechanical issue, a load that looked confirmed falls through. Midday is heavy on the phone and heavy on quick decision-making: rebooking a load, finding a nearby repair shop, calmly explaining a delay to a customer who is not happy about it.</p>
+        <p><strong>Afternoon/evening:</strong> Confirming tomorrow's assignments, negotiating rates on new loads, updating records, and — depending on the size of the operation — handling invoicing or paperwork for completed deliveries.</p>
+        <p>What this adds up to: the job rewards people who are comfortable being interrupted constantly and who can hold several moving pieces in their head at once without losing track of any of them. It also rewards genuinely good phone and written communication — you're often the calm, clear voice a stressed driver or an unhappy customer needs in the middle of a problem. If that sounds stressful, it can be — but most experienced dispatchers describe it as energizing rather than draining once you build real comfort with the pace.</p>
+        <p>On pay: entry-level dispatcher salaries typically start between $34,000 and $45,000 annually in North America, with experienced dispatchers managing larger fleets earning $55,000 to $75,000, and senior dispatch managers at larger carriers earning $75,000-$97,000 or more. Independent/commission-based dispatchers have a different, more variable income curve — the first 30-90 days are typically spent building carrier relationships rather than generating strong income, since trust and a track record take time to establish.</p>
+      `,
+      quiz: [
+        {q:"According to this chapter, when do problems most typically surface during the day?", opts:["First thing in the morning, before any work starts","Midday — delays, mechanical issues, and load cancellations","Only at the very end of the day","Problems are rare in dispatching"], correct:1, ex:"Midday tends to be the heaviest period for real-time problem solving, as delays and issues from the morning's plans surface."},
+        {q:"What does a realistic day suggest about the skills this job rewards?", opts:["Working alone without interruption","Comfort with constant interruption and multitasking","Avoiding phone calls whenever possible","Working the same routine every single day"], correct:1, ex:"The job's realistic pace rewards people comfortable being interrupted and juggling multiple moving pieces simultaneously."},
+        {q:"What's the approximate entry-level dispatcher salary range mentioned?", opts:["$15,000–$20,000", "$34,000–$45,000", "$150,000–$200,000", "There is no typical range"], correct:1, ex:"Entry-level dispatcher salaries typically start in the $34,000–$45,000 range, based on current labour market data."},
+        {q:"Why might the first 30-90 days be slower for an independent, commission-based dispatcher?", opts:["Independent dispatchers aren't allowed to work during this period","Building carrier trust and relationships takes time before steady income develops","There are legal restrictions on new dispatchers","Independent dispatchers only work part-time"], correct:1, ex:"Commission-based income depends on carrier relationships, and those take time to build — so early income is typically lower and less steady."},
+        {q:"What does the chapter suggest about how experienced dispatchers feel about the pace of the job?", opts:["Most quit within a year due to stress","Many describe it as energizing rather than draining once comfortable with the pace","The job has no real pace to speak of","Experienced dispatchers avoid busy days entirely"], correct:1, ex:"With experience, many dispatchers find the fast pace energizing rather than purely stressful."}
+      ]
+    },
+    {
+      id: 4, free: false,
+      title: "Understanding Freight: Trailer Types and Load Boards",
+      intro: "The practical vocabulary and tools you'll use every single day — trailer types and how loads are actually found.",
+      content: `
+        <p>Before you can dispatch effectively, you need to understand what you're actually moving. Different freight requires different trailer types, and knowing the difference is fundamental to matching the right truck to the right load.</p>
+        <p><strong>Common trailer types:</strong></p>
+        <ul>
+          <li><strong>Dry van</strong> — the standard enclosed trailer, used for general freight that doesn't need temperature control</li>
+          <li><strong>Reefer (refrigerated)</strong> — temperature-controlled, used for food, pharmaceuticals, and other perishables</li>
+          <li><strong>Flatbed</strong> — open trailer with no walls or roof, used for oversized, irregularly shaped, or heavy equipment loads</li>
+          <li><strong>Step deck / drop deck</strong> — a flatbed variant with a lower deck height, used for taller cargo that wouldn't fit under bridges on a standard flatbed</li>
+          <li><strong>Tanker</strong> — used for liquid or gas freight (fuel, chemicals, food-grade liquids)</li>
+        </ul>
+        <p>A dispatcher needs to know which trailer type each truck in their fleet has, since a dry van can't haul a load that needs refrigeration, and a flatbed can't legally or safely carry certain enclosed freight. Mismatching a load to the wrong equipment is one of the most basic — and most costly — errors a new dispatcher can make.</p>
+        <h3>Load boards: how freight is actually found</h3>
+        <p>Load boards are online marketplaces where available freight is posted by shippers and brokers, and dispatchers search them to find loads that match their available trucks. The two most widely used load boards in the North American trucking industry are <strong>DAT</strong> and <strong>Truckstop</strong> — both let you filter by origin, destination, trailer type, weight, and rate, and both show market rate data so you can judge whether a posted rate is fair before booking it.</p>
+        <p>A typical booking sequence looks like: search the load board for freight matching your available truck's location, trailer type, and the driver's remaining legal hours → review the rate and route → contact the broker or shipper to confirm details and negotiate if needed → book the load → send the confirmed details (pickup time, delivery time, rate, reference numbers) to the driver.</p>
+        <p>Load boards aren't the only source of freight — many carriers also work with repeat customers directly, cutting out the need to search a board for every single load. But for new dispatchers, and especially independent dispatchers building a book of business, load boards are typically where you'll spend a meaningful part of your day.</p>
+      `,
+      quiz: [
+        {q:"Which trailer type is used for temperature-sensitive freight like food or pharmaceuticals?", opts:["Dry van","Flatbed","Reefer (refrigerated)","Tanker"], correct:2, ex:"Reefer trailers are temperature-controlled, making them the correct choice for perishable or temperature-sensitive freight."},
+        {q:"Why would a dispatcher use a step deck instead of a standard flatbed?", opts:["Step decks are cheaper to rent","For taller cargo that wouldn't clear bridges on a standard flatbed height","Step decks can carry liquid freight","There is no functional difference"], correct:1, ex:"A step deck's lower deck height allows taller cargo to still clear bridge height restrictions."},
+        {q:"What are DAT and Truckstop?", opts:["Government regulatory agencies","The two most widely used load boards in North America","Types of trailers","Insurance providers for carriers"], correct:1, ex:"DAT and Truckstop are load board platforms where available freight is posted and searched by dispatchers."},
+        {q:"What is one of the most costly basic errors a new dispatcher can make?", opts:["Calling a driver too often","Mismatching a load to the wrong trailer equipment","Using more than one load board","Negotiating a rate at all"], correct:1, ex:"Assigning a load to equipment that can't safely or legally carry it is a fundamental, costly mistake."},
+        {q:"Besides load boards, how else do carriers commonly find freight?", opts:["Freight can only be found through load boards","Through repeat, direct relationships with customers","By waiting for shippers to call randomly","Load boards are the only legal method"], correct:1, ex:"Many carriers build direct, repeat relationships with shippers, reducing reliance on searching load boards for every load."}
+      ]
+    },
+    {
+      id: 5, free: false,
+      title: "US Regulations: FMCSA, Hours of Service, and ELDs",
+      intro: "The rules that govern legal driving in the United States — and why compliance is a dispatcher's responsibility too, not just the driver's.",
+      content: `
+        <p>The Federal Motor Carrier Safety Administration (FMCSA) is the US federal body that regulates commercial trucking, and understanding its core rules is essential for any dispatcher working with US-based freight, since a dispatcher who assigns an illegal route or schedule creates real liability for the carrier — not just the driver.</p>
+        <h3>Hours of Service (HOS)</h3>
+        <p>HOS rules limit how long a driver can drive and work before requiring rest. The core rules (for property-carrying drivers) generally include:</p>
+        <ul>
+          <li>An 11-hour maximum driving limit after 10 consecutive hours off duty</li>
+          <li>A 14-hour on-duty window in which that driving must occur — once the 14-hour window closes, no more driving is allowed even if the driver hasn't used the full 11 hours</li>
+          <li>A 30-minute break required after 8 cumulative hours of driving</li>
+          <li>A 60/70-hour limit over 7/8 consecutive days, depending on the carrier's operating schedule</li>
+        </ul>
+        <p>These specific numbers can change with regulatory updates, so always verify current limits against FMCSA's official published rules rather than treating any number as permanently fixed. What matters for a dispatcher is the underlying principle: every route and schedule you build has to fit within the driver's remaining legal hours, and violating this isn't a minor paperwork issue — it can result in real fines, out-of-service orders, and safety rating damage for the carrier.</p>
+        <h3>Electronic Logging Devices (ELDs)</h3>
+        <p>ELDs automatically record a driver's hours of service, replacing the older paper logbook system. As a dispatcher, you'll typically have visibility into ELD data for your fleet, which means you can — and should — check a driver's remaining available hours before assigning a new load, rather than relying on the driver to catch a problem themselves. This is one of the most direct, practical ways HOS knowledge shows up in daily dispatch work.</p>
+        <h3>Why this matters beyond compliance</h3>
+        <p>Good HOS awareness isn't just about avoiding violations — it directly affects how well you can plan. A dispatcher who tracks hours carefully can proactively line up a driver's next load before their current one even finishes, keeping trucks moving efficiently. A dispatcher who doesn't track hours closely ends up reacting to problems (a driver stuck out of hours mid-route) instead of preventing them.</p>
+      `,
+      quiz: [
+        {q:"What does FMCSA stand for and regulate?", opts:["Federal Motor Carrier Safety Administration — regulates US commercial trucking","Freight Management and Customs Safety Association — a Canadian body","A private trucking industry lobby group","An international shipping insurance body"], correct:0, ex:"FMCSA is the US federal body responsible for regulating commercial motor carrier safety, including Hours of Service rules."},
+        {q:"What is the general purpose of the 14-hour on-duty window rule?", opts:["It limits how much a driver can be paid per day","It caps the total window in which driving can occur, regardless of unused driving hours","It only applies to drivers under 25","It has nothing to do with driving hours"], correct:1, ex:"Once the 14-hour on-duty window closes, no further driving is legally permitted, even if the driver hasn't used their full 11-hour driving allowance."},
+        {q:"What replaced the older paper logbook system for tracking driver hours?", opts:["Verbal check-ins with dispatch","Electronic Logging Devices (ELDs)","There is no tracking system required","Manual spreadsheets only"], correct:1, ex:"ELDs automatically record hours of service, replacing paper logbooks."},
+        {q:"Why should a dispatcher check ELD data before assigning a new load?", opts:["It's not necessary — that's the driver's job alone","To confirm the driver has enough remaining legal hours for the new assignment","ELD data is only used for payroll","To check the driver's personal contact information"], correct:1, ex:"Checking remaining legal hours before assigning a load prevents illegal scheduling and keeps operations compliant."},
+        {q:"According to the chapter, what's a key benefit of proactive HOS tracking for a dispatcher?", opts:["It has no practical benefit beyond legal compliance","It allows lining up a driver's next load before the current one finishes, improving efficiency","It eliminates the need for load boards","It removes the need for driver communication"], correct:1, ex:"Careful HOS tracking allows proactive planning, keeping trucks moving efficiently instead of reacting to last-minute hour shortages."}
+      ]
+    },
+    {
+      id: 6, free: false,
+      title: "Canadian Regulations and Cross-Border Compliance",
+      intro: "How Canadian rules compare to US rules, and what changes when a load needs to cross the border.",
+      content: `
+        <p>Canada has its own hours-of-service and safety compliance framework, generally overseen through provincial transportation ministries working alongside standards set by the Canadian Council of Motor Transport Administrators (CCMTA), with the Commercial Vehicle Safety Alliance (CVSA) — a joint Canada-US-Mexico body — playing a role in coordinated inspection standards across the continent.</p>
+        <p>Canadian hours-of-service rules follow a broadly similar structure to US rules (driving limits, mandatory off-duty periods, cumulative hour limits over a multi-day cycle) but the specific numbers and cycle structures are not identical to FMCSA's rules. A dispatcher working cross-border freight cannot simply apply US hour limits to a Canadian driver, or vice versa — always verify current rules with the appropriate federal or provincial authority (in Canada) or FMCSA (in the US) for the specific jurisdiction a driver is operating in, since applying the wrong country's limits is a genuine compliance risk.</p>
+        <h3>What changes for cross-border loads</h3>
+        <p>A load moving between Canada and the US needs to clear customs at the border, which means the dispatcher (often working alongside a dedicated customs broker) needs specific paperwork in place before the truck arrives at the crossing, generally including:</p>
+        <ul>
+          <li>A commercial invoice describing the freight and its value</li>
+          <li>A bill of lading confirming the shipment details</li>
+          <li>Customs documentation specific to the type of goods being moved (requirements vary meaningfully by commodity)</li>
+          <li>Driver documentation confirming legal authorization to cross (passport or equivalent, and in some cases specific carrier certifications)</li>
+        </ul>
+        <p>Missing or incorrect paperwork is one of the most common causes of a truck being held at the border, which creates costly delays and can cascade into missed delivery windows further down the schedule. Experienced dispatchers handling cross-border freight build a habit of confirming documentation well before a truck is anywhere near the crossing, not as a last-minute check.</p>
+        <h3>A practical note on this chapter</h3>
+        <p>Cross-border compliance details change based on the specific commodity, the carrier's certifications, and current trade agreements — this chapter gives you the conceptual foundation, but real cross-border dispatch work requires staying current with official government sources (CBSA and CBP specifically) rather than relying on any single training course as a permanently fixed reference.</p>
+      `,
+      quiz: [
+        {q:"What is the CVSA?", opts:["A Canadian-only trucking company","A joint Canada-US-Mexico body coordinating commercial vehicle inspection standards","A load board platform","A driver's union"], correct:1, ex:"CVSA (Commercial Vehicle Safety Alliance) coordinates commercial vehicle inspection standards across Canada, the US, and Mexico."},
+        {q:"Can a dispatcher apply US hours-of-service limits directly to a Canadian driver?", opts:["Yes, the rules are identical","No — Canadian and US HOS rules follow a similar structure but are not identical", "Only on weekends","Only for cross-border loads"], correct:1, ex:"While structurally similar, Canadian and US HOS rules have different specific numbers and cycles — they should not be assumed interchangeable."},
+        {q:"What is one of the most common causes of a truck being held at the border?", opts:["The truck's paint color","Missing or incorrect customs paperwork","The driver's height","Having too much fuel in the tank"], correct:1, ex:"Missing or incorrect documentation is a leading cause of border delays for commercial freight."},
+        {q:"According to the chapter, when should documentation be confirmed for a cross-border load?", opts:["After the truck arrives at the border","Well before the truck is anywhere near the crossing","Documentation isn't necessary for experienced drivers","Only if requested by the customer"], correct:1, ex:"Experienced dispatchers confirm documentation early, rather than treating it as a last-minute check at the border."},
+        {q:"What kind of documentation confirms the details of a specific shipment?", opts:["A bill of lading","A driver's personal résumé","A load board subscription receipt","A dispatcher's business card"], correct:0, ex:"A bill of lading is the standard shipment document confirming what's being transported and its details."}
+      ]
+    },
+    {
+      id: 7, free: false,
+      title: "Rate Negotiation and Freight Pricing",
+      intro: "How freight rates actually get set, and the real skill of negotiating a fair rate on both sides of a deal.",
+      content: `
+        <p>Freight rates aren't fixed prices — they shift constantly based on supply and demand: how many trucks are available in a given area versus how much freight needs to move out of it. A lane with lots of available trucks and little freight will have lower rates; a lane with heavy freight demand and few available trucks will command higher rates. Understanding this dynamic is the foundation of effective rate negotiation.</p>
+        <h3>How to evaluate whether a rate is fair</h3>
+        <p>Both major load boards (DAT and Truckstop) provide market rate data showing average rates for a given lane and trailer type, which gives you a genuine benchmark before you negotiate rather than guessing. A posted rate significantly below the market average is worth questioning — it may mean the broker is trying to move a load cheaply, or it may reflect something about the load (difficult delivery location, tight time window) that makes it less desirable.</p>
+        <h3>Negotiation basics</h3>
+        <p>A few practical principles that experienced dispatchers rely on:</p>
+        <ul>
+          <li><strong>Know your costs before you negotiate.</strong> A rate that sounds reasonable can still be unprofitable once fuel, driver pay, and deadhead miles (empty miles driven to reach the pickup point) are factored in.</li>
+          <li><strong>Factor in deadhead miles.</strong> A load that pays well but requires driving 150 empty miles just to reach the pickup point may be less profitable than a lower-paying load that's already near the truck's current location.</li>
+          <li><strong>Be willing to walk away.</strong> Not every load is worth taking, and booking a load at a loss just to keep a truck moving is usually a worse outcome than a short wait for a better one.</li>
+          <li><strong>Build relationships, not just transactions.</strong> Brokers and shippers who trust a dispatcher to deliver reliably are often more willing to negotiate favorably on future loads, since reliability has real value to them too.</li>
+        </ul>
+        <p>For independent dispatchers working on commission, rate negotiation directly affects income — a stronger negotiated rate means a larger commission on the same load, which is part of why this is one of the most practically valuable skills covered in this entire course.</p>
+      `,
+      quiz: [
+        {q:"What primarily determines freight rates on a given lane?", opts:["A fixed government price list","Supply and demand — available trucks versus available freight","The driver's years of experience","The season of the year only"], correct:1, ex:"Freight rates fluctuate based on supply and demand dynamics between available trucks and available freight in a given lane."},
+        {q:"What are 'deadhead miles'?", opts:["Miles driven while carrying freight","Empty miles driven to reach a pickup point","Miles driven only at night","Miles that don't count toward hours-of-service"], correct:1, ex:"Deadhead miles are empty miles driven without freight, typically to reach the next pickup location — they affect true load profitability."},
+        {q:"Why might a load with a lower posted rate sometimes be more profitable than a higher-paying one?", opts:["Lower rates are always more profitable","If the higher-paying load requires significant deadhead miles, true profitability can be lower","Rate has no effect on profitability","Higher rates are illegal in some provinces"], correct:1, ex:"A higher rate can be offset by significant deadhead miles, making a lower-rate, closer load more genuinely profitable."},
+        {q:"What should a dispatcher know before entering a rate negotiation?", opts:["The broker's personal schedule","Their own costs, so they can judge whether a rate is actually profitable","Nothing — negotiation is purely about instinct","The competitor's internal pricing"], correct:1, ex:"Knowing your own costs is essential to judging whether a negotiated rate will actually be profitable."},
+        {q:"Why does building relationships with brokers matter for rate negotiation?", opts:["It has no real effect on rates","Trusted, reliable dispatchers are often offered more favorable rates on future loads","Relationships are irrelevant to professional dispatching","Only large carriers benefit from broker relationships"], correct:1, ex:"Reliability has real value to brokers and shippers, and trusted relationships often translate into better negotiated terms over time."}
+      ]
+    },
+    {
+      id: 8, free: false,
+      title: "Dispatch Software and Daily Tools",
+      intro: "The practical technology stack you'll actually use — from load boards to full transportation management systems.",
+      content: `
+        <p>Beyond load boards (covered earlier), professional dispatchers rely on a broader set of tools to run daily operations efficiently. Understanding this toolkit — even before you've used any specific platform — makes you far more prepared for how the actual job works.</p>
+        <ul>
+          <li><strong>Transportation Management Systems (TMS)</strong> — software that centralizes load information, driver assignments, invoicing, and reporting in one place. Larger carriers and brokerages typically run on a TMS rather than tracking everything manually.</li>
+          <li><strong>GPS tracking</strong> — real-time location tracking for trucks, letting a dispatcher see exactly where every vehicle in their fleet is at any given moment, which is essential for giving customers accurate delivery estimates and catching delays early.</li>
+          <li><strong>ELD data platforms</strong> — as covered in the US regulations chapter, these show driver hours-of-service status directly, often integrated with GPS and TMS platforms into one unified dashboard.</li>
+          <li><strong>Communication tools</strong> — beyond phone calls, many carriers use dedicated driver communication apps or in-cab messaging systems that log communication for recordkeeping purposes.</li>
+        </ul>
+        <h3>Why toolkit familiarity matters even before your first job</h3>
+        <p>Specific software varies by employer — you're unlikely to walk into your first dispatching job already trained on that company's exact TMS platform, and most employers expect to provide platform-specific training. What matters going in is understanding the <em>categories</em> of tools and what each one is for, so that on-the-job training builds on a real foundation instead of starting from zero. A new hire who already understands what a TMS does, why GPS tracking matters, and how ELD data connects to legal compliance will ramp up meaningfully faster than one encountering these concepts for the first time.</p>
+        <p>If you're planning to work independently rather than for an employer, tool selection becomes a direct business decision — many load board platforms offer trial periods, which is a practical way to get hands-on familiarity before committing to a paid subscription.</p>
+      `,
+      quiz: [
+        {q:"What does a Transportation Management System (TMS) primarily do?", opts:["Physically repairs trucks","Centralizes load information, assignments, invoicing, and reporting in one system","Only tracks driver salaries","Replaces the need for any human dispatcher"], correct:1, ex:"A TMS centralizes core dispatch operations — loads, assignments, invoicing, and reporting — into one system."},
+        {q:"Why is GPS tracking valuable to a dispatcher?", opts:["It has no practical use in dispatching","It shows real-time truck location, helping with accurate delivery estimates and early delay detection","It only matters for insurance purposes","GPS tracking is illegal in most provinces"], correct:1, ex:"Real-time location visibility helps dispatchers give accurate delivery estimates and catch potential delays early."},
+        {q:"Should a new dispatcher expect to already know a specific employer's exact software before their first day?", opts:["Yes, it's always required in advance","No — most employers expect to provide platform-specific training", "Only if they attended a certified bootcamp","Software training is never provided by employers"], correct:1, ex:"Employers typically train new hires on their specific platform — understanding the general categories of tools in advance is what's genuinely useful."},
+        {q:"What's a practical way to gain hands-on tool familiarity before committing to a paid platform?", opts:["It's not possible to try tools before paying","Many load board platforms offer trial periods","You must purchase a full year subscription first","Free trials don't exist in this industry"], correct:1, ex:"Trial periods offered by many load board platforms allow hands-on familiarity before a financial commitment."},
+        {q:"What is often integrated together into one unified dashboard in modern dispatch operations?", opts:["Only driver personal social media accounts","ELD data, GPS tracking, and TMS platforms","Weather forecasting only","Nothing is ever integrated — each tool works in isolation"], correct:1, ex:"ELD, GPS, and TMS data are frequently integrated into a single dashboard for more efficient dispatch management."}
+      ]
+    },
+    {
+      id: 9, free: false,
+      title: "Customer Service, Carrier Relations, and Handling Problems",
+      intro: "The human side of the job — because dispatching is ultimately a communication role as much as a logistics one.",
+      content: `
+        <p>Every dispatcher eventually learns that the technical side of the job (routes, rates, regulations) is only half of it. The other half is managing relationships and communication — with drivers who need clear direction and genuine support, with brokers and shippers who need reliable updates, and with customers who are, understandably, unhappy when something goes wrong.</p>
+        <h3>Communicating with drivers</h3>
+        <p>Drivers are on the road, often dealing with real physical fatigue, traffic, weather, and unpredictable delays — the way a dispatcher communicates directly affects a driver's day. Clear, specific instructions ("pickup at Dock 4, ask for Maria, appointment window 2-4pm") prevent confusion that costs everyone time. Equally important: when something goes wrong for a driver — a breakdown, a missed appointment they couldn't control — a dispatcher who responds with problem-solving support rather than blame builds the kind of trust that keeps good drivers working with the same dispatcher long-term.</p>
+        <h3>Handling an upset customer</h3>
+        <p>When a delivery is delayed, the customer's frustration is legitimate — their business is affected too. A few practical principles: communicate proactively rather than waiting to be asked (a customer who hears about a delay before they'd have noticed it themselves reacts very differently than one who has to call and ask why their shipment hasn't arrived); be honest about what you actually know versus what you're still finding out; and always follow up with a concrete next step or updated timeline rather than a vague reassurance.</p>
+        <h3>When something genuinely goes wrong</h3>
+        <p>Breakdowns, accidents, weather closures, and paperwork errors all happen, regularly, in this industry — they are a normal part of the job, not a sign that something has been done wrong. What separates a strong dispatcher from a weak one isn't whether problems happen, but how quickly and calmly they're addressed: has a backup plan been identified, has the customer been informed, has the driver been supported with what they actually need (a tow, a nearby repair shop, updated instructions)? This chapter's core message is simple: technical knowledge gets you through the routine days, but communication skill is what gets you through the hard ones — and the hard days are where reputations, both a dispatcher's and a carrier's, are actually built.</p>
+      `,
+      quiz: [
+        {q:"Why does clear, specific communication with drivers matter?", opts:["It doesn't matter — drivers figure things out on their own","Vague instructions cause confusion that costs time for everyone involved","Drivers prefer minimal communication","Only new drivers need clear instructions"], correct:1, ex:"Clear, specific instructions prevent the kind of confusion that creates delays and wasted time."},
+        {q:"How should a dispatcher generally respond when a driver has a problem outside their control (like a breakdown)?", opts:["With blame, to discourage future issues","With problem-solving support, to build long-term trust","By ignoring the issue until it resolves itself","By reassigning the driver immediately without discussion"], correct:1, ex:"Responding with support rather than blame builds the kind of trust that keeps good drivers working with the same dispatcher."},
+        {q:"What's the recommended approach when communicating a delay to a customer?", opts:["Wait until the customer calls to ask","Communicate proactively, before they'd have noticed the issue themselves","Avoid mentioning the delay entirely","Blame the driver directly to the customer"], correct:1, ex:"Proactive communication is received very differently than a customer having to chase down information themselves."},
+        {q:"According to this chapter, are breakdowns and delays a sign that something was done wrong?", opts:["Yes, they always indicate dispatcher error","No — they are a normal, regular part of the industry","They only happen to inexperienced dispatchers","They are extremely rare in trucking"], correct:1, ex:"Breakdowns, weather issues, and delays are described as a normal, regular part of the industry, not inherently a sign of error."},
+        {q:"What does the chapter identify as the real differentiator between a strong and weak dispatcher during a problem?", opts:["Whether problems happen at all","How quickly and calmly the problem is addressed","How loudly they communicate","Whether they avoid taking any responsibility"], correct:1, ex:"The speed and composure of the response — not the mere occurrence of a problem — is what separates strong dispatchers from weak ones."}
+      ]
+    },
+    {
+      id: 10, free: false,
+      title: "Your Next Step: Employment vs. Starting Independently",
+      intro: "Two real paths forward, and what to genuinely expect from each as you finish this course.",
+      content: `
+        <p>By this point, you understand the core mechanics of the role — daily responsibilities, tools, regulations on both sides of the border, negotiation, and the communication skills the job actually runs on. The final decision ahead of you is which path to pursue: working as an employed dispatcher for a carrier or brokerage, or building an independent dispatching business supporting owner-operators directly.</p>
+        <h3>Path 1: Employment</h3>
+        <p>Working for an established carrier or brokerage means stepping into existing systems, tools, and processes — you'll typically receive structured onboarding, a fixed salary (in the ranges discussed in Chapter 3), and the stability of a defined role within a larger operation. This path is often the more accessible starting point for someone new to the industry, since you're learning inside a system that already has established procedures, rather than building everything from scratch while also trying to earn income.</p>
+        <h3>Path 2: Independent Dispatching</h3>
+        <p>Working independently — typically supporting one or more owner-operators on a commission basis — offers more autonomy and, over time, potentially stronger income, but it comes with real early-stage challenges: you're responsible for finding your own clients (the owner-operators you'll dispatch for), building a legal business structure, and establishing your own reputation from zero. As mentioned in Chapter 3, the first 30-90 days of an independent dispatch business are typically slower, since carrier trust takes time to build. This path suits people who are comfortable with some early income uncertainty in exchange for long-term independence and upside.</p>
+        <h3>What to actually do next</h3>
+        <ul>
+          <li><strong>If pursuing employment:</strong> look specifically for entry-level dispatcher or dispatch coordinator postings — many don't require prior direct experience if you can demonstrate genuine understanding of the fundamentals covered in this course.</li>
+          <li><strong>If pursuing independence:</strong> research the legal business requirements in your specific province or state, look into which load board platform fits your plans, and consider starting by supporting just one or two owner-operators rather than trying to scale immediately.</li>
+          <li><strong>Either way:</strong> the fundamentals in this course — regulations, communication, rate awareness, and tool familiarity — apply regardless of which path you choose. That foundation is what makes you genuinely job-ready, not just familiar with the job title.</li>
+        </ul>
+        <p>This concludes the core course. Dispatching is a career that rewards people who stay current — regulations, technology, and market rates all shift over time, and the best dispatchers treat learning as ongoing rather than something that ends after training.</p>
+      `,
+      quiz: [
+        {q:"What's a key advantage of the employment path over independent dispatching for someone new to the industry?", opts:["Employment pays less in every case","Structured onboarding and existing systems, rather than building everything from scratch","Employment requires a CDL","There is no meaningful difference between the two paths"], correct:1, ex:"Employment offers structured onboarding and established processes, which is often more accessible for someone new to the field."},
+        {q:"What's a genuine early-stage challenge of independent dispatching?", opts:["There are no challenges — independent dispatching is always immediately profitable","Finding your own clients and building trust/reputation from zero","Independent dispatchers are not allowed to use load boards","It requires a college degree"], correct:1, ex:"Independent dispatchers must build their own client base and reputation, which takes real time, especially early on."},
+        {q:"What does the course suggest for someone starting independent dispatching?", opts:["Try to sign as many owner-operators as possible immediately","Consider starting with just one or two owner-operators rather than scaling immediately","Skip understanding load boards entirely","Avoid any legal business registration"], correct:1, ex:"Starting with a small, manageable base of owner-operators is a more realistic approach than immediate large-scale expansion."},
+        {q:"According to the final chapter, what makes someone genuinely 'job-ready' as a dispatcher?", opts:["Only having the job title","Understanding regulations, communication, rate awareness, and tool familiarity — the fundamentals","Owning a truck personally","Having a university degree specifically in logistics"], correct:1, ex:"The course identifies the combination of regulatory knowledge, communication skill, rate awareness, and tool familiarity as what makes someone genuinely prepared, not just titled."},
+        {q:"What mindset does the course recommend for long-term success in dispatching?", opts:["Treat training as complete once this course ends","Treat learning as ongoing, since regulations, technology, and rates shift over time","Avoid learning new software once comfortable with one system","Focus only on one country's regulations permanently"], correct:1, ex:"The course closes by emphasizing that staying current is an ongoing part of the job, not something that ends after initial training."}
+      ]
+    }
+  ]
+};
+
+const freightCourse = {
+  chapters: [
+    {
+      id: 1, free: true,
+      title: "What a Freight Forwarder Actually Does",
+      intro: "The real scope of the role — freight forwarders are the architects of international trade logistics, not just booking agents.",
+      content: `
+        <p>A freight forwarder organizes the movement of goods internationally on behalf of shippers — but "organizes" undersells what the job actually involves. A forwarder acts as an intermediary between shippers, carriers (ocean lines, airlines, trucking and rail companies), customs authorities, and insurers, coordinating every link in a shipment's journey from origin to final destination.</p>
+        <p>Core responsibilities include:</p>
+        <ul>
+          <li>Researching and negotiating freight rates across carriers and transport modes</li>
+          <li>Booking cargo space with ocean lines, airlines, or trucking/rail carriers</li>
+          <li>Preparing and processing shipping documentation — bills of lading, commercial invoices, certificates of origin, customs declarations</li>
+          <li>Coordinating customs clearance and advising clients on import/export regulations</li>
+          <li>Tracking shipments and proactively communicating status to clients</li>
+          <li>Resolving problems — delays, damage, documentation discrepancies, port congestion</li>
+          <li>Managing letter of credit (L/C) documentation for shipments using documentary credit as a payment method</li>
+        </ul>
+        <p>Unlike a domestic truck dispatcher, a freight forwarder typically works across multiple transport modes simultaneously and operates within a genuinely international regulatory environment — a single shipment might involve a trucking leg, an ocean carrier, customs clearance in two different countries, and a final-mile delivery, all needing to be coordinated and documented correctly. This is why freight forwarders are sometimes described as "the logistics architects of international trade" — the job is fundamentally about designing and managing a multi-step journey, not executing a single transport leg.</p>
+        <p>Freight forwarders can be traditional (working through phone, email, and manual documentation) or digital (using freight-tech platforms that automate quoting, booking, and tracking) — the underlying knowledge required is the same either way, since digital platforms are tools that support the same core expertise, not a replacement for it.</p>
+      `,
+      quiz: [
+        {q:"What best describes the core function of a freight forwarder?", opts:["They physically drive trucks internationally","They coordinate and organize the movement of goods across carriers, customs, and borders","They only handle domestic shipments","They exclusively work in ocean freight"], correct:1, ex:"A freight forwarder acts as an intermediary coordinating multiple parties and steps in an international shipment's journey."},
+        {q:"What is a letter of credit (L/C) related to in this context?", opts:["A type of insurance policy","A documentary payment method requiring specific document management","A government tax form","A carrier's fuel surcharge"], correct:1, ex:"A letter of credit is a documentary credit payment method requiring the forwarder to manage specific required documentation."},
+        {q:"How does a freight forwarder's role typically differ from a domestic truck dispatcher's?", opts:["There is no meaningful difference","A forwarder typically coordinates multiple transport modes and international regulatory requirements simultaneously","Forwarders never deal with paperwork","Dispatchers only work with ocean freight"], correct:1, ex:"Freight forwarding often spans multiple transport modes and multiple countries' regulations within a single shipment, unlike typical domestic trucking dispatch."},
+        {q:"What's the difference between a traditional and digital freight forwarder?", opts:["Digital forwarders don't need industry knowledge","Both require the same underlying expertise; digital forwarders use tech platforms as tools to support that expertise","Traditional forwarders are no longer legal to operate","Digital forwarders only work with air freight"], correct:1, ex:"Digital platforms support and streamline the same core expertise — they don't replace the underlying knowledge required."},
+        {q:"Which of these is a genuine core responsibility of a freight forwarder?", opts:["Manufacturing the goods being shipped","Preparing and processing shipping documentation like bills of lading and commercial invoices","Setting international trade law","Operating as a bank"], correct:1, ex:"Preparing accurate shipping documentation is a core, hands-on responsibility of the role."}
+      ]
+    },
+    {
+      id: 2, free: true,
+      title: "Modes of Transport: Ocean, Air, Rail, and Road",
+      intro: "Understanding the trade-offs between transport modes — cost, speed, and suitability all shift dramatically depending on the mode.",
+      content: `
+        <p>A core part of a forwarder's job is recommending the right transport mode (or combination of modes) for a given shipment, balancing cost, speed, cargo type, and route availability.</p>
+        <p><strong>Ocean freight</strong> is the backbone of global trade by volume — the most cost-effective option for large or heavy shipments, but the slowest, with transit times measured in weeks rather than days. Ocean freight splits further into Full Container Load (FCL), where a shipper books an entire container, and Less than Container Load (LCL), where a forwarder consolidates multiple shippers' smaller cargo into one shared container to reduce cost per shipper.</p>
+        <p><strong>Air freight</strong> is dramatically faster — days instead of weeks — but significantly more expensive per kilogram, making it the default choice for high-value, time-sensitive, or perishable goods rather than bulk commodities.</p>
+        <p><strong>Rail freight</strong> occupies a middle ground in some trade lanes (notably China-Europe rail routes), offering a cost and speed compromise between ocean and air, though route availability is far more limited than ocean or air options.</p>
+        <p><strong>Road freight</strong> (trucking) is typically the "last mile" connector — moving cargo from a port or airport to its final destination, or handling the entire journey for shorter cross-border routes like intra-North American or intra-European shipments.</p>
+        <p>Most international shipments are actually multimodal — combining two or more of these modes into one coordinated journey (a container ships by ocean, then moves by rail or truck to an inland destination). Understanding how to sequence these modes correctly, and where the handoff points and risk transitions occur between them, is fundamental to the job and directly connects to the Incoterms chapter later in this course.</p>
+      `,
+      quiz: [
+        {q:"What is the key trade-off of ocean freight compared to air freight?", opts:["Ocean freight is always faster","Ocean freight is generally more cost-effective for volume but significantly slower","Ocean freight cannot carry containers","There is no difference between them"], correct:1, ex:"Ocean freight is typically the most cost-effective option for large volumes, but transit times are measured in weeks, not days."},
+        {q:"What does FCL stand for?", opts:["Freight Carrier Logistics","Full Container Load","First Class Loading","Federal Cargo License"], correct:1, ex:"FCL (Full Container Load) means a shipper books an entire container for their own cargo."},
+        {q:"What is LCL shipping?", opts:["A type of air freight exclusive service","Consolidating multiple shippers' smaller cargo into one shared container","A rail-only shipping method","An illegal shipping practice"], correct:1, ex:"LCL (Less than Container Load) consolidates cargo from multiple shippers into a shared container to reduce cost per shipper."},
+        {q:"Why is air freight typically chosen despite its higher cost?", opts:["Air freight is actually cheaper than ocean","For high-value, time-sensitive, or perishable goods where speed matters more than cost","Air freight has no weight restrictions","It's required by law for all shipments"], correct:1, ex:"Air freight's speed makes it the preferred choice when time sensitivity outweighs the higher per-kilogram cost."},
+        {q:"What does 'multimodal' shipping mean?", opts:["Shipping only by one mode of transport","Combining two or more transport modes into one coordinated journey","A shipment that never leaves the country","An outdated shipping method no longer used"], correct:1, ex:"Multimodal shipping combines multiple transport modes (e.g., ocean plus rail or truck) into a single coordinated journey."}
+      ]
+    },
+    {
+      id: 3, free: true,
+      title: "A Day in the Life: Skills, Career Path, and What to Expect",
+      intro: "What the job genuinely looks like day to day, the real skills it rewards, and honest salary expectations.",
+      content: `
+        <p>Freight forwarding is described consistently across the industry as a dynamic, fast-paced role — every day brings new shipments, new problems, and often direct contact with international clients, which adds a genuinely global element most logistics roles don't have.</p>
+        <p>A typical day blends: checking overnight updates on active shipments across time zones, researching and quoting rates for new business, preparing or reviewing documentation for shipments in progress, coordinating with customs brokers and carriers, and troubleshooting problems — a shipment held at customs, a documentation discrepancy, a carrier schedule change affecting a client's delivery timeline.</p>
+        <h3>Skills that actually matter</h3>
+        <ul>
+          <li><strong>Strong understanding of international shipping regulations and customs procedures</strong> — this isn't optional background knowledge, it's used constantly</li>
+          <li><strong>Negotiation and problem-solving</strong> — rate negotiation with carriers, and creative problem-solving when shipments hit obstacles</li>
+          <li><strong>Proficiency with logistics software and tracking systems</strong> — modern forwarding runs on technology, not just phone calls</li>
+          <li><strong>Communication across cultures and time zones</strong> — international clients, carriers, and partners mean written and verbal communication needs to be clear across language and cultural differences</li>
+          <li><strong>Attention to detail</strong> — a single documentation error can hold a shipment at customs for days and cost a client real money</li>
+        </ul>
+        <h3>Career path and realistic salary expectations</h3>
+        <p>Most forwarders start in entry-level roles like shipping coordinator or documentation clerk, building the practical experience and carrier relationships that the job depends on — this hands-on period typically takes one to two years before someone can work more independently. Salary ranges vary significantly by country and experience: in the United States, typical salaries range from roughly $48,000 to $70,000 annually, with senior roles exceeding $80,000; figures are meaningfully different in other countries, so treat any specific number as a general reference point rather than a fixed promise, and verify current figures for your specific region.</p>
+        <p>For formal career advancement, industry-recognized credentials exist — such as the Certified International Freight Forwarder (CIFF) designation, Customs Compliance Specialist (CCS) certification, and IATA Dangerous Goods Regulations training for air freight roles — which we'll return to in the final chapter of this course.</p>
+      `,
+      quiz: [
+        {q:"According to this chapter, roughly how long does the entry-level, hands-on experience period typically take before working more independently?", opts:["A few days","One to two years","Ten years minimum","There is no entry-level period"], correct:1, ex:"Building practical experience and carrier relationships typically takes one to two years before working more independently."},
+        {q:"Why does attention to detail matter so much in this role?", opts:["It doesn't really matter in freight forwarding","A single documentation error can hold a shipment at customs for days and cost real money","Documentation is optional in most countries","Only senior forwarders need to be detail-oriented"], correct:1, ex:"Documentation errors have real, costly consequences — holding shipments at customs and creating real financial impact for clients."},
+        {q:"What is CIFF?", opts:["A type of shipping container","A Certified International Freight Forwarder professional designation","A government customs agency","A type of ocean vessel"], correct:1, ex:"CIFF (Certified International Freight Forwarder) is an industry-recognized professional certification."},
+        {q:"What kind of entry-level roles does the chapter suggest as a starting point?", opts:["CEO of a logistics company","Shipping coordinator or documentation clerk","Ship captain","Customs judge"], correct:1, ex:"Shipping coordinator and documentation clerk are commonly cited entry-level starting roles in the industry."},
+        {q:"Why is proficiency with logistics software specifically highlighted as an important skill?", opts:["Software skills are irrelevant to freight forwarding","Modern forwarding runs substantially on technology and tracking systems, not just phone calls","Only IT staff need software skills","Freight forwarders never use computers"], correct:1, ex:"Modern freight forwarding relies heavily on logistics software and tracking systems as core working tools."}
+      ]
+    },
+    {
+      id: 4, free: false,
+      title: "Incoterms 2020: The Complete Guide to All 11 Rules",
+      intro: "The single most important technical framework in international freight — get this wrong and everything downstream (cost, risk, documentation) breaks.",
+      content: `
+        <p>Incoterms (International Commercial Terms) are standardized three-letter trade terms published by the International Chamber of Commerce (ICC), defining exactly when risk and cost responsibility transfer from seller to buyer during a shipment. The current version, <strong>Incoterms 2020</strong>, contains 11 rules. Getting the right Incoterm into a contract — and understanding what it actually obligates each party to do — is one of the most fundamental skills in freight forwarding.</p>
+        <h3>Rules for any mode of transport</h3>
+        <ul>
+          <li><strong>EXW (Ex Works)</strong> — the seller's only obligation is to make goods available at their own premises; the buyer handles everything else, including export clearance</li>
+          <li><strong>FCA (Free Carrier)</strong> — the seller delivers goods, cleared for export, to a carrier or location named by the buyer; risk transfers once goods are handed over. This is the standard, workhorse term for containerized freight.</li>
+          <li><strong>CPT (Carriage Paid To)</strong> — the seller arranges and pays for carriage to a named destination, but risk transfers to the buyer as soon as goods are handed to the first carrier — an important distinction many people miss</li>
+          <li><strong>CIP (Carriage and Insurance Paid To)</strong> — like CPT, but the seller must also provide insurance, and under the 2020 update, that insurance must meet a higher minimum coverage level (Institute Cargo Clause A, "all-risk" coverage)</li>
+          <li><strong>DAP (Delivered at Place)</strong> — seller delivers to a named destination, ready for unloading, at their own risk and cost</li>
+          <li><strong>DPU (Delivered at Place Unloaded)</strong> — like DAP, but the seller is also responsible for unloading at the destination (this term replaced the old "DAT" in the 2020 revision)</li>
+          <li><strong>DDP (Delivered Duty Paid)</strong> — maximum seller responsibility: the seller handles everything, including import duties, up to delivery at the named destination</li>
+        </ul>
+        <h3>Rules for sea and inland waterway transport only</h3>
+        <ul>
+          <li><strong>FAS (Free Alongside Ship)</strong> — seller delivers goods alongside the vessel at the port; buyer takes over from there</li>
+          <li><strong>FOB (Free on Board)</strong> — seller delivers goods on board the vessel; risk transfers at that point, and the buyer arranges and pays for the main freight</li>
+          <li><strong>CFR (Cost and Freight)</strong> — seller pays for freight to the destination port, but risk still transfers once goods are on board at origin, same as FOB</li>
+          <li><strong>CIF (Cost, Insurance, and Freight)</strong> — like CFR, but the seller must also provide minimum insurance (Institute Cargo Clause C, a lower minimum than CIP requires)</li>
+        </ul>
+        <h3>A common, costly mistake</h3>
+        <p>FOB and CIF are historically the most commonly used terms in casual conversation, but they technically only apply to sea and inland waterway transport — using them for containerized cargo (which typically moves through an inland container terminal before reaching a vessel) is a common and technically incorrect practice. For containerized freight, FCA or CIP are the technically correct equivalents, since risk transfers before the goods are physically loaded onto a ship. This distinction matters in real disputes over when risk actually transferred.</p>
+        <p>One more 2020-specific detail worth knowing: FCA was revised to let the buyer instruct the carrier to issue an on-board bill of lading to the seller after loading — resolving a long-standing practical conflict where sellers needed that document to get paid under a letter of credit, even though FCA's risk transfer happens earlier, before loading.</p>
+      `,
+      quiz: [
+        {q:"What do Incoterms fundamentally define?", opts:["Product manufacturing standards","When risk and cost responsibility transfer from seller to buyer","Currency exchange rates","Employee working conditions"], correct:1, ex:"Incoterms define exactly when risk and cost responsibility transfer between seller and buyer during a shipment's journey."},
+        {q:"How many Incoterms rules exist under the 2020 version?", opts:["4","7","11","20"], correct:2, ex:"Incoterms 2020 contains 11 rules total — 7 usable for any transport mode, and 4 specific to sea/inland waterway transport."},
+        {q:"What is a common mistake regarding FOB and CIF?", opts:["They are never used incorrectly","They're often used for containerized cargo despite technically only applying to sea/inland waterway transport","They only apply to air freight","They were removed from the 2020 revision"], correct:1, ex:"FOB and CIF are frequently misapplied to containerized freight, where FCA or CIP are the technically correct terms since risk transfers earlier."},
+        {q:"What changed with DAT in the Incoterms 2020 revision?", opts:["It was removed entirely with no replacement","It was renamed to DPU (Delivered at Place Unloaded)","It became mandatory for all shipments","It only applies to air freight now"], correct:1, ex:"DAT (Delivered at Terminal) was renamed DPU (Delivered at Place Unloaded) in the 2020 revision."},
+        {q:"What's the key insurance-related difference between CIP and CIF under Incoterms 2020?", opts:["CIF requires higher insurance than CIP","CIP now requires a higher minimum insurance level (Institute Cargo Clause A) than CIF (Institute Cargo Clause C)","Neither term requires any insurance","Insurance requirements are identical for both"], correct:1, ex:"Incoterms 2020 raised CIP's minimum insurance requirement to all-risk coverage (Clause A), while CIF retained the lower Clause C minimum."}
+      ]
+    },
+    {
+      id: 5, free: false,
+      title: "Essential Shipping Documents",
+      intro: "The paperwork that makes international trade legally and financially possible — get any of these wrong and a shipment can be held indefinitely.",
+      content: `
+        <p>Every international shipment depends on a set of standard documents, each serving a distinct legal and practical purpose. A forwarder needs to know not just what each document is, but why it exists and what happens if it's wrong or missing.</p>
+        <ul>
+          <li><strong>Bill of Lading (B/L)</strong> — issued by the carrier, this is simultaneously a receipt for the goods, evidence of the contract of carriage, and (in its "negotiable" form) a document of title that can be used to transfer ownership of the goods while they're still in transit. It's one of the most important documents in freight forwarding — under a letter of credit payment arrangement, the seller typically can't get paid until they present a valid bill of lading confirming the goods are on board.</li>
+          <li><strong>Commercial Invoice</strong> — the seller's bill for the goods, stating price, quantity, and terms of sale; customs authorities use it to assess duties and taxes, so its accuracy directly affects how much a buyer pays at the border.</li>
+          <li><strong>Packing List</strong> — an itemized breakdown of exactly what's in each package or container, used by customs, carriers, and the buyer to verify contents match what was declared.</li>
+          <li><strong>Certificate of Origin</strong> — confirms which country the goods were manufactured in, which matters for determining applicable tariffs and whether trade agreement preferences apply.</li>
+          <li><strong>Air Waybill (AWB)</strong> — the air freight equivalent of a bill of lading, though critically, an AWB is <em>not</em> a negotiable document of title the way an ocean bill of lading can be — this is a meaningful legal difference between air and ocean documentation.</li>
+        </ul>
+        <h3>Why document accuracy is a genuine, recurring problem</h3>
+        <p>Details across these documents need to match exactly — the commercial invoice, the bill of lading or air waybill, and any letter of credit involved all need to describe the same shipment consistently. A discrepancy (a quantity mismatch, an address that doesn't match, a missing signature) is one of the most common reasons shipments get held at customs or payment gets delayed under a letter of credit arrangement. Experienced forwarders develop a habit of cross-checking every document against every other document before a shipment moves, rather than treating each one as an isolated task.</p>
+      `,
+      quiz: [
+        {q:"What makes a bill of lading unique compared to most other shipping documents?", opts:["It has no legal significance","It can function as a document of title, allowing ownership transfer while goods are in transit","It's only used for air freight","It replaces the need for a commercial invoice"], correct:1, ex:"A negotiable bill of lading can transfer ownership of goods while they're still in transit, making it uniquely important among shipping documents."},
+        {q:"What is the primary purpose of a commercial invoice?", opts:["To confirm the ship's departure time","States price, quantity, and terms of sale, and is used by customs to assess duties and taxes","To insure the cargo","To register the carrier's license"], correct:1, ex:"The commercial invoice states the sale terms and is used directly by customs authorities to assess duties and taxes."},
+        {q:"How does an Air Waybill (AWB) differ legally from an ocean bill of lading?", opts:["There is no legal difference","An AWB is not a negotiable document of title, unlike an ocean bill of lading", "AWBs are used only for illegal shipments","AWBs replace the need for customs clearance"], correct:1, ex:"Unlike an ocean bill of lading, an air waybill is not a negotiable document of title — a meaningful legal distinction between the two."},
+        {q:"What does a Certificate of Origin confirm?", opts:["The shipment's insurance value","Which country the goods were manufactured in, affecting tariffs and trade agreements","The buyer's home address","The carrier's safety rating"], correct:1, ex:"A Certificate of Origin confirms the manufacturing country, which affects applicable tariffs and trade agreement eligibility."},
+        {q:"Why is cross-checking documents against each other a genuinely important habit?", opts:["It's not necessary if documents are typed neatly","Discrepancies between documents are a common cause of customs holds and payment delays","Cross-checking is only required for air freight","Documents never need to match each other"], correct:1, ex:"Mismatches between documents (invoice, bill of lading, letter of credit) are a leading cause of shipment holds and payment delays."}
+      ]
+    },
+    {
+      id: 6, free: false,
+      title: "Customs Clearance, Duties, and Compliance",
+      intro: "Navigating the regulatory side of international trade — where a forwarder's expertise becomes genuinely indispensable to clients.",
+      content: `
+        <p>Customs clearance is the legal process of getting goods approved to enter or leave a country, and it's an area where a forwarder's deep, current knowledge of regulations creates real value for clients who would otherwise face costly delays or penalties navigating it alone.</p>
+        <h3>Key concepts</h3>
+        <ul>
+          <li><strong>HS Codes (Harmonized System codes)</strong> — a standardized international classification system used to identify exactly what a product is for customs purposes; the code assigned determines which duty rate applies, so getting it right matters directly to a client's costs.</li>
+          <li><strong>Duties and tariffs</strong> — taxes assessed on imported goods, varying by product classification, country of origin, and current trade agreements between the countries involved. Tariff rates can and do change based on evolving trade policy, so forwarders need to stay current rather than relying on rates they memorized previously.</li>
+          <li><strong>Customs brokers</strong> — licensed specialists who formally handle the customs clearance process on a client's behalf; a freight forwarder often works alongside a dedicated customs broker rather than personally executing every regulatory step, especially for complex or high-risk shipments.</li>
+        </ul>
+        <h3>Industry standards bodies</h3>
+        <p>Two standards bodies are foundational to the industry: <strong>FIATA</strong> (the International Federation of Freight Forwarders Associations) sets globally recognized standards and documentation practices for freight forwarding, while <strong>IATA</strong> (International Air Transport Association) governs air freight standards specifically, including critical areas like dangerous goods regulations. FIATA's more recent guidance has also addressed digital trade documentation standards (referred to as UN Negotiable Cargo Documents, or UN NCDs) and updated customs pre-arrival security programs like ICS2 — the regulatory environment is genuinely still evolving, which is part of why ongoing learning matters in this field.</p>
+        <h3>Why penalties for non-compliance are taken seriously</h3>
+        <p>Non-compliance with customs regulations — incorrect classification, missing documentation, misdeclared value — carries real financial penalties, and in serious cases can affect a company's ability to import/export at all going forward. This is precisely why "strong understanding of international shipping regulations" appears consistently as a top-line requirement across freight forwarder job descriptions — it's not a nice-to-have, it's core to protecting clients from real financial and legal risk.</p>
+      `,
+      quiz: [
+        {q:"What is an HS Code used for?", opts:["Tracking a ship's GPS location","A standardized international classification identifying exactly what a product is for customs and duty purposes","A type of insurance policy number","An employee ID number"], correct:1, ex:"HS Codes are a standardized classification system that determines applicable duty rates for a given product."},
+        {q:"What does FIATA represent in the industry?", opts:["A shipping insurance company","The International Federation of Freight Forwarders Associations, setting global industry standards","A government customs agency","A type of cargo container"], correct:1, ex:"FIATA is the international body setting globally recognized standards and documentation practices for freight forwarding."},
+        {q:"What does IATA specifically govern?", opts:["Ocean freight container sizes","Air freight standards, including dangerous goods regulations","Rail freight scheduling only","Domestic trucking regulations"], correct:1, ex:"IATA (International Air Transport Association) governs air freight standards, including dangerous goods regulations specifically."},
+        {q:"Why might a freight forwarder work alongside a separate customs broker?", opts:["Customs brokers are never needed","Customs brokers are licensed specialists who formally handle customs clearance, especially for complex shipments","It's illegal for forwarders to touch customs paperwork","Customs brokers replace freight forwarders entirely"], correct:1, ex:"Customs brokers are licensed specialists that forwarders often work alongside, particularly for complex or high-risk shipments."},
+        {q:"Why do tariff rates require ongoing attention rather than one-time memorization?", opts:["Tariff rates never change once set","Tariff rates can and do change based on evolving trade policy and agreements","Tariffs are the same in every country permanently","Only air freight has variable tariffs"], correct:1, ex:"Trade policy and agreements evolve, meaning tariff rates change over time — forwarders need to stay current rather than rely on memorized figures."}
+      ]
+    },
+    {
+      id: 7, free: false,
+      title: "Ocean Freight Deep Dive: Containers, Booking, and Consolidation",
+      intro: "The practical mechanics of the mode that moves the majority of world trade by volume.",
+      content: `
+        <p>Building on the FCL/LCL distinction from Chapter 2, this chapter goes deeper into how ocean freight actually gets booked and moved.</p>
+        <h3>Container types</h3>
+        <p>Standard shipping containers come in a few common sizes and configurations: 20-foot and 40-foot standard containers are the most common, with 40-foot "high cube" containers offering extra vertical space for lighter, bulkier cargo. Specialized container types exist for specific cargo needs — refrigerated containers ("reefers") for temperature-sensitive goods, open-top containers for oversized cargo that can't fit through a standard container door, and flat-rack containers for irregularly shaped or heavy equipment loads.</p>
+        <h3>The booking process</h3>
+        <p>A typical ocean booking sequence: the forwarder confirms cargo details (weight, dimensions, commodity type) with the shipper → requests space and a rate quote from an ocean carrier or through a consolidator (for LCL) → confirms the booking and receives a booking confirmation with a vessel and sailing schedule → coordinates cargo delivery to the port or container yard by the required cutoff time → the carrier issues a bill of lading once the cargo is loaded.</p>
+        <h3>LCL consolidation, in practice</h3>
+        <p>For LCL shipments, a forwarder (or a specialized consolidator) combines cargo from multiple shippers into a single shared container, splitting the container cost proportionally among them. This makes ocean freight accessible to shippers whose cargo volume doesn't justify booking an entire container — but it adds complexity, since the container needs to be "deconsolidated" (unpacked and sorted back into individual shipments) at destination, adding time and cost that FCL shipments don't have.</p>
+        <h3>Port congestion and schedule reliability</h3>
+        <p>Monitoring carrier space availability, port congestion conditions, and schedule changes is an explicitly named ongoing responsibility in the role — ocean freight schedules are not perfectly reliable, and port congestion (a recurring issue at major global ports during high-demand periods) can meaningfully delay a shipment beyond its originally quoted transit time. Part of a forwarder's value to clients is realistic expectation-setting about this, not just booking the cheapest or fastest quoted option.</p>
+      `,
+      quiz: [
+        {q:"What is a 'reefer' container used for?", opts:["Oversized cargo that doesn't fit standard containers","Temperature-sensitive, refrigerated cargo","Liquid bulk cargo only","Documents and paperwork storage"], correct:1, ex:"Reefer containers are refrigerated, used specifically for temperature-sensitive cargo."},
+        {q:"What container type would be used for irregularly shaped, heavy equipment?", opts:["Standard 20-foot container","Flat-rack container","Reefer container","Document container"], correct:1, ex:"Flat-rack containers are designed for irregularly shaped or heavy equipment loads that don't fit standard enclosed containers."},
+        {q:"What additional step does LCL cargo require at destination that FCL doesn't?", opts:["No additional steps are required","Deconsolidation — unpacking and sorting the shared container back into individual shipments","Re-loading onto a different vessel","Additional customs declarations only for LCL"], correct:1, ex:"LCL shipments require deconsolidation at destination, adding time and cost not present with FCL shipments."},
+        {q:"Why is monitoring port congestion an important ongoing forwarder responsibility?", opts:["Port congestion never affects shipping schedules","Port congestion can meaningfully delay shipments beyond their quoted transit time","Only air freight is affected by congestion","Congestion only matters for LCL shipments"], correct:1, ex:"Port congestion is a real, recurring factor that can delay ocean shipments, making proactive monitoring a genuine part of the job."},
+        {q:"What's a general advantage of a 40-foot 'high cube' container?", opts:["It's smaller than a standard container","It offers extra vertical space, useful for lighter, bulkier cargo","It's exclusively for liquid cargo","It cannot be used for international shipping"], correct:1, ex:"High cube containers provide additional vertical space, well-suited to lighter, bulkier cargo that benefits from extra room."}
+      ]
+    },
+    {
+      id: 8, free: false,
+      title: "Air Freight Deep Dive: Air Waybills, Rates, and Dangerous Goods",
+      intro: "The mode built for speed — and the one with the most specialized regulatory requirements.",
+      content: `
+        <p>Air freight operates on fundamentally different logic than ocean freight — priced by weight (or volumetric weight, whichever is greater), booked in a much shorter timeframe, and often involving more specialized compliance requirements.</p>
+        <h3>Volumetric weight: a detail that surprises newcomers</h3>
+        <p>Air freight pricing uses whichever is greater: the cargo's actual weight, or its "volumetric weight" — a calculated weight based on the space the cargo occupies, since light, bulky cargo takes up valuable aircraft space disproportionate to its actual weight. Forwarders need to calculate both and quote based on the higher figure — a mistake here directly under- or over-quotes a client.</p>
+        <h3>The Air Waybill (AWB), revisited</h3>
+        <p>As covered in Chapter 5, the Air Waybill is air freight's core shipping document — but unlike an ocean bill of lading, it is not a negotiable document of title. This means an AWB cannot be used to transfer ownership of goods in transit the way an ocean B/L can, which affects how payment arrangements (like letters of credit) are typically structured for air shipments.</p>
+        <h3>Dangerous goods: a genuinely specialized area</h3>
+        <p>Shipping dangerous goods by air (chemicals, batteries, certain consumer products with battery components, and many other regulated categories) requires specific training and certification — IATA Dangerous Goods Regulations training is an industry-recognized credential specifically for this. Getting dangerous goods classification, packaging, labeling, and documentation wrong isn't just a compliance issue — it's a genuine safety issue, since improperly declared dangerous goods have caused real air cargo incidents. A forwarder handling any shipment with potential dangerous goods components (lithium batteries in electronics are an increasingly common example) needs to know when to flag this for specialized handling rather than treating it as routine cargo.</p>
+        <h3>When air freight makes sense despite the cost</h3>
+        <p>Beyond obviously time-sensitive goods, air freight is often the right call when a client's inventory carrying costs, spoilage risk, or contractual delivery penalties would exceed the cost premium over ocean freight — this is a genuine cost-benefit calculation a forwarder should be able to walk a client through, not just a default "air is faster" recommendation.</p>
+      `,
+      quiz: [
+        {q:"What does 'volumetric weight' refer to in air freight pricing?", opts:["The cargo's actual physical weight only","A calculated weight based on the space cargo occupies, used when greater than actual weight","A weight only used for ocean freight","An outdated pricing method no longer used"], correct:1, ex:"Volumetric weight accounts for space occupied by light, bulky cargo — air freight is priced on whichever is greater, actual or volumetric weight."},
+        {q:"Why does the non-negotiable nature of an Air Waybill matter practically?", opts:["It has no practical effect","It affects how payment arrangements like letters of credit are typically structured for air shipments","AWBs are illegal to use","It means air freight cannot be insured"], correct:1, ex:"Since an AWB can't transfer ownership like an ocean bill of lading, payment structures for air shipments are typically arranged differently."},
+        {q:"What is IATA Dangerous Goods Regulations training specifically for?", opts:["General customer service skills","Specialized certification for handling dangerous goods shipments by air","Ocean freight container loading","Currency exchange calculations"], correct:1, ex:"This is an industry-recognized credential specifically for the specialized area of shipping dangerous goods by air."},
+        {q:"What is an increasingly common example of a dangerous goods concern mentioned in this chapter?", opts:["Cotton clothing","Lithium batteries in electronics","Paper documents","Plastic packaging"], correct:1, ex:"Lithium batteries in electronics are cited as an increasingly common dangerous goods consideration in air freight."},
+        {q:"According to this chapter, when might air freight be the right economic choice despite higher cost?", opts:["Air freight is never economically justified","When inventory carrying costs, spoilage risk, or delivery penalties would exceed the air freight cost premium","Air freight is always the cheapest option","Cost should never factor into transport mode decisions"], correct:1, ex:"A genuine cost-benefit analysis sometimes favors air freight when carrying costs, spoilage risk, or penalties outweigh the price premium."}
+      ]
+    },
+    {
+      id: 9, free: false,
+      title: "Costing, Quoting, and Rate Negotiation",
+      intro: "Turning technical knowledge into an actual, profitable, competitive quote — a skill that directly determines a forwarder's value to clients and employers.",
+      content: `
+        <p>Providing an accurate, competitive quote requires combining several cost components correctly — miss one, and either the forwarder's margin disappears or the client is overcharged and takes their business elsewhere.</p>
+        <h3>What goes into a freight quote</h3>
+        <ul>
+          <li><strong>Base freight cost</strong> — the carrier's charge for the transport itself, which fluctuates with capacity, fuel prices, and route demand</li>
+          <li><strong>Accessorial charges</strong> — additional fees beyond base freight: fuel surcharges, port/terminal handling fees, documentation fees, customs clearance fees, and charges for special handling requirements</li>
+          <li><strong>Duties and taxes</strong> — calculated based on the HS code classification and country of origin covered in Chapter 6, and critically dependent on which Incoterm applies, since Incoterms determine who is even responsible for paying these in the first place</li>
+          <li><strong>Insurance</strong> — cargo insurance cost, which (as covered in the Incoterms chapter) is sometimes the seller's contractual obligation and sometimes the buyer's, depending on the Incoterm used</li>
+          <li><strong>Forwarder's margin</strong> — the forwarder's own fee for coordinating the shipment, which needs to be built in transparently rather than hidden inside inflated other costs</li>
+        </ul>
+        <h3>Rate negotiation with carriers</h3>
+        <p>Freight rates, like domestic trucking rates, respond to supply and demand — capacity tightness on a given trade lane during peak season can push rates up significantly, while off-peak periods offer more negotiating leverage. Forwarders who move consistent volume with a carrier typically have stronger negotiating position than those booking one-off shipments, which is part of why building consistent carrier relationships (echoing a theme from domestic dispatching) matters just as much in international freight forwarding.</p>
+        <h3>Presenting a quote to a client</h3>
+        <p>A trustworthy quote is itemized clearly enough that a client can see what they're paying for, rather than a single opaque number — this transparency builds the kind of long-term client trust that generates repeat business, which matters more to sustainable forwarder income than winning any single shipment on price alone.</p>
+      `,
+      quiz: [
+        {q:"What are 'accessorial charges' in a freight quote?", opts:["The base cost of transport only","Additional fees beyond base freight, like fuel surcharges and handling fees","A type of insurance","Government subsidies for shipping"], correct:1, ex:"Accessorial charges are additional fees on top of the base freight cost, covering things like fuel surcharges and handling."},
+        {q:"Why does the applicable Incoterm matter directly for costing a quote?", opts:["Incoterms have no effect on quoting","Incoterms determine who is responsible for paying duties, taxes, and insurance in the first place","Incoterms only affect delivery speed","Incoterms are unrelated to cost"], correct:1, ex:"Since Incoterms define which party is responsible for various costs, they directly determine what needs to be included in a quote."},
+        {q:"What typically gives a forwarder stronger negotiating leverage with a carrier?", opts:["Booking a single one-off shipment","Moving consistent volume with that carrier over time","Always accepting the first quoted rate","Refusing to communicate with carriers directly"], correct:1, ex:"Forwarders who move consistent volume typically have stronger negotiating positions than those booking isolated, one-off shipments."},
+        {q:"Why does the chapter recommend itemizing a quote clearly for clients?", opts:["It's a legal requirement in all countries","It builds long-term client trust, which generates more sustainable repeat business than winning on price alone","Itemized quotes are always more expensive","Clients never look at quote details"], correct:1, ex:"Clear, transparent itemization builds trust that supports long-term client relationships and repeat business."},
+        {q:"How do freight rates generally respond to peak season demand?", opts:["Rates are fixed regardless of season","Rates can rise significantly when capacity tightens on a given trade lane during peak season","Rates always decrease during peak season","Seasonality has no effect on freight rates"], correct:1, ex:"Like domestic trucking rates, freight rates respond to supply and demand, often rising during high-demand peak periods."}
+      ]
+    },
+    {
+      id: 10, free: false,
+      title: "Cargo Insurance, Freight Claims, and Risk Management",
+      intro: "What happens when something goes wrong — and how a forwarder protects clients (and themselves) when it does.",
+      content: `
+        <p>Cargo loss, damage, and delay are a genuine, recurring part of international shipping — a forwarder's job includes both minimizing this risk proactively and handling it professionally when it happens anyway.</p>
+        <h3>Cargo insurance basics</h3>
+        <p>Cargo insurance coverage levels are commonly referenced through Institute Cargo Clauses: Clause C offers the most limited/minimum coverage (specific named risks only), while Clause A offers the broadest "all-risk" coverage, subject to itemized exclusions. As covered in the Incoterms chapter, which party is contractually obligated to provide this insurance — and at what minimum level — depends entirely on the Incoterm used in the sale contract (CIF requires Clause C minimum; CIP requires the higher Clause A minimum under the 2020 revision).</p>
+        <p>It's worth understanding that a carrier's own liability for cargo loss or damage is typically quite limited under international transport conventions — this is precisely why separate cargo insurance exists, since relying solely on a carrier's built-in liability coverage often leaves a shipper significantly underinsured relative to the actual value of their goods.</p>
+        <h3>Handling a freight claim</h3>
+        <p>When cargo is lost, damaged, or significantly delayed, a forwarder is often the first point of contact for the client and needs to coordinate the claims process with the relevant carrier and/or cargo insurer. This typically involves: documenting the damage or loss thoroughly (photos, inspection reports), gathering the shipment's documentation trail, filing the claim within the carrier's or insurer's required timeframe (which can be surprisingly short and easy to miss if not tracked carefully), and following up until resolution.</p>
+        <h3>Proactive risk management</h3>
+        <p>Beyond reacting to claims, experienced forwarders reduce risk proactively: choosing appropriately reputable carriers for high-value cargo, ensuring packaging matches the cargo's actual fragility and the transport mode's real handling conditions, and setting realistic client expectations about transit reliability rather than overpromising to win business. A forwarder's long-term reputation is built as much on how well they handle the inevitable problem shipment as on how smoothly the easy ones go.</p>
+      `,
+      quiz: [
+        {q:"What's the difference between Institute Cargo Clause C and Clause A coverage?", opts:["They are identical coverage levels","Clause C offers minimum/limited coverage for named risks; Clause A offers broader 'all-risk' coverage","Clause A is only for air freight","Clause C is illegal in most countries"], correct:1, ex:"Clause C provides minimum coverage for specific named risks, while Clause A provides broader all-risk coverage, subject to exclusions."},
+        {q:"Why does separate cargo insurance exist, given carriers already have some liability?", opts:["Cargo insurance is unnecessary if a carrier has any liability","A carrier's own liability under international transport conventions is typically quite limited, often leaving shippers underinsured without separate coverage","Carriers are always fully liable for all cargo value","Cargo insurance replaces the need for any shipping documentation"], correct:1, ex:"Carrier liability is typically limited, which is exactly why separate cargo insurance is necessary to adequately protect shipment value."},
+        {q:"What's an important, easy-to-miss detail when filing a freight claim?", opts:["Claims can be filed at any time with no deadline","Claims often have a required filing timeframe that can be surprisingly short","Only the carrier can file a claim, never the forwarder","Photos are never needed for a claim"], correct:1, ex:"Claims typically have a required filing timeframe, and missing it can jeopardize the claim entirely — tracking this carefully matters."},
+        {q:"Which Incoterm requires the higher (Clause A) insurance minimum under the 2020 revision?", opts:["CIF","CIP","FOB","EXW"], correct:1, ex:"CIP requires the higher Clause A ('all-risk') insurance minimum under Incoterms 2020, while CIF retains the lower Clause C minimum."},
+        {q:"According to the chapter, what is a forwarder's long-term reputation substantially built on?", opts:["Only how smoothly easy shipments go","How well they handle problem shipments, not just the easy ones","Never having any shipment go wrong, ever","Avoiding all client communication during problems"], correct:1, ex:"Handling problems professionally when they inevitably occur is described as being just as important to reputation as smooth routine shipments."}
+      ]
+    },
+    {
+      id: 11, free: false,
+      title: "Digital Freight Forwarding and Industry Technology",
+      intro: "How technology is reshaping the role — and what stays fundamentally human despite the automation.",
+      content: `
+        <p>The freight forwarding industry has moved substantially toward digital tools over the past several years — automated quoting platforms, real-time tracking, AI-assisted predictive analytics, and IoT-based cargo tracking are increasingly standard rather than cutting-edge.</p>
+        <h3>What digital platforms actually change</h3>
+        <p>Digital freight forwarding platforms streamline quoting, booking, and document generation, and integrate tracking data from multiple carriers into a single dashboard — reducing the manual, repetitive administrative work that used to dominate the role. This doesn't eliminate the need for forwarder expertise; it shifts forwarders' time toward the parts of the job that genuinely require human judgment: complex problem-solving, relationship management, and situations that don't fit a standard template (unusual cargo, disrupted routes, disputed claims).</p>
+        <h3>Digital trade documentation</h3>
+        <p>The industry is also moving toward digitizing the documents themselves — FIATA's guidance on UN Negotiable Cargo Documents (UN NCDs) reflects an ongoing shift toward electronic bills of lading and other digitized trade documents, which historically have been paper-based specifically because of their legal function as negotiable documents of title. This is a genuinely active area of change, not a settled one, and forwarders entering the field now are likely to see continued evolution here throughout their careers.</p>
+        <h3>Security and pre-arrival requirements</h3>
+        <p>Regulatory technology has evolved alongside commercial technology — programs like ICS2 (an EU customs pre-arrival security and safety program) require more advance electronic data submission before cargo even arrives, part of a broader global trend toward earlier, more detailed advance information requirements for security purposes.</p>
+        <h3>What this means for someone entering the field today</h3>
+        <p>Comfort with logistics software isn't optional context anymore — it's a baseline expectation, the same way basic computer literacy became a baseline expectation in most office jobs. But the chapters before this one — Incoterms, documentation, customs, risk management — remain the actual substance of the job. Technology changes how that knowledge gets applied and how efficiently the administrative side runs; it doesn't replace the underlying expertise itself.</p>
+      `,
+      quiz: [
+        {q:"What does digital freight forwarding technology primarily change about the role?", opts:["It eliminates the need for any human forwarder","It reduces manual administrative work and shifts focus toward complex judgment-based tasks","It only affects ocean freight, not air freight","It has had no real impact on the industry"], correct:1, ex:"Digital tools reduce repetitive administrative work, shifting forwarder time toward complex problem-solving and relationship management."},
+        {q:"What are UN NCDs related to?", opts:["A new type of shipping container","Digital trade documentation standards, including electronic bills of lading","A customs tariff classification system","An airline safety certification"], correct:1, ex:"UN Negotiable Cargo Documents (UN NCDs) relate to the industry's move toward digitizing trade documents like bills of lading."},
+        {q:"What is ICS2?", opts:["A type of ocean vessel","An EU customs pre-arrival security and safety program requiring advance electronic data","A freight forwarder certification","A currency exchange system"], correct:1, ex:"ICS2 is a regulatory program requiring more advance electronic data submission before cargo arrives, part of broader security trends."},
+        {q:"According to the chapter, why have bills of lading historically remained paper-based?", opts:["Paper is cheaper than digital systems","Their legal function as negotiable documents of title made digitization technically and legally complex","Digital documents were technically impossible until recently","There was never any reason to digitize them"], correct:1, ex:"The negotiable, document-of-title legal function of bills of lading is specifically why digitizing them has been a slower, more complex process."},
+        {q:"What does the chapter conclude about the relationship between technology and core forwarder knowledge?", opts:["Technology has made all prior knowledge in this course obsolete","Technology changes efficiency and application, but doesn't replace the underlying expertise from earlier chapters","Only technology skills matter now, not Incoterms or documentation knowledge","Technology and forwarding knowledge are entirely unrelated"], correct:1, ex:"The chapter concludes that technology changes how expertise is applied, but the underlying knowledge from earlier chapters remains the actual substance of the job."}
+      ]
+    },
+    {
+      id: 12, free: false,
+      title: "Building Your Career: Certifications and Next Steps",
+      intro: "Turning this course into an actual career move — the concrete paths forward from here.",
+      content: `
+        <p>You've now covered the technical foundation of freight forwarding — transport modes, Incoterms, documentation, customs, costing, risk, and the technology reshaping the field. This final chapter is about what to actually do with that knowledge.</p>
+        <h3>Industry certifications worth knowing about</h3>
+        <ul>
+          <li><strong>Certified International Freight Forwarder (CIFF)</strong> — validates broad freight forwarding knowledge and is recognized across the industry as a credential for career advancement</li>
+          <li><strong>Customs Compliance Specialist (CCS)</strong> — focused specifically on customs regulations and compliance, valuable if you want to specialize in the regulatory side of the role</li>
+          <li><strong>IATA Dangerous Goods Regulations certification</strong> — essential and often required specifically for anyone handling air freight with potential dangerous goods components, covered in Chapter 8</li>
+        </ul>
+        <p>These aren't prerequisites to start working in the field — most people enter through an entry-level operational role first, as covered in Chapter 3 — but they become meaningfully more relevant as you look to advance beyond an entry-level position.</p>
+        <h3>Building practical skills alongside knowledge</h3>
+        <ul>
+          <li><strong>Language skills</strong> — since this is a genuinely international field, additional language ability (especially in major trade languages relevant to your region) is a real, practical differentiator</li>
+          <li><strong>Software familiarity</strong> — CRM and ERP systems, along with logistics-specific TMS platforms, are worth getting hands-on exposure to however you can, even before your first role</li>
+          <li><strong>Real-world exposure</strong> — entry-level roles like documentation clerk or shipping coordinator (mentioned in Chapter 3) are valuable specifically because they expose you to the actual paperwork and processes this course has described conceptually</li>
+        </ul>
+        <h3>What genuinely makes someone job-ready after this course</h3>
+        <p>Not memorizing every Incoterm perfectly from day one — that comes with repetition on the job. What matters is understanding the <em>logic</em> behind the frameworks in this course: why risk transfer points matter, why documentation needs to match across multiple forms, why customs compliance is treated seriously, and why technology supports rather than replaces the underlying expertise. An employer interviewing someone who genuinely understands these connections, even without direct experience yet, is interviewing someone meaningfully more prepared than someone who's only memorized the job title.</p>
+        <p>This field rewards continuous learning — trade regulations, technology, and global trade conditions all shift over time, and the strongest forwarders treat staying current as an ongoing part of the job, not something that ends after initial training.</p>
+      `,
+      quiz: [
+        {q:"Is CIFF certification required to start working as an entry-level freight forwarder?", opts:["Yes, it's mandatory before any employment","No — most people enter through an entry-level role first; certifications become more relevant for advancement","CIFF is only for customs brokers","CIFF is a shipping container brand"], correct:1, ex:"Certifications like CIFF are not prerequisites for entry-level roles — they become more relevant as someone looks to advance."},
+        {q:"What does CCS certification specifically focus on?", opts:["Container stacking techniques","Customs regulations and compliance specifically","Ship navigation","Currency trading"], correct:1, ex:"CCS (Customs Compliance Specialist) certification focuses specifically on customs regulations and compliance."},
+        {q:"Why are entry-level roles like documentation clerk described as valuable beyond just being a paycheck?", opts:["They aren't valuable at all","They expose someone to the actual real-world paperwork and processes described conceptually throughout this course","They guarantee a management position within a year","They require no prior knowledge at all"], correct:1, ex:"Entry-level roles provide hands-on exposure to the real processes and documents covered conceptually in this course."},
+        {q:"According to the final chapter, what genuinely makes someone job-ready, more than memorization?", opts:["Memorizing all 11 Incoterms perfectly on day one","Understanding the underlying logic behind the frameworks — why risk transfer, documentation matching, and compliance matter","Having a university degree specifically in shipping","Owning a shipping company"], correct:1, ex:"Understanding the reasoning behind the course's frameworks is identified as more valuable than perfect memorization from day one."},
+        {q:"What mindset does the course recommend for long-term success in freight forwarding?", opts:["Treating this course as the complete and final education needed","Treating learning as ongoing, since regulations, technology, and trade conditions shift over time","Avoiding any new technology once comfortable with current tools","Focusing exclusively on one transport mode permanently"], correct:1, ex:"The course closes by emphasizing that staying current is an ongoing part of the job, mirroring the same conclusion from the dispatcher course."}
+      ]
+    }
+  ]
+};
+
 let resumeDraft = {
   personalInfo: { fullName:'', title:'', email:'', phone:'', linkedin:'', github:'', portfolio:'', address:'', summary:'' },
   jobCategory: 'general',
@@ -4028,6 +4906,383 @@ function goToResumeBuilderPaymentLink(){
   window.location.href = url;
 }
 
+/* ================= COURSES (generic, multi-course system) ================= */
+// IMPORTANT: replace these placeholders with real Stripe Payment Links once
+// created. Until then these buttons will not charge correctly — see the
+// setup notes handed off alongside this file.
+const courseCatalog = {
+  dispatch: {
+    data: dispatchCourse,
+    badge: "🚛 Course",
+    title: "Truck Dispatcher Training — Canada & USA",
+    lede: "A complete, practical course for anyone who wants to become a truck dispatcher — covering the real day-to-day job, North American regulations, load boards, rate negotiation, and what to genuinely expect from your first role.",
+    icon: "🚛",
+    catalogDesc: "10 chapters, 50 questions. Learn what the job actually looks like, day one.",
+    learn: [
+      "📋 Core daily responsibilities of a real dispatcher",
+      "🌎 How freight moves between Canada and the USA",
+      "🚚 Trailer types and how load boards actually work",
+      "📜 US (FMCSA) and Canadian regulations, side by side",
+      "💰 How freight rates are set and how to negotiate them",
+      "💻 The dispatch software and tools used industry-wide",
+      "🗣️ Handling drivers, customers, and problems calmly",
+      "🧭 Choosing between employment and going independent",
+    ],
+    expect: "This course is built for someone genuinely new to trucking or logistics who wants to understand the dispatcher role well enough to apply for real jobs or start dispatching independently — not just learn the job title, but understand what the work actually feels like day to day.",
+    price: "$49.99",
+    priceNote: "CAD",
+    hours: "8–10 hours",
+    paymentLink: "https://buy.stripe.com/REPLACE_WITH_REAL_DISPATCH_COURSE_LINK",
+    productKey: "dispatch_course",
+  },
+  freight: {
+    data: freightCourse,
+    badge: "🌐 New Course",
+    title: "Freight Forwarding Mastery — International Trade & Logistics",
+    lede: "An intensive, real-world course on international freight forwarding — Incoterms 2020, shipping documentation, customs compliance, ocean and air freight, costing, and cargo risk management.",
+    icon: "🌐",
+    catalogDesc: "12 chapters, 60 questions. Incoterms, documentation, customs — the technical core of the job.",
+    learn: [
+      "🌎 What a freight forwarder actually does, day to day",
+      "🚢 Ocean, air, rail, and road freight — when to use each",
+      "📄 Incoterms 2020 — all 11 rules, explained properly",
+      "📋 Essential shipping documents and why they must match",
+      "🛃 Customs clearance, duties, and compliance basics",
+      "💰 Costing, quoting, and rate negotiation",
+      "🛡️ Cargo insurance, freight claims, and risk management",
+      "💻 Digital freight forwarding and industry technology",
+    ],
+    expect: "This course is built for someone who wants to genuinely understand international freight forwarding — the technical frameworks (Incoterms, documentation, customs) that the job actually runs on, not just a job description. Suggested pricing below — let Claude know if you'd like it adjusted.",
+    price: "$59.99",
+    priceNote: "CAD",
+    hours: "10–12 hours",
+    paymentLink: "https://buy.stripe.com/REPLACE_WITH_REAL_FREIGHT_COURSE_LINK",
+    productKey: "freight_course",
+  },
+};
+
+let currentCourseKey = null;
+let dcQuizState = { dispatch: {}, freight: {} };
+let courseAccess = { dispatch: false, freight: false };
+
+function initCourseCatalog(){
+  const el = document.getElementById('dc-catalog-grid');
+  if(!el) return;
+  el.innerHTML = Object.keys(courseCatalog).map(key => {
+    const c = courseCatalog[key];
+    return `
+      <div class="dc-catalog-card" onclick="openCourseDetail('${key}')">
+        <div class="dc-catalog-icon">${c.icon}</div>
+        <h3>${c.title}</h3>
+        <p>${c.catalogDesc}</p>
+        <div class="dc-catalog-meta">
+          <span class="dc-catalog-price">${c.price} ${c.priceNote}</span>
+          <span class="dc-catalog-link">View course →</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openCourseDetail(courseKey){
+  currentCourseKey = courseKey;
+  const c = courseCatalog[courseKey];
+  showView('coursedetail');
+  window.scrollTo({top:0, behavior:'instant'});
+
+  document.getElementById('dc-detail-badge').textContent = c.badge;
+  document.getElementById('dc-detail-title').textContent = c.title;
+  document.getElementById('dc-detail-lede').textContent = c.lede;
+  document.getElementById('dc-detail-stats').innerHTML = `
+    <div><strong>${c.data.chapters.length}</strong><span>Chapters</span></div>
+    <div><strong>${c.data.chapters.reduce((s,ch)=>s+ch.quiz.length,0)}</strong><span>Practice Questions</span></div>
+    <div><strong>${c.data.chapters.filter(ch=>ch.free).length}</strong><span>Free to Start</span></div>
+  `;
+  document.getElementById('dc-detail-learn').innerHTML = c.learn.map(l => `<div class="dc-learn-item">${l}</div>`).join('');
+  document.getElementById('dc-detail-price').innerHTML = `${c.price} <span>${c.priceNote}</span>`;
+  document.getElementById('dc-detail-included').innerHTML = `
+    <li>✓ All ${c.data.chapters.length} chapters</li>
+    <li>✓ ${c.data.chapters.reduce((s,ch)=>s+ch.quiz.length,0)} practice questions with explanations</li>
+    <li>✓ Real-world, researched course material</li>
+    <li>✓ Lifetime access, study at your own pace</li>
+  `;
+  document.getElementById('dc-detail-expect').textContent = c.expect;
+
+  renderDcChapterList();
+  renderDcEnrollCta();
+  renderDcCertificateSection();
+}
+
+function renderDcChapterList(){
+  const el = document.getElementById('dc-chapter-list');
+  if(!el || !currentCourseKey) return;
+  const c = courseCatalog[currentCourseKey];
+  el.innerHTML = c.data.chapters.map(ch => {
+    const unlocked = ch.free || courseAccess[currentCourseKey];
+    return `
+      <div class="dc-chapter-card ${unlocked ? '' : 'locked'}" onclick="openDcChapter(${ch.id})">
+        <div class="dc-chapter-num">${unlocked ? ch.id : '🔒'}</div>
+        <div class="dc-chapter-info">
+          <h4>${ch.title}</h4>
+          <p>${ch.intro}</p>
+        </div>
+        <div class="dc-chapter-badge ${ch.free ? 'free' : 'locked'}">${ch.free ? 'Free' : 'Premium'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderDcEnrollCta(){
+  const el = document.getElementById('dc-enroll-cta');
+  if(!el || !currentCourseKey) return;
+  const c = courseCatalog[currentCourseKey];
+  if(courseAccess[currentCourseKey]){
+    el.innerHTML = `<div style="color:var(--green); font-weight:800; padding:12px 0;">✓ Enrolled — all chapters unlocked</div>`;
+  } else {
+    const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+    if(!user){
+      el.innerHTML = `<button class="dc-btn-enroll" onclick="safeOpenLogin('login')">Log in to enroll</button>`;
+    } else {
+      el.innerHTML = `<button class="dc-btn-enroll" onclick="goToCoursePaymentLink('${currentCourseKey}')">Enroll now — ${c.price}</button>`;
+    }
+  }
+}
+
+function goToCoursePaymentLink(courseKey){
+  const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+  if(!user){ safeOpenLogin('login'); return; }
+  const c = courseCatalog[courseKey];
+  const url = `${c.paymentLink}?client_reference_id=${encodeURIComponent(user.id)}&prefilled_email=${encodeURIComponent(user.email || '')}`;
+  window.location.href = url;
+}
+
+function openDcChapter(chapterId){
+  const c = courseCatalog[currentCourseKey];
+  const chapter = c.data.chapters.find(ch => ch.id === chapterId);
+  if(!chapter) return;
+  window.dcCurrentChapterId = chapterId;
+  const totalChapters = c.data.chapters.length;
+  const unlocked = chapter.free || courseAccess[currentCourseKey];
+  showView('coursechapter');
+  window.scrollTo({top:0, behavior:'instant'});
+  const el = document.getElementById('dc-chapter-reader');
+
+  if(!unlocked){
+    const user = window.netlifyIdentity && netlifyIdentity.currentUser();
+    el.innerHTML = `
+      <div class="dc-reader">
+        <div class="dc-reader-eyebrow">Chapter ${chapter.id} of ${totalChapters} · Premium</div>
+        <h1>${chapter.title}</h1>
+        <div class="dc-locked-box">
+          <div class="lock-icon">🔒</div>
+          <h3 style="margin:0 0 10px;">This chapter is part of the full course</h3>
+          <p style="color:var(--dc-text-soft); margin-bottom:20px;">Enroll once for ${c.price} ${c.priceNote} to unlock all ${totalChapters} chapters, for life.</p>
+          ${!user
+            ? `<button class="dc-btn-enroll" style="max-width:280px; margin:0 auto;" onclick="safeOpenLogin('login')">Log in to enroll</button>`
+            : `<button class="dc-btn-enroll" style="max-width:280px; margin:0 auto;" onclick="goToCoursePaymentLink('${currentCourseKey}')">Enroll now — ${c.price}</button>`}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  dcQuizState[currentCourseKey][chapterId] = dcQuizState[currentCourseKey][chapterId] || {};
+  el.innerHTML = `
+    <div class="dc-reader">
+      <div class="dc-reader-eyebrow">Chapter ${chapter.id} of ${totalChapters} ${chapter.free ? '· Free' : '· Premium'}</div>
+      <h1>${chapter.title}</h1>
+      <p class="dc-reader-intro">${chapter.intro}</p>
+      <div class="dc-reader-content">${chapter.content}</div>
+      <div class="section-head" style="margin-top:36px;"><h2 style="font-size:18px;">Check your understanding</h2></div>
+      <div id="dc-quiz-${chapter.id}"></div>
+      <div class="dc-reader-nav">
+        <button class="btn btn-ghost" onclick="dcNavChapter(-1)" ${chapter.id===1?'disabled style="opacity:.4;"':''}>← Previous chapter</button>
+        <button class="btn btn-primary" onclick="dcNavChapter(1)" ${chapter.id===totalChapters?'disabled style="opacity:.4;"':''}>Next chapter →</button>
+      </div>
+    </div>
+  `;
+  renderDcQuiz(chapter);
+}
+
+function dcNavChapter(direction){
+  const totalChapters = courseCatalog[currentCourseKey].data.chapters.length;
+  const nextId = window.dcCurrentChapterId + direction;
+  if(nextId < 1 || nextId > totalChapters) return;
+  openDcChapter(nextId);
+}
+
+function renderDcQuiz(chapter){
+  const el = document.getElementById(`dc-quiz-${chapter.id}`);
+  const state = dcQuizState[currentCourseKey][chapter.id];
+  el.innerHTML = chapter.quiz.map((q, qi) => {
+    const answered = state[qi] !== undefined;
+    return `
+      <div class="q-card" style="margin-bottom:16px; border-radius:16px;">
+        <p style="font-weight:600; margin-bottom:12px;">${qi+1}. ${q.q}</p>
+        ${q.opts.map((opt, oi) => `
+          <label style="display:block; margin-bottom:8px; cursor:pointer;">
+            <input type="radio" name="dc-${chapter.id}-${qi}" value="${oi}" ${answered?'disabled':''} ${state[qi]===oi?'checked':''} onchange="dcCheckAnswer(${chapter.id}, ${qi}, ${oi})">
+            ${opt}
+          </label>
+        `).join('')}
+        ${answered ? `<p style="margin-top:8px; font-size:13px; color:${state[qi]===q.correct?'var(--green)':'var(--red)'};"><strong>${state[qi]===q.correct?'Correct.':'Not quite.'}</strong> ${q.ex}</p>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+function dcCheckAnswer(chapterId, qi, selected){
+  dcQuizState[currentCourseKey][chapterId][qi] = selected;
+  const chapter = courseCatalog[currentCourseKey].data.chapters.find(c => c.id === chapterId);
+  renderDcQuiz(chapter);
+  renderDcCertificateSection();
+}
+
+/* ---- Certificate of completion ---- */
+function dcGetCompletionStatus(){
+  const c = courseCatalog[currentCourseKey];
+  const state = dcQuizState[currentCourseKey];
+  const chaptersFinished = c.data.chapters.filter(ch => {
+    const chState = state[ch.id];
+    if(!chState) return false;
+    return ch.quiz.every((q, qi) => chState[qi] !== undefined);
+  }).length;
+  return {
+    chaptersFinished,
+    totalChapters: c.data.chapters.length,
+    isComplete: chaptersFinished === c.data.chapters.length && courseAccess[currentCourseKey]
+  };
+}
+
+function renderDcCertificateSection(){
+  const el = document.getElementById('dc-certificate-section');
+  if(!el || !currentCourseKey) return;
+  const status = dcGetCompletionStatus();
+  if(status.isComplete){
+    el.innerHTML = `
+      <div class="dc-cert-card">
+        <div class="dc-cert-icon">🎓</div>
+        <h3>You've completed the course!</h3>
+        <p>Enter your name exactly as you'd like it to appear, then download your certificate of completion.</p>
+        <input type="text" id="dc-cert-name" class="rb-input" placeholder="Your full name" style="max-width:320px; margin:14px auto;">
+        <br>
+        <button class="dc-btn-enroll" style="max-width:280px;" onclick="dcDownloadCertificate()">Download certificate</button>
+      </div>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="dc-cert-card dc-cert-locked">
+        <div class="dc-cert-icon">🎓</div>
+        <h3>Certificate of completion</h3>
+        <p>Complete all ${status.totalChapters} chapters and their practice questions to unlock your certificate.</p>
+        <div class="dc-cert-progress-bar"><div class="dc-cert-progress-fill" style="width:${(status.chaptersFinished/status.totalChapters)*100}%;"></div></div>
+        <p style="font-size:12.5px; color:var(--dc-text-soft); margin-top:8px;">${status.chaptersFinished} of ${status.totalChapters} chapters completed</p>
+      </div>
+    `;
+  }
+}
+
+function dcDownloadCertificate(){
+  const nameInput = document.getElementById('dc-cert-name');
+  const name = (nameInput?.value || '').trim();
+  if(!name){
+    alert('Please enter your name first.');
+    return;
+  }
+  const c = courseCatalog[currentCourseKey];
+  const totalChapters = c.data.chapters.length;
+  const totalQuestions = c.data.chapters.reduce((s,ch)=>s+ch.quiz.length,0);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1400;
+  canvas.height = 990;
+  const ctx = canvas.getContext('2d');
+
+  const bgGradient = ctx.createLinearGradient(0,0,1400,990);
+  bgGradient.addColorStop(0, '#0B1B33');
+  bgGradient.addColorStop(1, '#16294A');
+  ctx.fillStyle = bgGradient;
+  ctx.fillRect(0,0,1400,990);
+
+  ctx.strokeStyle = '#F59E0B';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(40,40,1320,910);
+  ctx.strokeStyle = 'rgba(245,158,11,.4)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(56,56,1288,878);
+
+  ctx.textAlign = 'center';
+
+  ctx.fillStyle = '#F59E0B';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillText('CERTIFICATE OF COMPLETION', 700, 175);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 38px sans-serif';
+  // Wrap the course title across up to 2 lines if it's long
+  const titleWords = c.title.split(' ');
+  let line1 = '', line2 = '';
+  titleWords.forEach(w => {
+    if((line1 + w).length < 34 && !line2) line1 += w + ' ';
+    else line2 += w + ' ';
+  });
+  ctx.fillText(line1.trim(), 700, 245);
+  if(line2){
+    ctx.font = '600 26px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.75)';
+    ctx.fillText(line2.trim(), 700, 285);
+  }
+
+  ctx.font = '20px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.7)';
+  ctx.fillText('This certifies that', 700, 370);
+
+  ctx.font = 'italic 800 52px serif';
+  ctx.fillStyle = '#F59E0B';
+  ctx.fillText(name, 700, 440);
+
+  ctx.font = '19px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.85)';
+  ctx.fillText(`has successfully completed all ${totalChapters} chapters and ${totalQuestions} practice questions`, 700, 500);
+  ctx.fillText(`of the ${c.title} course on Redleaf Study.`, 700, 528);
+
+  const dateStr = new Date().toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
+  ctx.font = '600 17px sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`Date completed: ${dateStr}`, 700, 595);
+  ctx.fillText(`Estimated study time: ${c.hours}`, 700, 623);
+
+  ctx.strokeStyle = 'rgba(255,255,255,.25)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(140, 695, 1120, 150);
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillStyle = '#F59E0B';
+  ctx.fillText('IMPORTANT DISCLAIMER', 700, 723);
+  ctx.font = '13px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.7)';
+  const disclaimerLines = [
+    'This certificate confirms completion of a self-paced online course on Redleaf Study (redleafstudy.com).',
+    'Redleaf Study is not an accredited educational institution, government body, or licensing authority.',
+    'This is not an official, government-recognized, or professionally accredited certification or license,',
+    'and does not by itself qualify the holder for employment, licensure, or professional standing.',
+  ];
+  disclaimerLines.forEach((line, i) => {
+    ctx.fillText(line, 700, 747 + i*20);
+  });
+
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText('Redleaf Study', 700, 895);
+  ctx.font = '12px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.fillText('redleafstudy.com', 700, 917);
+
+  const link = document.createElement('a');
+  link.download = `${name.replace(/[^a-z0-9]/gi,'-')}-${currentCourseKey}-certificate.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+
 // PDF export uses the browser's own print-to-PDF, scoped to just the
 // resume preview via print CSS — reliable across browsers, no external
 // library or server needed. "Save as PDF" is a standard destination
@@ -4138,6 +5393,8 @@ async function syncEntitlements(){
       hasPhotoToolAccess = true;
       hasResumeBuilderAccess = true;
     }
+    if(products.includes('dispatch_course')) courseAccess.dispatch = true;
+    if(products.includes('freight_course')) courseAccess.freight = true;
     // Re-render whatever's currently on screen so newly-unlocked content shows immediately
     if(document.querySelector('[data-view="home"].active')) renderChapterGrid();
     if(document.querySelector('[data-view="ielts-hub"].active')) renderIeltsTabContent();
@@ -4146,6 +5403,8 @@ async function syncEntitlements(){
     if(document.querySelector('[data-view="tef-hub"].active')) renderTefTabContent();
     if(document.querySelector('[data-view="phototool"].active') && ptState.hasGenerated) renderPhotoUnlockCta();
     if(document.querySelector('[data-view="resumebuilder"].active')) renderRbExportCta();
+    if(document.querySelector('[data-view="coursedetail"].active') && currentCourseKey) openCourseDetail(currentCourseKey);
+    if(document.querySelector('[data-view="coursechapter"].active') && currentCourseKey && window.dcCurrentChapterId) openDcChapter(window.dcCurrentChapterId);
   }catch(e){
     console.error('Could not check entitlements:', e);
   }
@@ -4225,6 +5484,17 @@ function dismissInstallBanner(){
   document.getElementById('install-banner-inline')?.classList.add('hide');
   try{ localStorage.setItem('redleaf_install_banner_dismissed', 'true'); }catch(e){}
 }
+function checkCourseBannerDismissed(){
+  try{
+    if(localStorage.getItem('redleaf_course_banner_dismissed') === 'true'){
+      document.getElementById('dc-promo-banner-inline')?.classList.add('hide');
+    }
+  }catch(e){}
+}
+function dismissCourseBanner(){
+  document.getElementById('dc-promo-banner-inline')?.classList.add('hide');
+  try{ localStorage.setItem('redleaf_course_banner_dismissed', 'true'); }catch(e){}
+}
 function openInstallModal(){
   document.getElementById('install-modal-overlay').classList.add('show');
   if(deferredInstallPrompt){
@@ -4251,6 +5521,7 @@ document.getElementById('install-modal-overlay')?.addEventListener('click', (e)=
   if(e.target.id === 'install-modal-overlay') closeInstallModal();
 });
 checkInstallBannerDismissed();
+checkCourseBannerDismissed();
 
 applyI18n();
 renderQotd();
