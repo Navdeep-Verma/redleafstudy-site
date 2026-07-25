@@ -472,6 +472,16 @@
   .dc-reader-nav{display:flex; justify-content:space-between; margin-top:32px; padding-top:22px; border-top:1.5px solid var(--line);}
   .dc-locked-box{background:#fff; border:1.5px dashed var(--dc-amber); border-radius:20px; padding:40px 30px; text-align:center; margin-top:24px;}
   .dc-locked-box .lock-icon{font-size:34px; margin-bottom:10px;}
+  .dc-page-dots{display:flex; gap:6px; margin:10px 0 20px;}
+  .dc-page-dot{width:8px; height:8px; border-radius:50%; background:#E2E8F0; cursor:pointer; transition:all .15s;}
+  .dc-page-dot.done{background:var(--dc-amber);}
+  .dc-page-dot.active{background:var(--dc-navy); width:22px; border-radius:4px;}
+  .dc-page-title{font-family:"Plus Jakarta Sans",sans-serif; font-size:19px; color:var(--dc-navy); margin:0 0 14px;}
+  .dc-diagram{width:100%; max-width:400px; height:auto; display:block; margin:18px auto; border-radius:12px; box-shadow:0 4px 14px rgba(11,27,51,.08);}
+  .dc-compare-table{width:100%; border-collapse:collapse; margin:16px 0; font-size:13px;}
+  .dc-compare-table th{background:var(--dc-navy); color:#fff; padding:10px 12px; text-align:left; font-size:12px;}
+  .dc-compare-table td{padding:9px 12px; border-bottom:1px solid var(--line); color:#334155;}
+  .dc-compare-table tr:nth-child(even) td{background:#F8F9FC;}
   .dc-promo-banner{position:relative; overflow:hidden; background:linear-gradient(120deg,var(--dc-navy),#1E3A5F); border-radius:24px; padding:26px 30px; margin:18px 0 8px; display:flex; align-items:center; gap:20px; box-shadow:0 16px 40px rgba(11,27,51,.3); border:1px solid rgba(245,158,11,.25);}
   .dc-promo-banner::after{content:''; position:absolute; right:-40px; top:-40px; width:180px; height:180px; background:radial-gradient(circle, rgba(245,158,11,.3), transparent 70%);}
   .dc-promo-close{position:absolute; top:12px; right:14px; background:rgba(255,255,255,.1); border:none; color:rgba(255,255,255,.7); width:26px; height:26px; border-radius:50%; font-size:12px; z-index:2;}
@@ -1061,7 +1071,7 @@
     <div class="dc-sidebar">
       <div class="dc-price-card">
         <div class="dc-price-amount" id="dc-detail-price"></div>
-        <div class="dc-price-note">One-time payment · lifetime access</div>
+        <div class="dc-price-note">One-time payment · lifetime access · unlocks both courses</div>
         <div id="dc-enroll-cta"></div>
         <ul class="dc-included-list" id="dc-detail-included"></ul>
       </div>
@@ -3893,259 +3903,680 @@ const jobCategoryData = {
   }
 };
 
+// Original diagrams, drawn as inline SVG — no external images, no
+// copyright risk, fully custom to this course.
+const dcDiagrams = {
+  hosClock: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="24" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">The 14-Hour On-Duty Window</text>
+    <rect x="30" y="50" width="280" height="34" rx="6" fill="#E5E7F0"/>
+    <rect x="30" y="50" width="220" height="34" rx="6" fill="#F59E0B"/>
+    <text x="140" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#0B1B33">11 hrs driving allowed</text>
+    <rect x="250" y="50" width="60" height="34" rx="6" fill="#CBD5E1"/>
+    <text x="280" y="72" text-anchor="middle" font-size="10" fill="#334155">on-duty, not driving</text>
+    <line x1="30" y1="46" x2="30" y2="90" stroke="#0B1B33" stroke-width="1.5"/>
+    <line x1="310" y1="46" x2="310" y2="90" stroke="#0B1B33" stroke-width="1.5"/>
+    <text x="30" y="102" text-anchor="middle" font-size="10" fill="#0B1B33">on-duty starts</text>
+    <text x="310" y="102" text-anchor="middle" font-size="10" fill="#0B1B33">14 hrs later — window closes</text>
+    <text x="170" y="130" text-anchor="middle" font-size="11" fill="#64748B">No driving allowed after the 14-hour window closes —</text>
+    <text x="170" y="146" text-anchor="middle" font-size="11" fill="#64748B">even if unused driving hours remain.</text>
+    <text x="170" y="172" text-anchor="middle" font-size="11" font-weight="700" fill="#B45309">Requires 10 consecutive hours off-duty before the next window starts.</text>
+  </svg>`,
+
+  trailerTypes: `<svg viewBox="0 0 340 220" class="dc-diagram">
+    <rect width="340" height="220" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Common Trailer Types</text>
+    <g transform="translate(20,36)">
+      <rect x="0" y="0" width="90" height="34" rx="4" fill="#4F46E5"/>
+      <text x="45" y="22" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Dry Van</text>
+      <text x="45" y="48" text-anchor="middle" font-size="9" fill="#64748B">General freight</text>
+    </g>
+    <g transform="translate(125,36)">
+      <rect x="0" y="0" width="90" height="34" rx="4" fill="#10B981"/>
+      <text x="45" y="22" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Reefer</text>
+      <text x="45" y="48" text-anchor="middle" font-size="9" fill="#64748B">Temp-controlled</text>
+    </g>
+    <g transform="translate(230,36)">
+      <rect x="0" y="10" width="90" height="14" rx="2" fill="#F59E0B"/>
+      <text x="45" y="22" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Flatbed</text>
+      <text x="45" y="48" text-anchor="middle" font-size="9" fill="#64748B">Open, oversized</text>
+    </g>
+    <g transform="translate(20,110)">
+      <rect x="0" y="14" width="90" height="20" rx="3" fill="#EF4444"/>
+      <text x="45" y="28" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Step Deck</text>
+      <text x="45" y="52" text-anchor="middle" font-size="9" fill="#64748B">Taller cargo</text>
+    </g>
+    <g transform="translate(125,110)">
+      <ellipse cx="45" cy="24" rx="42" ry="17" fill="#6366F1"/>
+      <text x="45" y="28" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Tanker</text>
+      <text x="45" y="52" text-anchor="middle" font-size="9" fill="#64748B">Liquid/gas</text>
+    </g>
+    <text x="170" y="200" text-anchor="middle" font-size="10" fill="#64748B">Matching the right trailer to the right load is a fundamental dispatch skill.</text>
+  </svg>`,
+
+  bookingFlow: `<svg viewBox="0 0 340 260" class="dc-diagram">
+    <rect width="340" height="260" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">The Load Booking Sequence</text>
+    ${[["1","Search the load board",44],["2","Compare rate to market data",84],["3","Contact broker, negotiate",124],["4","Book the load",164],["5","Send details to driver",204]].map(([n,label,y]) => `
+      <circle cx="34" cy="${y}" r="14" fill="#4F46E5"/>
+      <text x="34" y="${y+4}" text-anchor="middle" font-size="11" fill="#fff" font-weight="800">${n}</text>
+      <text x="58" y="${y+4}" font-size="11" fill="#0B1B33">${label}</text>
+    `).join('')}
+    <line x1="34" y1="58" x2="34" y2="70" stroke="#CBD5E1" stroke-width="2"/>
+    <line x1="34" y1="98" x2="34" y2="110" stroke="#CBD5E1" stroke-width="2"/>
+    <line x1="34" y1="138" x2="34" y2="150" stroke="#CBD5E1" stroke-width="2"/>
+    <line x1="34" y1="178" x2="34" y2="190" stroke="#CBD5E1" stroke-width="2"/>
+    <text x="170" y="240" text-anchor="middle" font-size="10" fill="#64748B">Every load follows this same basic sequence, whether it takes 5 minutes or an hour.</text>
+  </svg>`,
+
+  rateMath: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">True Rate-Per-Mile Comparison</text>
+    <text x="170" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#4F46E5">Load A: $2,200</text>
+    <rect x="30" y="56" width="180" height="16" fill="#4F46E5" rx="3"/>
+    <text x="215" y="68" font-size="10" fill="#64748B">300 loaded mi</text>
+    <rect x="210" y="56" width="90" height="16" fill="#CBD5E1" rx="3"/>
+    <text x="255" y="68" font-size="9" fill="#334155" text-anchor="middle">+150 deadhead</text>
+    <text x="170" y="94" text-anchor="middle" font-size="10" fill="#0B1B33">$2,200 ÷ 450 total mi = <tspan font-weight="800">$4.89/mi</tspan></text>
+    <text x="170" y="126" text-anchor="middle" font-size="11" font-weight="700" fill="#10B981">Load B: $1,900</text>
+    <rect x="30" y="136" width="240" height="16" fill="#10B981" rx="3"/>
+    <text x="275" y="148" font-size="10" fill="#64748B">300 mi</text>
+    <text x="170" y="174" text-anchor="middle" font-size="10" fill="#0B1B33">$1,900 ÷ 300 total mi = <tspan font-weight="800">$6.33/mi</tspan></text>
+    <text x="170" y="194" text-anchor="middle" font-size="10" font-weight="700" fill="#B45309">Load B is actually more profitable, despite the lower rate.</text>
+  </svg>`,
+
+  crossBorderChecklist: `<svg viewBox="0 0 340 240" class="dc-diagram">
+    <rect width="340" height="240" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Cross-Border Document Checklist</text>
+    ${["Commercial invoice","Bill of lading","Customs documentation","Driver ID / passport","Carrier certifications"].map((label,i) => `
+      <rect x="30" y="${40+i*36}" width="18" height="18" rx="4" fill="none" stroke="#4F46E5" stroke-width="2"/>
+      <path d="M33 ${49+i*36} l4 4 l8 -8" stroke="#10B981" stroke-width="2.5" fill="none"/>
+      <text x="58" y="${54+i*36}" font-size="11" fill="#0B1B33">${label}</text>
+    `).join('')}
+    <text x="170" y="228" text-anchor="middle" font-size="10" fill="#64748B">Confirm all five, days before the truck reaches the crossing — not at the border.</text>
+  </svg>`,
+
+  toolStack: `<svg viewBox="0 0 340 220" class="dc-diagram">
+    <rect width="340" height="220" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">The Daily Dispatch Toolkit</text>
+    <rect x="20" y="40" width="145" height="60" rx="8" fill="#4F46E5"/>
+    <text x="92" y="65" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">TMS</text>
+    <text x="92" y="82" text-anchor="middle" font-size="9" fill="#E0E7FF">loads, assignments,</text>
+    <text x="92" y="93" text-anchor="middle" font-size="9" fill="#E0E7FF">invoicing</text>
+    <rect x="175" y="40" width="145" height="60" rx="8" fill="#10B981"/>
+    <text x="247" y="65" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">GPS Tracking</text>
+    <text x="247" y="82" text-anchor="middle" font-size="9" fill="#D1FAE5">real-time truck</text>
+    <text x="247" y="93" text-anchor="middle" font-size="9" fill="#D1FAE5">location</text>
+    <rect x="20" y="112" width="145" height="60" rx="8" fill="#F59E0B"/>
+    <text x="92" y="137" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">ELD Data</text>
+    <text x="92" y="154" text-anchor="middle" font-size="9" fill="#FEF3C7">HOS status,</text>
+    <text x="92" y="165" text-anchor="middle" font-size="9" fill="#FEF3C7">legal hours left</text>
+    <rect x="175" y="112" width="145" height="60" rx="8" fill="#6366F1"/>
+    <text x="247" y="137" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">Load Boards</text>
+    <text x="247" y="154" text-anchor="middle" font-size="9" fill="#E0E7FF">DAT, Truckstop —</text>
+    <text x="247" y="165" text-anchor="middle" font-size="9" fill="#E0E7FF">finding freight</text>
+    <text x="170" y="200" text-anchor="middle" font-size="10" fill="#64748B">Most employers train you on their specific tools — knowing the categories helps you ramp up faster.</text>
+  </svg>`,
+
+  careerPaths: `<svg viewBox="0 0 340 220" class="dc-diagram">
+    <rect width="340" height="220" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Two Paths Forward</text>
+    <rect x="20" y="40" width="140" height="140" rx="10" fill="#EEF2FF" stroke="#4F46E5" stroke-width="1.5"/>
+    <text x="90" y="64" text-anchor="middle" font-size="12" font-weight="800" fill="#4F46E5">Employment</text>
+    <text x="90" y="86" text-anchor="middle" font-size="9" fill="#334155">Structured onboarding</text>
+    <text x="90" y="102" text-anchor="middle" font-size="9" fill="#334155">Fixed salary</text>
+    <text x="90" y="118" text-anchor="middle" font-size="9" fill="#334155">Stable, defined role</text>
+    <text x="90" y="140" text-anchor="middle" font-size="9" fill="#334155">More accessible</text>
+    <text x="90" y="156" text-anchor="middle" font-size="9" fill="#334155">starting point</text>
+    <rect x="180" y="40" width="140" height="140" rx="10" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+    <text x="250" y="64" text-anchor="middle" font-size="12" font-weight="800" fill="#B45309">Independent</text>
+    <text x="250" y="86" text-anchor="middle" font-size="9" fill="#334155">Commission-based</text>
+    <text x="250" y="102" text-anchor="middle" font-size="9" fill="#334155">More autonomy</text>
+    <text x="250" y="118" text-anchor="middle" font-size="9" fill="#334155">Build own client base</text>
+    <text x="250" y="140" text-anchor="middle" font-size="9" fill="#334155">Higher long-term</text>
+    <text x="250" y="156" text-anchor="middle" font-size="9" fill="#334155">income potential</text>
+    <text x="170" y="202" text-anchor="middle" font-size="10" fill="#64748B">Both paths use the same fundamentals — the difference is structure vs. autonomy.</text>
+  </svg>`
+};
+
+
 const dispatchCourse = {
   chapters: [
-    {
-      id: 1, free: true,
-      title: "What a Truck Dispatcher Actually Does",
-      intro: "Start here if you're brand new to the industry — this chapter covers the real, day-to-day version of the job, not just the job title.",
-      content: `
-        <p>"Truck dispatcher" and "freight dispatcher" mean the same thing — the terms are used interchangeably across the industry, and you'll see both on job postings. At its core, a dispatcher is the coordination hub between drivers, the trucks they drive, and the freight that needs to move. If a driver is the one physically moving a shipment, the dispatcher is the one making sure that driver always knows where to go next, has a legal and profitable load to carry, and isn't sitting idle burning time and money.</p>
-        <p>A dispatcher's core responsibilities include:</p>
-        <ul>
-          <li>Managing driver schedules and assigning routes</li>
-          <li>Finding and booking loads for available trucks</li>
-          <li>Tracking shipments from pickup to delivery</li>
-          <li>Monitoring driver hours-of-service to keep assignments legal</li>
-          <li>Resolving problems in real time — delays, breakdowns, missed appointments</li>
-          <li>Maintaining clear, constant communication with drivers, carriers, and customers</li>
-          <li>Keeping accurate records of loads, rates, and driver activity</li>
-        </ul>
-        <p>What makes dispatching different from a lot of office jobs is the pace. A calm morning can turn into three simultaneous problems by 11am — a truck breaks down, a receiver changes their delivery window, and a driver is about to run out of legal driving hours 200 miles from the nearest delivery point. Good dispatchers aren't the ones who never have a bad day — they're the ones who stay organized and communicate clearly when the bad day happens.</p>
-        <p>One thing that surprises people entering this field: dispatching is almost entirely office-based or remote. You don't need a commercial driver's license, and you don't need to have driven a truck yourself, though understanding the driver's side of the job (covered later in this course) makes you a far better dispatcher. Many companies in both Canada and the US now hire dispatchers who work entirely remotely, which is part of why this has become an accessible entry point into the logistics industry.</p>
-      `,
-      quiz: [
-        {q:"What is the main difference between a 'truck dispatcher' and a 'freight dispatcher'?", opts:["They are the same role, just different names","Freight dispatchers only work with international freight","Truck dispatchers require a commercial driver's license","Freight dispatchers work only with rail freight"], correct:0, ex:"The terms are used interchangeably across the industry — same role, same responsibilities, same training."},
-        {q:"Which of these is NOT typically a core dispatcher responsibility?", opts:["Assigning routes to drivers","Physically driving the truck","Monitoring hours-of-service compliance","Resolving delivery delays in real time"], correct:1, ex:"Dispatchers coordinate and support drivers — they don't drive the trucks themselves."},
-        {q:"Why do dispatchers need to track driver hours-of-service?", opts:["To calculate driver pay only","To keep assignments legal and avoid regulatory violations","It's optional unless crossing into another province","Only long-haul drivers have hours-of-service rules"], correct:1, ex:"Assigning a route that would push a driver past their legal hours creates a compliance violation, which is a serious problem for the carrier."},
-        {q:"What does the text suggest makes someone good at dispatching?", opts:["Never having a difficult day","Staying organized and communicating clearly when problems happen","Working faster than everyone else","Avoiding contact with drivers"], correct:1, ex:"The job inherently involves solving unexpected problems — the skill is in handling them calmly and communicating clearly, not avoiding them."},
-        {q:"Is a commercial driver's license required to become a dispatcher?", opts:["Yes, always","No — dispatching is primarily an office-based or remote role","Only in Canada","Only for international freight"], correct:1, ex:"Dispatching doesn't require a CDL — it's an office or remote role, though understanding driving operations helps."}
-      ]
-    },
-    {
-      id: 2, free: true,
-      title: "The Trucking Industry: Canada, USA, and the Border Between Them",
-      intro: "Understanding how freight actually moves across North America — and why the Canada-US border is so central to this industry.",
-      content: `
-        <p>North America moves over 70% of all freight by truck, and the trade relationship between Canada and the United States is enormous — a truck crosses the Canada-US border roughly every 2.5 seconds. Understanding this scale matters, because it explains why dispatching is such a consistently in-demand role: as long as goods need to move between these two countries (and within each of them), someone needs to coordinate that movement.</p>
-        <p>The industry is generally structured around a few key player types:</p>
-        <ul>
-          <li><strong>Carriers</strong> — companies that own trucks and employ or contract drivers to physically move freight</li>
-          <li><strong>Brokers</strong> — companies that connect shippers who need freight moved with carriers who have available trucks, without owning trucks themselves</li>
-          <li><strong>Shippers</strong> — the companies whose goods are actually being transported</li>
-          <li><strong>Owner-operators</strong> — independent drivers who own their own truck and often work with a dispatcher (sometimes an independent contractor themselves) to find loads</li>
-        </ul>
-        <p>A dispatcher's exact role shifts depending on which of these you work for. A dispatcher employed directly by a carrier is usually managing that company's own fleet and drivers. An independent dispatcher, by contrast, often works as a contractor supporting one or more owner-operators, earning a commission (commonly 5-10% per load) rather than a fixed salary — this path has become increasingly common as remote dispatching has grown.</p>
-        <p>Cross-border freight adds another layer entirely. A load moving from Toronto to Chicago, for example, has to clear customs at the border, which means the dispatcher (or a dedicated customs broker working alongside them) needs the right paperwork in order before the truck ever reaches the crossing. We'll cover this in more depth in the regulations chapters later in the course, but it's worth understanding from day one that cross-border loads carry extra complexity — and often pay a premium because of it.</p>
-      `,
-      quiz: [
-        {q:"Roughly how often does a truck cross the Canada-US border?", opts:["Every hour","Every 2.5 seconds","Once a day per crossing point","Only during business hours"], correct:1, ex:"The scale of cross-border trucking traffic is enormous — a crossing roughly every 2.5 seconds reflects just how central trucking is to Canada-US trade."},
-        {q:"What's the key difference between a carrier and a broker?", opts:["Carriers own trucks; brokers connect shippers and carriers without owning trucks","Brokers only work internationally","Carriers only work with owner-operators","There is no meaningful difference"], correct:0, ex:"Carriers physically own/operate trucks and employ drivers; brokers act as a connector between shippers and carriers."},
-        {q:"How do independent dispatchers commonly get paid?", opts:["A fixed annual salary only","Commission, commonly 5-10% per load","Hourly wage set by the government","They are not paid until the owner-operator retires"], correct:1, ex:"Independent dispatchers working with owner-operators typically earn a percentage commission per load, not a fixed salary."},
-        {q:"What extra complexity does cross-border freight add?", opts:["None, it's identical to domestic freight","Customs clearance and additional paperwork requirements","Only the language on the invoice changes","Cross-border loads are illegal without a special license"], correct:1, ex:"Cross-border loads need to clear customs, meaning the right paperwork has to be in place before the truck reaches the border."},
-        {q:"What is an owner-operator?", opts:["A dispatcher who owns the dispatch company","An independent driver who owns their own truck","A government inspector at the border","A type of freight broker"], correct:1, ex:"An owner-operator is an independent driver who owns their own truck, often working with a dispatcher to find loads."}
-      ]
-    },
-    {
-      id: 3, free: true,
-      title: "A Day in the Life: What to Actually Expect",
-      intro: "What the job genuinely feels like hour to hour — set realistic expectations before you go further.",
-      content: `
-        <p>Job postings describe dispatcher duties in tidy bullet points. The real job is less tidy and more reactive. Here's a realistic version of how a day can unfold, so you walk into this career with accurate expectations rather than a sanitized job description.</p>
-        <p><strong>Morning:</strong> Most dispatchers start by checking overnight messages and driver check-ins — where is every truck right now, is anyone behind schedule, did anything happen overnight that needs immediate attention. This is also when you're often searching load boards for upcoming freight to keep trucks moving without gaps.</p>
-        <p><strong>Midday:</strong> This is typically when problems surface — a receiver pushes back a delivery window, a driver reports a mechanical issue, a load that looked confirmed falls through. Midday is heavy on the phone and heavy on quick decision-making: rebooking a load, finding a nearby repair shop, calmly explaining a delay to a customer who is not happy about it.</p>
-        <p><strong>Afternoon/evening:</strong> Confirming tomorrow's assignments, negotiating rates on new loads, updating records, and — depending on the size of the operation — handling invoicing or paperwork for completed deliveries.</p>
-        <p>What this adds up to: the job rewards people who are comfortable being interrupted constantly and who can hold several moving pieces in their head at once without losing track of any of them. It also rewards genuinely good phone and written communication — you're often the calm, clear voice a stressed driver or an unhappy customer needs in the middle of a problem. If that sounds stressful, it can be — but most experienced dispatchers describe it as energizing rather than draining once you build real comfort with the pace.</p>
-        <p>On pay: entry-level dispatcher salaries typically start between $34,000 and $45,000 annually in North America, with experienced dispatchers managing larger fleets earning $55,000 to $75,000, and senior dispatch managers at larger carriers earning $75,000-$97,000 or more. Independent/commission-based dispatchers have a different, more variable income curve — the first 30-90 days are typically spent building carrier relationships rather than generating strong income, since trust and a track record take time to establish.</p>
-      `,
-      quiz: [
-        {q:"According to this chapter, when do problems most typically surface during the day?", opts:["First thing in the morning, before any work starts","Midday — delays, mechanical issues, and load cancellations","Only at the very end of the day","Problems are rare in dispatching"], correct:1, ex:"Midday tends to be the heaviest period for real-time problem solving, as delays and issues from the morning's plans surface."},
-        {q:"What does a realistic day suggest about the skills this job rewards?", opts:["Working alone without interruption","Comfort with constant interruption and multitasking","Avoiding phone calls whenever possible","Working the same routine every single day"], correct:1, ex:"The job's realistic pace rewards people comfortable being interrupted and juggling multiple moving pieces simultaneously."},
-        {q:"What's the approximate entry-level dispatcher salary range mentioned?", opts:["$15,000–$20,000", "$34,000–$45,000", "$150,000–$200,000", "There is no typical range"], correct:1, ex:"Entry-level dispatcher salaries typically start in the $34,000–$45,000 range, based on current labour market data."},
-        {q:"Why might the first 30-90 days be slower for an independent, commission-based dispatcher?", opts:["Independent dispatchers aren't allowed to work during this period","Building carrier trust and relationships takes time before steady income develops","There are legal restrictions on new dispatchers","Independent dispatchers only work part-time"], correct:1, ex:"Commission-based income depends on carrier relationships, and those take time to build — so early income is typically lower and less steady."},
-        {q:"What does the chapter suggest about how experienced dispatchers feel about the pace of the job?", opts:["Most quit within a year due to stress","Many describe it as energizing rather than draining once comfortable with the pace","The job has no real pace to speak of","Experienced dispatchers avoid busy days entirely"], correct:1, ex:"With experience, many dispatchers find the fast pace energizing rather than purely stressful."}
-      ]
-    },
-    {
-      id: 4, free: false,
-      title: "Understanding Freight: Trailer Types and Load Boards",
-      intro: "The practical vocabulary and tools you'll use every single day — trailer types and how loads are actually found.",
-      content: `
-        <p>Before you can dispatch effectively, you need to understand what you're actually moving. Different freight requires different trailer types, and knowing the difference is fundamental to matching the right truck to the right load.</p>
-        <p><strong>Common trailer types:</strong></p>
-        <ul>
-          <li><strong>Dry van</strong> — the standard enclosed trailer, used for general freight that doesn't need temperature control</li>
-          <li><strong>Reefer (refrigerated)</strong> — temperature-controlled, used for food, pharmaceuticals, and other perishables</li>
-          <li><strong>Flatbed</strong> — open trailer with no walls or roof, used for oversized, irregularly shaped, or heavy equipment loads</li>
-          <li><strong>Step deck / drop deck</strong> — a flatbed variant with a lower deck height, used for taller cargo that wouldn't fit under bridges on a standard flatbed</li>
-          <li><strong>Tanker</strong> — used for liquid or gas freight (fuel, chemicals, food-grade liquids)</li>
-        </ul>
-        <p>A dispatcher needs to know which trailer type each truck in their fleet has, since a dry van can't haul a load that needs refrigeration, and a flatbed can't legally or safely carry certain enclosed freight. Mismatching a load to the wrong equipment is one of the most basic — and most costly — errors a new dispatcher can make.</p>
-        <h3>Load boards: how freight is actually found</h3>
-        <p>Load boards are online marketplaces where available freight is posted by shippers and brokers, and dispatchers search them to find loads that match their available trucks. The two most widely used load boards in the North American trucking industry are <strong>DAT</strong> and <strong>Truckstop</strong> — both let you filter by origin, destination, trailer type, weight, and rate, and both show market rate data so you can judge whether a posted rate is fair before booking it.</p>
-        <p>A typical booking sequence looks like: search the load board for freight matching your available truck's location, trailer type, and the driver's remaining legal hours → review the rate and route → contact the broker or shipper to confirm details and negotiate if needed → book the load → send the confirmed details (pickup time, delivery time, rate, reference numbers) to the driver.</p>
-        <p>Load boards aren't the only source of freight — many carriers also work with repeat customers directly, cutting out the need to search a board for every single load. But for new dispatchers, and especially independent dispatchers building a book of business, load boards are typically where you'll spend a meaningful part of your day.</p>
-      `,
-      quiz: [
-        {q:"Which trailer type is used for temperature-sensitive freight like food or pharmaceuticals?", opts:["Dry van","Flatbed","Reefer (refrigerated)","Tanker"], correct:2, ex:"Reefer trailers are temperature-controlled, making them the correct choice for perishable or temperature-sensitive freight."},
-        {q:"Why would a dispatcher use a step deck instead of a standard flatbed?", opts:["Step decks are cheaper to rent","For taller cargo that wouldn't clear bridges on a standard flatbed height","Step decks can carry liquid freight","There is no functional difference"], correct:1, ex:"A step deck's lower deck height allows taller cargo to still clear bridge height restrictions."},
-        {q:"What are DAT and Truckstop?", opts:["Government regulatory agencies","The two most widely used load boards in North America","Types of trailers","Insurance providers for carriers"], correct:1, ex:"DAT and Truckstop are load board platforms where available freight is posted and searched by dispatchers."},
-        {q:"What is one of the most costly basic errors a new dispatcher can make?", opts:["Calling a driver too often","Mismatching a load to the wrong trailer equipment","Using more than one load board","Negotiating a rate at all"], correct:1, ex:"Assigning a load to equipment that can't safely or legally carry it is a fundamental, costly mistake."},
-        {q:"Besides load boards, how else do carriers commonly find freight?", opts:["Freight can only be found through load boards","Through repeat, direct relationships with customers","By waiting for shippers to call randomly","Load boards are the only legal method"], correct:1, ex:"Many carriers build direct, repeat relationships with shippers, reducing reliance on searching load boards for every load."}
-      ]
-    },
-    {
-      id: 5, free: false,
-      title: "US Regulations: FMCSA, Hours of Service, and ELDs",
-      intro: "The rules that govern legal driving in the United States — and why compliance is a dispatcher's responsibility too, not just the driver's.",
-      content: `
-        <p>The Federal Motor Carrier Safety Administration (FMCSA) is the US federal body that regulates commercial trucking, and understanding its core rules is essential for any dispatcher working with US-based freight, since a dispatcher who assigns an illegal route or schedule creates real liability for the carrier — not just the driver.</p>
-        <h3>Hours of Service (HOS)</h3>
-        <p>HOS rules limit how long a driver can drive and work before requiring rest. The core rules (for property-carrying drivers) generally include:</p>
-        <ul>
-          <li>An 11-hour maximum driving limit after 10 consecutive hours off duty</li>
-          <li>A 14-hour on-duty window in which that driving must occur — once the 14-hour window closes, no more driving is allowed even if the driver hasn't used the full 11 hours</li>
-          <li>A 30-minute break required after 8 cumulative hours of driving</li>
-          <li>A 60/70-hour limit over 7/8 consecutive days, depending on the carrier's operating schedule</li>
-        </ul>
-        <p>These specific numbers can change with regulatory updates, so always verify current limits against FMCSA's official published rules rather than treating any number as permanently fixed. What matters for a dispatcher is the underlying principle: every route and schedule you build has to fit within the driver's remaining legal hours, and violating this isn't a minor paperwork issue — it can result in real fines, out-of-service orders, and safety rating damage for the carrier.</p>
-        <h3>Electronic Logging Devices (ELDs)</h3>
-        <p>ELDs automatically record a driver's hours of service, replacing the older paper logbook system. As a dispatcher, you'll typically have visibility into ELD data for your fleet, which means you can — and should — check a driver's remaining available hours before assigning a new load, rather than relying on the driver to catch a problem themselves. This is one of the most direct, practical ways HOS knowledge shows up in daily dispatch work.</p>
-        <h3>Why this matters beyond compliance</h3>
-        <p>Good HOS awareness isn't just about avoiding violations — it directly affects how well you can plan. A dispatcher who tracks hours carefully can proactively line up a driver's next load before their current one even finishes, keeping trucks moving efficiently. A dispatcher who doesn't track hours closely ends up reacting to problems (a driver stuck out of hours mid-route) instead of preventing them.</p>
-      `,
-      quiz: [
-        {q:"What does FMCSA stand for and regulate?", opts:["Federal Motor Carrier Safety Administration — regulates US commercial trucking","Freight Management and Customs Safety Association — a Canadian body","A private trucking industry lobby group","An international shipping insurance body"], correct:0, ex:"FMCSA is the US federal body responsible for regulating commercial motor carrier safety, including Hours of Service rules."},
-        {q:"What is the general purpose of the 14-hour on-duty window rule?", opts:["It limits how much a driver can be paid per day","It caps the total window in which driving can occur, regardless of unused driving hours","It only applies to drivers under 25","It has nothing to do with driving hours"], correct:1, ex:"Once the 14-hour on-duty window closes, no further driving is legally permitted, even if the driver hasn't used their full 11-hour driving allowance."},
-        {q:"What replaced the older paper logbook system for tracking driver hours?", opts:["Verbal check-ins with dispatch","Electronic Logging Devices (ELDs)","There is no tracking system required","Manual spreadsheets only"], correct:1, ex:"ELDs automatically record hours of service, replacing paper logbooks."},
-        {q:"Why should a dispatcher check ELD data before assigning a new load?", opts:["It's not necessary — that's the driver's job alone","To confirm the driver has enough remaining legal hours for the new assignment","ELD data is only used for payroll","To check the driver's personal contact information"], correct:1, ex:"Checking remaining legal hours before assigning a load prevents illegal scheduling and keeps operations compliant."},
-        {q:"According to the chapter, what's a key benefit of proactive HOS tracking for a dispatcher?", opts:["It has no practical benefit beyond legal compliance","It allows lining up a driver's next load before the current one finishes, improving efficiency","It eliminates the need for load boards","It removes the need for driver communication"], correct:1, ex:"Careful HOS tracking allows proactive planning, keeping trucks moving efficiently instead of reacting to last-minute hour shortages."}
-      ]
-    },
-    {
-      id: 6, free: false,
-      title: "Canadian Regulations and Cross-Border Compliance",
-      intro: "How Canadian rules compare to US rules, and what changes when a load needs to cross the border.",
-      content: `
-        <p>Canada has its own hours-of-service and safety compliance framework, generally overseen through provincial transportation ministries working alongside standards set by the Canadian Council of Motor Transport Administrators (CCMTA), with the Commercial Vehicle Safety Alliance (CVSA) — a joint Canada-US-Mexico body — playing a role in coordinated inspection standards across the continent.</p>
-        <p>Canadian hours-of-service rules follow a broadly similar structure to US rules (driving limits, mandatory off-duty periods, cumulative hour limits over a multi-day cycle) but the specific numbers and cycle structures are not identical to FMCSA's rules. A dispatcher working cross-border freight cannot simply apply US hour limits to a Canadian driver, or vice versa — always verify current rules with the appropriate federal or provincial authority (in Canada) or FMCSA (in the US) for the specific jurisdiction a driver is operating in, since applying the wrong country's limits is a genuine compliance risk.</p>
-        <h3>What changes for cross-border loads</h3>
-        <p>A load moving between Canada and the US needs to clear customs at the border, which means the dispatcher (often working alongside a dedicated customs broker) needs specific paperwork in place before the truck arrives at the crossing, generally including:</p>
-        <ul>
-          <li>A commercial invoice describing the freight and its value</li>
-          <li>A bill of lading confirming the shipment details</li>
-          <li>Customs documentation specific to the type of goods being moved (requirements vary meaningfully by commodity)</li>
-          <li>Driver documentation confirming legal authorization to cross (passport or equivalent, and in some cases specific carrier certifications)</li>
-        </ul>
-        <p>Missing or incorrect paperwork is one of the most common causes of a truck being held at the border, which creates costly delays and can cascade into missed delivery windows further down the schedule. Experienced dispatchers handling cross-border freight build a habit of confirming documentation well before a truck is anywhere near the crossing, not as a last-minute check.</p>
-        <h3>A practical note on this chapter</h3>
-        <p>Cross-border compliance details change based on the specific commodity, the carrier's certifications, and current trade agreements — this chapter gives you the conceptual foundation, but real cross-border dispatch work requires staying current with official government sources (CBSA and CBP specifically) rather than relying on any single training course as a permanently fixed reference.</p>
-      `,
-      quiz: [
-        {q:"What is the CVSA?", opts:["A Canadian-only trucking company","A joint Canada-US-Mexico body coordinating commercial vehicle inspection standards","A load board platform","A driver's union"], correct:1, ex:"CVSA (Commercial Vehicle Safety Alliance) coordinates commercial vehicle inspection standards across Canada, the US, and Mexico."},
-        {q:"Can a dispatcher apply US hours-of-service limits directly to a Canadian driver?", opts:["Yes, the rules are identical","No — Canadian and US HOS rules follow a similar structure but are not identical", "Only on weekends","Only for cross-border loads"], correct:1, ex:"While structurally similar, Canadian and US HOS rules have different specific numbers and cycles — they should not be assumed interchangeable."},
-        {q:"What is one of the most common causes of a truck being held at the border?", opts:["The truck's paint color","Missing or incorrect customs paperwork","The driver's height","Having too much fuel in the tank"], correct:1, ex:"Missing or incorrect documentation is a leading cause of border delays for commercial freight."},
-        {q:"According to the chapter, when should documentation be confirmed for a cross-border load?", opts:["After the truck arrives at the border","Well before the truck is anywhere near the crossing","Documentation isn't necessary for experienced drivers","Only if requested by the customer"], correct:1, ex:"Experienced dispatchers confirm documentation early, rather than treating it as a last-minute check at the border."},
-        {q:"What kind of documentation confirms the details of a specific shipment?", opts:["A bill of lading","A driver's personal résumé","A load board subscription receipt","A dispatcher's business card"], correct:0, ex:"A bill of lading is the standard shipment document confirming what's being transported and its details."}
-      ]
-    },
-    {
-      id: 7, free: false,
-      title: "Rate Negotiation and Freight Pricing",
-      intro: "How freight rates actually get set, and the real skill of negotiating a fair rate on both sides of a deal.",
-      content: `
-        <p>Freight rates aren't fixed prices — they shift constantly based on supply and demand: how many trucks are available in a given area versus how much freight needs to move out of it. A lane with lots of available trucks and little freight will have lower rates; a lane with heavy freight demand and few available trucks will command higher rates. Understanding this dynamic is the foundation of effective rate negotiation.</p>
-        <h3>How to evaluate whether a rate is fair</h3>
-        <p>Both major load boards (DAT and Truckstop) provide market rate data showing average rates for a given lane and trailer type, which gives you a genuine benchmark before you negotiate rather than guessing. A posted rate significantly below the market average is worth questioning — it may mean the broker is trying to move a load cheaply, or it may reflect something about the load (difficult delivery location, tight time window) that makes it less desirable.</p>
-        <h3>Negotiation basics</h3>
-        <p>A few practical principles that experienced dispatchers rely on:</p>
-        <ul>
-          <li><strong>Know your costs before you negotiate.</strong> A rate that sounds reasonable can still be unprofitable once fuel, driver pay, and deadhead miles (empty miles driven to reach the pickup point) are factored in.</li>
-          <li><strong>Factor in deadhead miles.</strong> A load that pays well but requires driving 150 empty miles just to reach the pickup point may be less profitable than a lower-paying load that's already near the truck's current location.</li>
-          <li><strong>Be willing to walk away.</strong> Not every load is worth taking, and booking a load at a loss just to keep a truck moving is usually a worse outcome than a short wait for a better one.</li>
-          <li><strong>Build relationships, not just transactions.</strong> Brokers and shippers who trust a dispatcher to deliver reliably are often more willing to negotiate favorably on future loads, since reliability has real value to them too.</li>
-        </ul>
-        <p>For independent dispatchers working on commission, rate negotiation directly affects income — a stronger negotiated rate means a larger commission on the same load, which is part of why this is one of the most practically valuable skills covered in this entire course.</p>
-      `,
-      quiz: [
-        {q:"What primarily determines freight rates on a given lane?", opts:["A fixed government price list","Supply and demand — available trucks versus available freight","The driver's years of experience","The season of the year only"], correct:1, ex:"Freight rates fluctuate based on supply and demand dynamics between available trucks and available freight in a given lane."},
-        {q:"What are 'deadhead miles'?", opts:["Miles driven while carrying freight","Empty miles driven to reach a pickup point","Miles driven only at night","Miles that don't count toward hours-of-service"], correct:1, ex:"Deadhead miles are empty miles driven without freight, typically to reach the next pickup location — they affect true load profitability."},
-        {q:"Why might a load with a lower posted rate sometimes be more profitable than a higher-paying one?", opts:["Lower rates are always more profitable","If the higher-paying load requires significant deadhead miles, true profitability can be lower","Rate has no effect on profitability","Higher rates are illegal in some provinces"], correct:1, ex:"A higher rate can be offset by significant deadhead miles, making a lower-rate, closer load more genuinely profitable."},
-        {q:"What should a dispatcher know before entering a rate negotiation?", opts:["The broker's personal schedule","Their own costs, so they can judge whether a rate is actually profitable","Nothing — negotiation is purely about instinct","The competitor's internal pricing"], correct:1, ex:"Knowing your own costs is essential to judging whether a negotiated rate will actually be profitable."},
-        {q:"Why does building relationships with brokers matter for rate negotiation?", opts:["It has no real effect on rates","Trusted, reliable dispatchers are often offered more favorable rates on future loads","Relationships are irrelevant to professional dispatching","Only large carriers benefit from broker relationships"], correct:1, ex:"Reliability has real value to brokers and shippers, and trusted relationships often translate into better negotiated terms over time."}
-      ]
-    },
-    {
-      id: 8, free: false,
-      title: "Dispatch Software and Daily Tools",
-      intro: "The practical technology stack you'll actually use — from load boards to full transportation management systems.",
-      content: `
-        <p>Beyond load boards (covered earlier), professional dispatchers rely on a broader set of tools to run daily operations efficiently. Understanding this toolkit — even before you've used any specific platform — makes you far more prepared for how the actual job works.</p>
-        <ul>
-          <li><strong>Transportation Management Systems (TMS)</strong> — software that centralizes load information, driver assignments, invoicing, and reporting in one place. Larger carriers and brokerages typically run on a TMS rather than tracking everything manually.</li>
-          <li><strong>GPS tracking</strong> — real-time location tracking for trucks, letting a dispatcher see exactly where every vehicle in their fleet is at any given moment, which is essential for giving customers accurate delivery estimates and catching delays early.</li>
-          <li><strong>ELD data platforms</strong> — as covered in the US regulations chapter, these show driver hours-of-service status directly, often integrated with GPS and TMS platforms into one unified dashboard.</li>
-          <li><strong>Communication tools</strong> — beyond phone calls, many carriers use dedicated driver communication apps or in-cab messaging systems that log communication for recordkeeping purposes.</li>
-        </ul>
-        <h3>Why toolkit familiarity matters even before your first job</h3>
-        <p>Specific software varies by employer — you're unlikely to walk into your first dispatching job already trained on that company's exact TMS platform, and most employers expect to provide platform-specific training. What matters going in is understanding the <em>categories</em> of tools and what each one is for, so that on-the-job training builds on a real foundation instead of starting from zero. A new hire who already understands what a TMS does, why GPS tracking matters, and how ELD data connects to legal compliance will ramp up meaningfully faster than one encountering these concepts for the first time.</p>
-        <p>If you're planning to work independently rather than for an employer, tool selection becomes a direct business decision — many load board platforms offer trial periods, which is a practical way to get hands-on familiarity before committing to a paid subscription.</p>
-      `,
-      quiz: [
-        {q:"What does a Transportation Management System (TMS) primarily do?", opts:["Physically repairs trucks","Centralizes load information, assignments, invoicing, and reporting in one system","Only tracks driver salaries","Replaces the need for any human dispatcher"], correct:1, ex:"A TMS centralizes core dispatch operations — loads, assignments, invoicing, and reporting — into one system."},
-        {q:"Why is GPS tracking valuable to a dispatcher?", opts:["It has no practical use in dispatching","It shows real-time truck location, helping with accurate delivery estimates and early delay detection","It only matters for insurance purposes","GPS tracking is illegal in most provinces"], correct:1, ex:"Real-time location visibility helps dispatchers give accurate delivery estimates and catch potential delays early."},
-        {q:"Should a new dispatcher expect to already know a specific employer's exact software before their first day?", opts:["Yes, it's always required in advance","No — most employers expect to provide platform-specific training", "Only if they attended a certified bootcamp","Software training is never provided by employers"], correct:1, ex:"Employers typically train new hires on their specific platform — understanding the general categories of tools in advance is what's genuinely useful."},
-        {q:"What's a practical way to gain hands-on tool familiarity before committing to a paid platform?", opts:["It's not possible to try tools before paying","Many load board platforms offer trial periods","You must purchase a full year subscription first","Free trials don't exist in this industry"], correct:1, ex:"Trial periods offered by many load board platforms allow hands-on familiarity before a financial commitment."},
-        {q:"What is often integrated together into one unified dashboard in modern dispatch operations?", opts:["Only driver personal social media accounts","ELD data, GPS tracking, and TMS platforms","Weather forecasting only","Nothing is ever integrated — each tool works in isolation"], correct:1, ex:"ELD, GPS, and TMS data are frequently integrated into a single dashboard for more efficient dispatch management."}
-      ]
-    },
-    {
-      id: 9, free: false,
-      title: "Customer Service, Carrier Relations, and Handling Problems",
-      intro: "The human side of the job — because dispatching is ultimately a communication role as much as a logistics one.",
-      content: `
-        <p>Every dispatcher eventually learns that the technical side of the job (routes, rates, regulations) is only half of it. The other half is managing relationships and communication — with drivers who need clear direction and genuine support, with brokers and shippers who need reliable updates, and with customers who are, understandably, unhappy when something goes wrong.</p>
-        <h3>Communicating with drivers</h3>
-        <p>Drivers are on the road, often dealing with real physical fatigue, traffic, weather, and unpredictable delays — the way a dispatcher communicates directly affects a driver's day. Clear, specific instructions ("pickup at Dock 4, ask for Maria, appointment window 2-4pm") prevent confusion that costs everyone time. Equally important: when something goes wrong for a driver — a breakdown, a missed appointment they couldn't control — a dispatcher who responds with problem-solving support rather than blame builds the kind of trust that keeps good drivers working with the same dispatcher long-term.</p>
-        <h3>Handling an upset customer</h3>
-        <p>When a delivery is delayed, the customer's frustration is legitimate — their business is affected too. A few practical principles: communicate proactively rather than waiting to be asked (a customer who hears about a delay before they'd have noticed it themselves reacts very differently than one who has to call and ask why their shipment hasn't arrived); be honest about what you actually know versus what you're still finding out; and always follow up with a concrete next step or updated timeline rather than a vague reassurance.</p>
-        <h3>When something genuinely goes wrong</h3>
-        <p>Breakdowns, accidents, weather closures, and paperwork errors all happen, regularly, in this industry — they are a normal part of the job, not a sign that something has been done wrong. What separates a strong dispatcher from a weak one isn't whether problems happen, but how quickly and calmly they're addressed: has a backup plan been identified, has the customer been informed, has the driver been supported with what they actually need (a tow, a nearby repair shop, updated instructions)? This chapter's core message is simple: technical knowledge gets you through the routine days, but communication skill is what gets you through the hard ones — and the hard days are where reputations, both a dispatcher's and a carrier's, are actually built.</p>
-      `,
-      quiz: [
-        {q:"Why does clear, specific communication with drivers matter?", opts:["It doesn't matter — drivers figure things out on their own","Vague instructions cause confusion that costs time for everyone involved","Drivers prefer minimal communication","Only new drivers need clear instructions"], correct:1, ex:"Clear, specific instructions prevent the kind of confusion that creates delays and wasted time."},
-        {q:"How should a dispatcher generally respond when a driver has a problem outside their control (like a breakdown)?", opts:["With blame, to discourage future issues","With problem-solving support, to build long-term trust","By ignoring the issue until it resolves itself","By reassigning the driver immediately without discussion"], correct:1, ex:"Responding with support rather than blame builds the kind of trust that keeps good drivers working with the same dispatcher."},
-        {q:"What's the recommended approach when communicating a delay to a customer?", opts:["Wait until the customer calls to ask","Communicate proactively, before they'd have noticed the issue themselves","Avoid mentioning the delay entirely","Blame the driver directly to the customer"], correct:1, ex:"Proactive communication is received very differently than a customer having to chase down information themselves."},
-        {q:"According to this chapter, are breakdowns and delays a sign that something was done wrong?", opts:["Yes, they always indicate dispatcher error","No — they are a normal, regular part of the industry","They only happen to inexperienced dispatchers","They are extremely rare in trucking"], correct:1, ex:"Breakdowns, weather issues, and delays are described as a normal, regular part of the industry, not inherently a sign of error."},
-        {q:"What does the chapter identify as the real differentiator between a strong and weak dispatcher during a problem?", opts:["Whether problems happen at all","How quickly and calmly the problem is addressed","How loudly they communicate","Whether they avoid taking any responsibility"], correct:1, ex:"The speed and composure of the response — not the mere occurrence of a problem — is what separates strong dispatchers from weak ones."}
-      ]
-    },
-    {
-      id: 10, free: false,
-      title: "Your Next Step: Employment vs. Starting Independently",
-      intro: "Two real paths forward, and what to genuinely expect from each as you finish this course.",
-      content: `
-        <p>By this point, you understand the core mechanics of the role — daily responsibilities, tools, regulations on both sides of the border, negotiation, and the communication skills the job actually runs on. The final decision ahead of you is which path to pursue: working as an employed dispatcher for a carrier or brokerage, or building an independent dispatching business supporting owner-operators directly.</p>
-        <h3>Path 1: Employment</h3>
-        <p>Working for an established carrier or brokerage means stepping into existing systems, tools, and processes — you'll typically receive structured onboarding, a fixed salary (in the ranges discussed in Chapter 3), and the stability of a defined role within a larger operation. This path is often the more accessible starting point for someone new to the industry, since you're learning inside a system that already has established procedures, rather than building everything from scratch while also trying to earn income.</p>
-        <h3>Path 2: Independent Dispatching</h3>
-        <p>Working independently — typically supporting one or more owner-operators on a commission basis — offers more autonomy and, over time, potentially stronger income, but it comes with real early-stage challenges: you're responsible for finding your own clients (the owner-operators you'll dispatch for), building a legal business structure, and establishing your own reputation from zero. As mentioned in Chapter 3, the first 30-90 days of an independent dispatch business are typically slower, since carrier trust takes time to build. This path suits people who are comfortable with some early income uncertainty in exchange for long-term independence and upside.</p>
-        <h3>What to actually do next</h3>
-        <ul>
-          <li><strong>If pursuing employment:</strong> look specifically for entry-level dispatcher or dispatch coordinator postings — many don't require prior direct experience if you can demonstrate genuine understanding of the fundamentals covered in this course.</li>
-          <li><strong>If pursuing independence:</strong> research the legal business requirements in your specific province or state, look into which load board platform fits your plans, and consider starting by supporting just one or two owner-operators rather than trying to scale immediately.</li>
-          <li><strong>Either way:</strong> the fundamentals in this course — regulations, communication, rate awareness, and tool familiarity — apply regardless of which path you choose. That foundation is what makes you genuinely job-ready, not just familiar with the job title.</li>
-        </ul>
-        <p>This concludes the core course. Dispatching is a career that rewards people who stay current — regulations, technology, and market rates all shift over time, and the best dispatchers treat learning as ongoing rather than something that ends after training.</p>
-      `,
-      quiz: [
-        {q:"What's a key advantage of the employment path over independent dispatching for someone new to the industry?", opts:["Employment pays less in every case","Structured onboarding and existing systems, rather than building everything from scratch","Employment requires a CDL","There is no meaningful difference between the two paths"], correct:1, ex:"Employment offers structured onboarding and established processes, which is often more accessible for someone new to the field."},
-        {q:"What's a genuine early-stage challenge of independent dispatching?", opts:["There are no challenges — independent dispatching is always immediately profitable","Finding your own clients and building trust/reputation from zero","Independent dispatchers are not allowed to use load boards","It requires a college degree"], correct:1, ex:"Independent dispatchers must build their own client base and reputation, which takes real time, especially early on."},
-        {q:"What does the course suggest for someone starting independent dispatching?", opts:["Try to sign as many owner-operators as possible immediately","Consider starting with just one or two owner-operators rather than scaling immediately","Skip understanding load boards entirely","Avoid any legal business registration"], correct:1, ex:"Starting with a small, manageable base of owner-operators is a more realistic approach than immediate large-scale expansion."},
-        {q:"According to the final chapter, what makes someone genuinely 'job-ready' as a dispatcher?", opts:["Only having the job title","Understanding regulations, communication, rate awareness, and tool familiarity — the fundamentals","Owning a truck personally","Having a university degree specifically in logistics"], correct:1, ex:"The course identifies the combination of regulatory knowledge, communication skill, rate awareness, and tool familiarity as what makes someone genuinely prepared, not just titled."},
-        {q:"What mindset does the course recommend for long-term success in dispatching?", opts:["Treat training as complete once this course ends","Treat learning as ongoing, since regulations, technology, and rates shift over time","Avoid learning new software once comfortable with one system","Focus only on one country's regulations permanently"], correct:1, ex:"The course closes by emphasizing that staying current is an ongoing part of the job, not something that ends after initial training."}
-      ]
-    }
+{
+    id: 1, free: true,
+    title: "What a Truck Dispatcher Actually Does",
+    intro: "Start here if you're brand new to the industry — this chapter covers the real, day-to-day version of the job, not just the job title.",
+    pages: [
+      {
+        title: "The Role, Properly Defined",
+        content: `
+          <p>"Truck dispatcher" and "freight dispatcher" mean the same thing — the terms are used interchangeably across the industry, and you'll see both on job postings. At its core, a dispatcher is the coordination hub between drivers, the trucks they drive, and the freight that needs to move. If a driver is the one physically moving a shipment, the dispatcher is the one making sure that driver always knows where to go next, has a legal and profitable load to carry, and isn't sitting idle burning time and money.</p>
+          <p>It helps to think of the role in three overlapping layers. The <strong>logistics layer</strong> is the part most people picture first: finding freight, booking it, planning routes. The <strong>compliance layer</strong> runs underneath everything else — every route and schedule has to fit within legal hours-of-service limits, and a dispatcher who ignores this creates real liability for the carrier. The <strong>relationship layer</strong> is the part new dispatchers most often underestimate: drivers need to trust that their dispatcher has their back, brokers need to trust that loads booked will actually get delivered, and customers need to trust that they'll be told the truth about delays. A dispatcher who's only strong in one of these three layers will struggle — the job genuinely requires all three working together.</p>
+          <p>A dispatcher's core responsibilities include:</p>
+          <ul>
+            <li>Managing driver schedules and assigning routes</li>
+            <li>Finding and booking loads for available trucks</li>
+            <li>Tracking shipments from pickup to delivery</li>
+            <li>Monitoring driver hours-of-service to keep assignments legal</li>
+            <li>Resolving problems in real time — delays, breakdowns, missed appointments</li>
+            <li>Maintaining clear, constant communication with drivers, carriers, and customers</li>
+            <li>Keeping accurate records of loads, rates, and driver activity</li>
+          </ul>
+          <p>What makes dispatching different from a lot of office jobs is the pace. A calm morning can turn into three simultaneous problems by 11am — a truck breaks down, a receiver changes their delivery window, and a driver is about to run out of legal driving hours 200 miles from the nearest delivery point. Good dispatchers aren't the ones who never have a bad day — they're the ones who stay organized and communicate clearly when the bad day happens.</p>
+        `
+      },
+      {
+        title: "Three Flavours of the Same Job",
+        content: `
+          <p>Not every dispatching job looks identical, and it helps to understand the differences before you start applying, since the day-to-day texture — and the skills each rewards most — genuinely differs between them.</p>
+          <p><strong>Fleet dispatcher (carrier-employed).</strong> You work directly for a trucking company, managing some or all of that company's own trucks and drivers. You're usually part of a small dispatch team, each person often responsible for a set number of trucks (commonly somewhere between 10 and 30, depending on the company's size and how much automation they use). The relationship with your drivers is ongoing and stable — you get to know their preferences, their strengths, which ones need more support and which ones you can hand a difficult load to without worry. Success here is measured largely by how efficiently your slice of the fleet runs: minimal empty miles, minimal idle time, on-time deliveries, compliant hours.</p>
+          <p><strong>Brokerage dispatcher.</strong> You work for a freight brokerage, which doesn't own trucks itself but instead connects shippers who need freight moved with carriers who have capacity. Here the "dispatching" work blends with sales and relationship-building, since you're constantly working with different, often unfamiliar carriers rather than a fixed fleet you already know. This role rewards people who are comfortable cold-calling, quickly assessing whether an unfamiliar carrier is trustworthy, and negotiating rates from the buyer's side of the table rather than the seller's side.</p>
+          <p><strong>Independent dispatcher.</strong> You work as a contractor supporting one or more owner-operators directly, usually earning a commission (commonly 5-10% per load) rather than a fixed salary. This path offers the most autonomy but also the most responsibility — you're not just dispatching, you're running a small business. Finding your own clients, managing your own cash flow through the slower early months, and building a reputation from zero are all part of the job, not separate from it. We'll return to this path in much more depth in the final chapter of this course.</p>
+          <table class="dc-compare-table">
+            <tr><th></th><th>Fleet</th><th>Brokerage</th><th>Independent</th></tr>
+            <tr><td>Pay structure</td><td>Fixed salary</td><td>Fixed salary + bonus</td><td>Commission</td></tr>
+            <tr><td>Stability</td><td>High</td><td>High</td><td>Variable, especially early</td></tr>
+            <tr><td>Autonomy</td><td>Low-moderate</td><td>Moderate</td><td>High</td></tr>
+            <tr><td>Best for</td><td>Structure, learning the ropes</td><td>Sales-minded people</td><td>Entrepreneurial people</td></tr>
+          </table>
+        `
+      },
+      {
+        title: "A Full Incident, Start to Finish",
+        content: `
+          <p>To make the role concrete rather than abstract, here's how a single, ordinary problem actually plays out in real time — the kind of thing that happens on an entirely normal Tuesday.</p>
+          <p>A driver named Marcus is hauling a load from Calgary to Winnipeg. Partway through, he calls in: his trailer has a flat tire, and he's on the shoulder of the highway. A dispatcher handling this well works through several things almost simultaneously:</p>
+          <ul>
+            <li><strong>Safety first, always.</strong> Confirm Marcus is safe and properly off the roadway before anything else — no logistics decision matters more than this in the first thirty seconds of the call.</li>
+            <li><strong>Get help moving.</strong> Pull up a roadside assistance or tire service provider near his current location. Experienced dispatchers keep a mental (or literal) list of trusted repair contacts along their common routes, so this step takes seconds, not ten minutes of searching.</li>
+            <li><strong>Check the legal clock.</strong> How much of Marcus's legal driving time remains? The delay eats into his hours-of-service window regardless of whose fault it is — a flat tire doesn't pause the clock.</li>
+            <li><strong>Communicate honestly, early.</strong> Notify the customer that the delivery will likely be late, with a realistic new estimate rather than false reassurance. A customer told at 10am that a delivery might slip to 4pm reacts very differently than one who calls at 2pm asking where their truck is.</li>
+            <li><strong>Document it.</strong> Record the incident — what happened, when, how it was resolved — for the carrier's records. This matters both for accountability and for spotting patterns (is this the third flat this month on this trailer? That's a maintenance conversation, not a coincidence).</li>
+          </ul>
+          <p>None of this is complicated individually — the skill is doing all five at once, calmly, while Marcus is stressed and the clock on his legal hours keeps running regardless of how the conversation goes. New dispatchers often try to solve these one at a time, in sequence, which works but is slower; experienced dispatchers hold all five threads simultaneously, which is exactly the kind of multitasking this course keeps returning to as the core skill of the job.</p>
+        `
+      },
+      {
+        title: "Is This Career Actually For You?",
+        content: `
+          <p>Before going further, it's worth being honest about who tends to thrive in this role, and a few common myths worth clearing up early.</p>
+          <p><strong>You'll likely enjoy this work if:</strong> you get a genuine sense of satisfaction from solving a messy, time-pressured problem rather than feeling drained by it; you're comfortable being interrupted mid-task without losing your place; you communicate clearly under pressure rather than freezing or over-explaining; and you don't need every day to look the same.</p>
+          <p><strong>You might struggle with this work if:</strong> you strongly prefer working through one task fully before starting another; unexpected phone calls genuinely derail your focus for the rest of the day; or you find it hard to stay calm when someone on the other end of the phone is frustrated, even when the frustration isn't really about you.</p>
+          <p><strong>Myth: "You need a trucking background to do this well."</strong> Not true. Dispatching is almost entirely office-based or remote, and you don't need a commercial driver's license or prior driving experience. That said, understanding the driver's side of the job — covered throughout this course — genuinely makes you a far better dispatcher. It's worth deliberately watching a few real driver vlogs or ride-along videos before you start, just to build an accurate mental picture of what your drivers are actually experiencing when they call in with a problem.</p>
+          <p><strong>Myth: "It's just answering phone calls."</strong> The phone is one tool among several — load boards, TMS software, GPS tracking, rate negotiation, and paperwork all matter just as much, and we'll cover each in depth later in this course.</p>
+          <p><strong>Myth: "It's a dead-end job."</strong> Many companies in both Canada and the US now hire dispatchers who work entirely remotely, which is part of why this has become an accessible entry point into the logistics industry — including for people newly arrived in Canada building their first North American work experience. And as covered in the career chapter at the end of this course, dispatching experience opens doors into brokerage, operations management, and independent business ownership over time.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What is the main difference between a 'truck dispatcher' and a 'freight dispatcher'?", opts:["They are the same role, just different names","Freight dispatchers only work with international freight","Truck dispatchers require a commercial driver's license","Freight dispatchers work only with rail freight"], correct:0, ex:"The terms are used interchangeably across the industry — same role, same responsibilities, same training."},
+      {q:"Which of these is NOT typically a core dispatcher responsibility?", opts:["Assigning routes to drivers","Physically driving the truck","Monitoring hours-of-service compliance","Resolving delivery delays in real time"], correct:1, ex:"Dispatchers coordinate and support drivers — they don't drive the trucks themselves."},
+      {q:"What's a key difference between a fleet dispatcher and an independent dispatcher?", opts:["There is no real difference","A fleet dispatcher manages a company's own trucks; an independent dispatcher typically works on commission supporting owner-operators","Fleet dispatchers require a CDL and independent dispatchers don't","Independent dispatchers are illegal in Canada"], correct:1, ex:"Fleet dispatchers work directly for a carrier managing its own trucks, while independent dispatchers typically work as commission-based contractors for owner-operators."},
+      {q:"In the flat tire example, why does the dispatcher need to check the driver's remaining hours-of-service?", opts:["It's irrelevant to a tire problem","The delay eats into the driver's legal driving window, which affects what's still possible that day","Only for international shipments","Hours-of-service only matters at the end of the week"], correct:1, ex:"Any delay reduces the driver's remaining legal driving time for that shift, which directly affects the rest of the day's plan."},
+      {q:"Is a commercial driver's license required to become a dispatcher?", opts:["Yes, always","No — dispatching is primarily an office-based or remote role","Only in Canada","Only for international freight"], correct:1, ex:"Dispatching doesn't require a CDL — it's an office or remote role, though understanding driving operations helps."}
+    ]
+  },
+  {
+    id: 2, free: true,
+    title: "The Trucking Industry: Canada, USA, and the Border Between Them",
+    intro: "Understanding how freight actually moves across North America — and why the Canada-US border is so central to this industry.",
+    pages: [
+      {
+        title: "The Scale of the Industry",
+        content: `
+          <p>North America moves over 70% of all freight by truck, and the trade relationship between Canada and the United States is enormous — a truck crosses the Canada-US border roughly every 2.5 seconds. Understanding this scale matters, because it explains why dispatching is such a consistently in-demand role: as long as goods need to move between these two countries (and within each of them), someone needs to coordinate that movement.</p>
+          <p>It's worth sitting with what this actually means in practice. Nearly everything in a typical household — food, clothing, electronics, furniture, building materials — spent at least part of its journey on a truck, coordinated by a dispatcher somewhere along the way. Retail shelves are restocked by trucks running on tight, dispatcher-planned schedules. Construction sites depend on materials arriving exactly when needed, not too early (nowhere to store it) and not too late (the crew sits idle). This isn't a background detail — it's the reason the industry consistently needs new dispatchers: the volume of coordination required simply doesn't shrink.</p>
+        `
+      },
+      {
+        title: "The Key Players, In Depth",
+        content: `
+          <ul>
+            <li><strong>Carriers</strong> — companies that own trucks and employ or contract drivers to physically move freight. Carriers range enormously in size, from a single owner-operator with one truck, to mid-size regional fleets running dozens of trucks, to massive national carriers running thousands. The size of the carrier changes what dispatching looks like: a small carrier's dispatcher might personally know every driver by name and handle every load manually, while a large carrier's dispatch operation runs through sophisticated software with dispatchers each responsible for a defined slice of the fleet.</li>
+            <li><strong>Brokers</strong> — companies that connect shippers who need freight moved with carriers who have available trucks, without owning trucks themselves. Brokers make money on the spread between what they charge the shipper and what they pay the carrier, which is why rate negotiation (covered in depth in Chapter 7) matters so much to their business model.</li>
+            <li><strong>Shippers</strong> — the companies whose goods are actually being transported. A shipper might be a manufacturer, a retailer, a distributor, or any business that needs its product physically moved from one place to another.</li>
+            <li><strong>Owner-operators</strong> — independent drivers who own their own truck and often work with a dispatcher (sometimes an independent contractor themselves) to find loads. Owner-operators take on more financial risk and responsibility (truck payments, maintenance, insurance) but also keep more of each load's revenue than a company driver would.</li>
+          </ul>
+          <p>A dispatcher's exact role shifts depending on which of these you work for. A dispatcher employed directly by a carrier is usually managing that company's own fleet and drivers — the relationship is stable and internal, and success is measured by how efficiently the existing fleet runs. An independent dispatcher, by contrast, often works as a contractor supporting one or more owner-operators, earning a commission (commonly 5-10% per load) rather than a fixed salary — this path has become increasingly common as remote dispatching has grown, and it puts a much bigger premium on your own rate-negotiation and relationship-building skill, since your income is directly tied to how well you perform for your client, not a fixed paycheque.</p>
+        `
+      },
+      {
+        title: "Cross-Border Freight, In Practical Detail",
+        content: `
+          <p>Cross-border freight adds another layer entirely. A load moving from Toronto to Chicago, for example, has to clear customs at the border, which means the dispatcher (or a dedicated customs broker working alongside them) needs the right paperwork in order before the truck ever reaches the crossing.</p>
+          <p>This isn't a minor detail — a truck arriving at the border without correct paperwork can be held for hours or even sent back, which is a genuinely expensive mistake for everyone involved: the carrier loses the truck's productive time, the driver may run into hours-of-service problems while sitting and waiting, and the customer's delivery slips. We'll cover the specific documentation requirements in much more depth in the regulations chapters later in this course, but it's worth understanding from day one that cross-border loads carry extra complexity — and often pay a premium because of it, since not every carrier or dispatcher is comfortable or equipped to handle the additional paperwork correctly.</p>
+          ${dcDiagrams.crossBorderChecklist}
+        `
+      },
+      {
+        title: "Seasonal and Regional Patterns",
+        content: `
+          <p>Freight demand isn't constant throughout the year. Certain sectors create predictable surges in specific lanes and times of year:</p>
+          <ul>
+            <li><strong>Retail goods</strong> surge ahead of the winter holiday season, typically starting in September and peaking through November as retailers stock up.</li>
+            <li><strong>Agricultural harvest freight</strong> spikes in late summer and fall, particularly in Prairie and Midwest grain-growing regions.</li>
+            <li><strong>Construction materials</strong> pick up in warmer months when building activity is highest.</li>
+          </ul>
+          <p>An experienced dispatcher learns these patterns over time — knowing that rates on a specific lane tend to spike every November, for example, is the kind of practical knowledge that only comes from paying attention to the market, not something you can fully learn from a textbook. Part of what this course can do is tell you these patterns exist and why; recognizing them in real time on the job is something you'll build with genuine experience, month by month, season by season.</p>
+          <p>Regional patterns matter too. A dispatcher working lanes into and out of Alberta will see different rhythms than one working the Toronto-Montreal corridor, simply because the underlying industries driving freight demand differ by region. Paying attention to which industries dominate a given region — energy in Alberta, manufacturing in southern Ontario, agriculture on the Prairies — gives you an intuitive sense of when freight in that region will be tight (favoring higher rates) versus loose (favoring lower rates), well before you'd otherwise notice it just from watching load board numbers day to day.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"Roughly how often does a truck cross the Canada-US border?", opts:["Every hour","Every 2.5 seconds","Once a day per crossing point","Only during business hours"], correct:1, ex:"The scale of cross-border trucking traffic is enormous — a crossing roughly every 2.5 seconds reflects just how central trucking is to Canada-US trade."},
+      {q:"What's the key difference between a carrier and a broker?", opts:["Carriers own trucks; brokers connect shippers and carriers without owning trucks","Brokers only work internationally","Carriers only work with owner-operators","There is no meaningful difference"], correct:0, ex:"Carriers physically own/operate trucks and employ drivers; brokers act as a connector between shippers and carriers."},
+      {q:"How does a broker typically make money?", opts:["Government subsidies","On the spread between what they charge the shipper and what they pay the carrier","Brokers don't charge for their services","Only through owning trucks"], correct:1, ex:"Brokers profit from the difference between the rate charged to the shipper and the rate paid to the carrier moving the freight."},
+      {q:"What extra complexity does cross-border freight add?", opts:["None, it's identical to domestic freight","Customs clearance and additional paperwork requirements","Only the language on the invoice changes","Cross-border loads are illegal without a special license"], correct:1, ex:"Cross-border loads need to clear customs, meaning the right paperwork has to be in place before the truck reaches the border."},
+      {q:"Why does the chapter mention seasonal freight patterns?", opts:["They have no practical relevance to dispatching","Recognizing predictable seasonal demand surges is practical knowledge that develops with experience","Seasonal patterns only affect ocean freight","Freight demand is always perfectly constant year-round"], correct:1, ex:"Seasonal and regional demand patterns are real, practical knowledge that experienced dispatchers learn to recognize over time."}
+    ]
+  },
+{
+    id: 3, free: true,
+    title: "A Day in the Life: What to Actually Expect",
+    intro: "What the job genuinely feels like hour to hour — set realistic expectations before you go further.",
+    pages: [
+      {
+        title: "An Hour-by-Hour Walkthrough",
+        content: `
+          <p>Job postings describe dispatcher duties in tidy bullet points. The real job is less tidy and more reactive. Here's a realistic, hour-by-hour version of how a day can unfold, so you walk into this career with accurate expectations rather than a sanitized job description.</p>
+          <p><strong>7:00–8:30am:</strong> Most dispatchers start by checking overnight messages and driver check-ins — where is every truck right now, is anyone behind schedule, did anything happen overnight that needs immediate attention. If you're managing drivers across multiple time zones, this first hour often involves catching up on messages that came in while you were asleep.</p>
+          <p><strong>8:30–10:30am:</strong> This is typically when you're searching load boards for upcoming freight to keep trucks moving without gaps, confirming tomorrow's pickups are still on track, and handling any paperwork from yesterday's completed deliveries.</p>
+          <p><strong>10:30am–1:00pm:</strong> Midday is typically when problems surface — a receiver pushes back a delivery window, a driver reports a mechanical issue, a load that looked confirmed falls through. This stretch is heavy on the phone and heavy on quick decision-making: rebooking a load, finding a nearby repair shop, calmly explaining a delay to a customer who is not happy about it.</p>
+          <p><strong>1:00–3:00pm:</strong> Often a slightly calmer stretch — following up on rate negotiations for upcoming loads, checking in proactively with drivers who are mid-route (rather than waiting for them to call you), and catching up on anything that got pushed aside during the morning's chaos.</p>
+          <p><strong>3:00–5:30pm:</strong> Confirming tomorrow's assignments, negotiating rates on new loads, updating records, and — depending on the size of the operation — handling invoicing or paperwork for completed deliveries. This is also often when you're planning ahead for the next day, trying to line up loads before you leave so drivers aren't waiting on you first thing in the morning.</p>
+        `
+      },
+      {
+        title: "A Realistic First-Week Narrative",
+        content: `
+          <p>If you're starting a new dispatching job, here's roughly what to expect, week by week, so the ramp-up feels manageable rather than overwhelming.</p>
+          <p><strong>Days 1-2:</strong> Usually shadowing an experienced dispatcher or working through structured onboarding on the company's specific software and processes. You'll listen to real calls, watch real load bookings happen, and start building a mental map of how this particular operation works — every company's exact workflow differs slightly, even though the underlying principles in this course apply everywhere.</p>
+          <p><strong>Days 3-5:</strong> Typically handling simple, low-risk tasks under supervision — confirming a pickup time, updating a tracking record, making a routine check-in call. Mistakes here are expected and low-stakes; this is exactly the period where asking questions constantly is not just acceptable but the right move.</p>
+          <p><strong>Weeks 2-3:</strong> Usually managing a smaller slice of the workload independently, with a more experienced dispatcher available to help when something unusual comes up. You'll start recognizing your assigned drivers' voices on the phone and their typical patterns.</p>
+          <p><strong>Months 2-3:</strong> Full independent confidence — genuinely knowing your regular drivers, your typical lanes, and how to handle the inevitable curveballs calmly — usually develops around here, not in the first week. That's completely normal. Nobody expects a new dispatcher to have the calm-under-pressure instincts covered in Chapter 9 on day one; those come from repetition, not from reading about them.</p>
+        `
+      },
+      {
+        title: "What the Pace Rewards",
+        content: `
+          <p>What this adds up to: the job rewards people who are comfortable being interrupted constantly and who can hold several moving pieces in their head at once without losing track of any of them. It also rewards genuinely good phone and written communication — you're often the calm, clear voice a stressed driver or an unhappy customer needs in the middle of a problem.</p>
+          <p>If that sounds stressful, it can be — but most experienced dispatchers describe it as energizing rather than draining once you build real comfort with the pace. There's a specific feeling worth naming here: the first few weeks, a ringing phone during an already-busy moment can feel like one more thing piling on. With experience, that same ringing phone starts to feel like just another normal part of the rhythm — not because the problems get smaller, but because your capacity to hold multiple things at once genuinely grows with practice, the same way any skill does.</p>
+          <p>One practical habit worth building early: keep a simple running list — digital or paper, whatever works for you — of open items throughout the day. Even experienced dispatchers rely on some form of this, because the job's pace means it's genuinely easy to lose track of a small follow-up promise ("I'll call you back by 3pm") in the middle of handling three other things. A dispatcher who reliably follows through on small promises builds trust faster than one who's technically skilled but forgets to close loops.</p>
+        `
+      },
+      {
+        title: "Pay, In More Detail",
+        content: `
+          <p>Entry-level dispatcher salaries typically start between $34,000 and $45,000 annually in North America, with experienced dispatchers managing larger fleets earning $55,000 to $75,000, and senior dispatch managers at larger carriers earning $75,000-$97,000 or more.</p>
+          <p>These figures shift with your specific region, the size of the carrier you work for, and how much of the fleet you're personally responsible for — a dispatcher managing 10 trucks and one managing 30 trucks at the same company often have meaningfully different pay, even with the same job title. Cost of living in your specific city or region matters too — the same salary stretches differently in different parts of Canada or the US.</p>
+          <p>Independent/commission-based dispatchers have a different, more variable income curve — the first 30-90 days are typically spent building carrier relationships rather than generating strong income, since trust and a track record take time to establish. But established independent dispatchers with a strong roster of owner-operator clients can, over time, out-earn a comparable salaried position, precisely because commission income scales with how much freight you help move rather than being capped by a fixed paycheque. A dispatcher independently supporting 4-5 owner-operators, each running consistent freight, can genuinely see income exceed a typical senior fleet dispatcher's salary — but this takes real time to build, typically a year or more of steady relationship-building, not a fast track.</p>
+          <p>It's worth entering this field with realistic expectations either way: dispatching offers solid, stable, accessible income on the employment path, and real upside — alongside real early uncertainty — on the independent path. Neither path is inherently "better"; they suit different risk tolerances and life circumstances.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"According to this chapter, when do problems most typically surface during the day?", opts:["First thing in the morning, before any work starts","Midday — delays, mechanical issues, and load cancellations","Only at the very end of the day","Problems are rare in dispatching"], correct:1, ex:"Midday tends to be the heaviest period for real-time problem solving, as delays and issues from the morning's plans surface."},
+      {q:"According to the realistic first-week narrative, when does full independent confidence typically develop?", opts:["On day one","Around months 2-3, not in the first week","Exactly one year, no exceptions","It's expected on day one"], correct:1, ex:"Genuinely comfortable, independent confidence typically develops over the first couple months of real experience, not immediately."},
+      {q:"What does a realistic day suggest about the skills this job rewards?", opts:["Working alone without interruption","Comfort with constant interruption and multitasking","Avoiding phone calls whenever possible","Working the same routine every single day"], correct:1, ex:"The job's realistic pace rewards people comfortable being interrupted and juggling multiple moving pieces simultaneously."},
+      {q:"Why does the chapter recommend keeping a running list of open items throughout the day?", opts:["It's unnecessary busywork","It's easy to lose track of small follow-up promises amid the job's pace, and reliability builds trust","Only new dispatchers need to do this","Lists are required by law"], correct:1, ex:"Keeping track of open commitments helps ensure follow-through, which builds trust with drivers and customers over time."},
+      {q:"Why can an established independent, commission-based dispatcher potentially out-earn a comparable salaried position over time?", opts:["Independent dispatchers are paid a fixed government stipend","Commission income scales with freight volume moved, rather than being capped by a fixed salary","Independent dispatchers work fewer hours for the same pay","This is not actually possible"], correct:1, ex:"Because commission-based income depends on performance and volume, it isn't capped the way a fixed salary is, allowing potentially higher long-term earning."}
+    ]
+  },
+  {
+    id: 4, free: false,
+    title: "Understanding Freight: Trailer Types and Load Boards",
+    intro: "The practical vocabulary and tools you'll use every single day — trailer types and how loads are actually found.",
+    pages: [
+      {
+        title: "Trailer Types, In Practical Detail",
+        content: `
+          <p>Before you can dispatch effectively, you need to understand what you're actually moving. Different freight requires different trailer types, and knowing the difference is fundamental to matching the right truck to the right load.</p>
+          ${dcDiagrams.trailerTypes}
+          <ul>
+            <li><strong>Dry van</strong> — the standard enclosed trailer, typically around 53 feet long, used for general freight that doesn't need temperature control: packaged goods, retail merchandise, non-perishable food, general manufactured products. This is the most common trailer type and the one most new dispatchers will work with most often.</li>
+            <li><strong>Reefer (refrigerated)</strong> — temperature-controlled, used for food, pharmaceuticals, and other perishables. Reefer freight adds a layer of complexity dry van doesn't have: the trailer's temperature needs to be set correctly for the specific cargo and monitored throughout transit, since a temperature excursion can ruin an entire load of perishable goods, turning a shipping problem into a total loss.</li>
+            <li><strong>Flatbed</strong> — open trailer with no walls or roof, used for oversized, irregularly shaped, or heavy equipment loads: construction materials, machinery, steel, lumber. Flatbed freight typically requires securing cargo with straps or chains and sometimes tarping to protect it from weather, which is additional work drivers need to be equipped and trained for.</li>
+            <li><strong>Step deck / drop deck</strong> — a flatbed variant with a lower deck height, used for taller cargo that wouldn't fit under bridges on a standard flatbed.</li>
+            <li><strong>Tanker</strong> — used for liquid or gas freight (fuel, chemicals, food-grade liquids). Tanker freight often has its own specialized regulatory requirements beyond general trucking rules, since many tanker loads qualify as hazardous materials.</li>
+          </ul>
+          <p>A dispatcher needs to know which trailer type each truck in their fleet has, since a dry van can't haul a load that needs refrigeration, and a flatbed can't legally or safely carry certain enclosed freight. Mismatching a load to the wrong equipment is one of the most basic — and most costly — errors a new dispatcher can make.</p>
+        `
+      },
+      {
+        title: "Load Boards: The Booking Sequence",
+        content: `
+          <p>Load boards are online marketplaces where available freight is posted by shippers and brokers, and dispatchers search them to find loads that match their available trucks. The two most widely used load boards in the North American trucking industry are <strong>DAT</strong> and <strong>Truckstop</strong> — both let you filter by origin, destination, trailer type, weight, and rate, and both show market rate data so you can judge whether a posted rate is fair before booking it.</p>
+          ${dcDiagrams.bookingFlow}
+          <p>A typical booking sequence, in more detail:</p>
+          <ol>
+            <li><strong>Search</strong> the load board for freight matching your available truck's location, trailer type, and the driver's remaining legal hours.</li>
+            <li><strong>Filter and compare</strong> multiple posted loads against each other — not just on rate, but on how well the destination sets up your driver's next load (a load heading somewhere with plenty of outbound freight is often more valuable than a slightly higher-paying load heading somewhere remote with little freight moving back out).</li>
+            <li><strong>Review the rate</strong> against the load board's market data for that specific lane and trailer type, so you know whether what's posted is fair, generous, or lowball.</li>
+            <li><strong>Contact the broker or shipper</strong> to confirm details and negotiate if needed — pickup and delivery windows, any special handling requirements, detention pay policy (compensation if the truck is held up waiting to load or unload).</li>
+            <li><strong>Book the load</strong> once terms are agreed.</li>
+            <li><strong>Send the confirmed details</strong> to the driver — pickup time, delivery time, rate, reference/load numbers, any special instructions — clearly and in writing, not just verbally, so there's a record both of you can refer back to.</li>
+          </ol>
+        `
+      },
+      {
+        title: "Reading a Load Posting Like a Pro",
+        content: `
+          <p>A load board posting typically shows: origin and destination cities, pickup and delivery dates, trailer type required, weight, mileage, and the posted rate (sometimes shown as a total dollar figure, sometimes as a per-mile rate). Learning to scan these quickly, and spot the details that actually matter for a given truck, is a real skill that develops with repetition.</p>
+          <p>A few things worth training your eye to notice immediately: <strong>drop-and-hook vs. live load/unload</strong> (drop-and-hook, where a pre-loaded trailer is simply swapped, is much faster than live loading, where the driver waits while cargo is physically loaded or unloaded — this affects how much of the driver's day gets used up); <strong>appointment times vs. FCFS</strong> ("first come, first served" receivers can mean unpredictable wait times, while a firm appointment window is more reliable for planning); and <strong>any special notes</strong> in the posting about handling requirements, since these often signal added complexity the base rate should account for.</p>
+        `
+      },
+      {
+        title: "Beyond Load Boards",
+        content: `
+          <p>Load boards aren't the only source of freight — many carriers also work with repeat customers directly, cutting out the need to search a board for every single load. Building this kind of direct relationship takes time, but it's genuinely valuable: repeat-customer freight is often more predictable, sometimes better-paying, and comes with less of the uncertainty of an unfamiliar broker.</p>
+          <p>But for new dispatchers, and especially independent dispatchers building a book of business, load boards are typically where you'll spend a meaningful part of your day, and getting comfortable navigating them efficiently is a real, practical skill worth deliberately practicing. A useful early exercise, even before your first job: browse a load board's public rate-lookup tools (many offer free or trial access to at least some data) and get a feel for how rates vary by lane, season, and trailer type. This kind of hands-on familiarity, even without a job yet, genuinely shows in an interview.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"Which trailer type is used for temperature-sensitive freight like food or pharmaceuticals?", opts:["Dry van","Flatbed","Reefer (refrigerated)","Tanker"], correct:2, ex:"Reefer trailers are temperature-controlled, making them the correct choice for perishable or temperature-sensitive freight."},
+      {q:"Why is reefer freight more complex to manage than standard dry van freight?", opts:["Reefer trailers are smaller","Temperature must be correctly set and monitored, since a temperature excursion can ruin the entire load","Reefer freight never requires any driver training","There is no real difference in complexity"], correct:1, ex:"Reefer freight requires ongoing temperature monitoring, since an excursion can spoil an entire load of perishable goods."},
+      {q:"What is the practical difference between drop-and-hook and live load/unload?", opts:["There is no difference","Drop-and-hook swaps a pre-loaded trailer quickly, while live loading requires the driver to wait during loading/unloading","Drop-and-hook is illegal in most provinces","Live loading is always faster"], correct:1, ex:"Drop-and-hook is generally much faster since it avoids the wait time inherent in live loading or unloading."},
+      {q:"What are DAT and Truckstop?", opts:["Government regulatory agencies","The two most widely used load boards in North America","Types of trailers","Insurance providers for carriers"], correct:1, ex:"DAT and Truckstop are load board platforms where available freight is posted and searched by dispatchers."},
+      {q:"What is detention pay?", opts:["A penalty charged to drivers for being late","Compensation for a truck being held up waiting to load or unload beyond agreed time","A fee for using a load board","Insurance for damaged freight"], correct:1, ex:"Detention pay compensates a carrier/driver when a truck is held at a facility longer than agreed, since that lost time has real cost."}
+    ]
+  },
+  {
+    id: 5, free: false,
+    title: "US Regulations: FMCSA, Hours of Service, and ELDs",
+    intro: "The rules that govern legal driving in the United States — and why compliance is a dispatcher's responsibility too, not just the driver's.",
+    pages: [
+      {
+        title: "FMCSA and the Core HOS Rules",
+        content: `
+          <p>The Federal Motor Carrier Safety Administration (FMCSA) is the US federal body that regulates commercial trucking, and understanding its core rules is essential for any dispatcher working with US-based freight, since a dispatcher who assigns an illegal route or schedule creates real liability for the carrier — not just the driver.</p>
+          <p>Hours of Service (HOS) rules limit how long a driver can drive and work before requiring rest. The core rules (for property-carrying drivers) generally include:</p>
+          <ul>
+            <li>An 11-hour maximum driving limit after 10 consecutive hours off duty</li>
+            <li>A 14-hour on-duty window in which that driving must occur — once the 14-hour window closes, no more driving is allowed even if the driver hasn't used the full 11 hours</li>
+            <li>A 30-minute break required after 8 cumulative hours of driving</li>
+            <li>A 60/70-hour limit over 7/8 consecutive days, depending on the carrier's operating schedule</li>
+          </ul>
+          <p>These specific numbers can change with regulatory updates, so always verify current limits against FMCSA's official published rules rather than treating any number as permanently fixed.</p>
+        `
+      },
+      {
+        title: "The 14-Hour Window, Worked Through",
+        content: `
+          ${dcDiagrams.hosClock}
+          <p>Here's how this plays out in a real scenario: a driver goes on-duty at 6:00am. Their 14-hour window closes at 8:00pm, regardless of how much actual driving they've done. If they've only driven 8 of their available 11 hours by 6:00pm because of loading delays and traffic, they still can't drive past 8:00pm — the 14-hour window is the hard limit, not the 11-hour driving allowance.</p>
+          <p>This exact scenario — a driver who "still has driving hours left" but has run out of on-duty window — is one of the most common HOS confusions new dispatchers make, and it's worth committing to memory early, since assigning a route assuming the driver can "just keep driving because they haven't hit 11 hours yet" is a genuine, common mistake. What matters for a dispatcher is the underlying principle: every route and schedule you build has to fit within the driver's remaining legal hours, and violating this isn't a minor paperwork issue — it can result in real fines, out-of-service orders, and safety rating damage for the carrier.</p>
+        `
+      },
+      {
+        title: "ELDs and Roadside Inspections",
+        content: `
+          <p>Electronic Logging Devices (ELDs) automatically record a driver's hours of service, replacing the older paper logbook system. As a dispatcher, you'll typically have visibility into ELD data for your fleet, which means you can — and should — check a driver's remaining available hours before assigning a new load, rather than relying on the driver to catch a problem themselves. This is one of the most direct, practical ways HOS knowledge shows up in daily dispatch work: before you confirm a new load to a driver, a quick glance at their ELD status tells you whether the timeline you're proposing is even legally possible.</p>
+          <p>It's worth understanding the driver's side of compliance too. During a roadside inspection, an officer can review a driver's ELD data directly, along with their license, vehicle condition, and cargo documentation. If a driver is found to have violated HOS rules, they can be placed out-of-service on the spot — meaning they're not legally allowed to keep driving until they've had sufficient rest — which obviously disrupts your dispatch plan immediately and without warning. This is part of why proactive HOS tracking genuinely protects your operation, not just the driver.</p>
+        `
+      },
+      {
+        title: "Why This Matters Beyond Compliance",
+        content: `
+          <p>Good HOS awareness isn't just about avoiding violations — it directly affects how well you can plan. A dispatcher who tracks hours carefully can proactively line up a driver's next load before their current one even finishes, keeping trucks moving efficiently. A dispatcher who doesn't track hours closely ends up reacting to problems (a driver stuck out of hours mid-route) instead of preventing them.</p>
+          <p>Over time, this proactive habit is one of the clearest differences between a dispatcher who's still learning and one who's genuinely experienced. Think of it this way: a new dispatcher checks a driver's hours when a problem has already started to surface. An experienced dispatcher checks hours as a routine part of every single load assignment, the same way you'd automatically check a delivery address before booking — not because a problem is expected, but because it's simply part of doing the job correctly, every time, without needing to be reminded.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What does FMCSA stand for and regulate?", opts:["Federal Motor Carrier Safety Administration — regulates US commercial trucking","Freight Management and Customs Safety Association — a Canadian body","A private trucking industry lobby group","An international shipping insurance body"], correct:0, ex:"FMCSA is the US federal body responsible for regulating commercial motor carrier safety, including Hours of Service rules."},
+      {q:"In the 6:00am start example, why can't the driver keep driving past 8:00pm even with unused driving hours left?", opts:["The driver is simply too tired by then","The 14-hour on-duty window is a hard limit independent of how many driving hours were actually used","There is no such limit in US regulations","This scenario is illegal to even discuss"], correct:1, ex:"The 14-hour on-duty window closes regardless of unused driving hours — a common point of confusion for new dispatchers."},
+      {q:"What replaced the older paper logbook system for tracking driver hours?", opts:["Verbal check-ins with dispatch","Electronic Logging Devices (ELDs)","There is no tracking system required","Manual spreadsheets only"], correct:1, ex:"ELDs automatically record hours of service, replacing paper logbooks."},
+      {q:"What can happen to a driver found to have violated HOS rules during a roadside inspection?", opts:["Nothing, HOS rules are only guidelines","They can be placed out-of-service immediately, unable to legally keep driving","Only a small fine is issued with no operational impact","The dispatcher is arrested instead of the driver"], correct:1, ex:"A driver can be placed out-of-service on the spot for HOS violations found during inspection, immediately disrupting the dispatch plan."},
+      {q:"According to the chapter, what's the key difference between a new and an experienced dispatcher's approach to HOS tracking?", opts:["There is no difference","Experienced dispatchers check hours routinely on every assignment, not just when a problem surfaces","New dispatchers check hours more often","Only experienced dispatchers are required to check hours at all"], correct:1, ex:"Experienced dispatchers build HOS checking into their routine for every assignment, rather than reacting only once a problem appears."}
+    ]
+  },
+{
+    id: 6, free: false,
+    title: "Canadian Regulations and Cross-Border Compliance",
+    intro: "How Canadian rules compare to US rules, and what changes when a load needs to cross the border.",
+    pages: [
+      {
+        title: "Canada's Regulatory Framework",
+        content: `
+          <p>Canada has its own hours-of-service and safety compliance framework, generally overseen through provincial transportation ministries working alongside standards set by the Canadian Council of Motor Transport Administrators (CCMTA), with the Commercial Vehicle Safety Alliance (CVSA) — a joint Canada-US-Mexico body — playing a role in coordinated inspection standards across the continent.</p>
+          <p>Canadian hours-of-service rules follow a broadly similar structure to US rules (driving limits, mandatory off-duty periods, cumulative hour limits over a multi-day cycle) but the specific numbers and cycle structures are not identical to FMCSA's rules. A dispatcher working cross-border freight cannot simply apply US hour limits to a Canadian driver, or vice versa — always verify current rules with the appropriate federal or provincial authority (in Canada) or FMCSA (in the US) for the specific jurisdiction a driver is operating in, since applying the wrong country's limits is a genuine compliance risk.</p>
+          <p>Provincial variation adds another layer worth knowing about. Within Canada itself, some rules and permit requirements vary by province — weight limits, specific permit requirements for oversized loads, and some safety program details can differ between, say, Ontario and Alberta. A dispatcher regularly working routes that cross provincial boundaries needs to be aware that "the rules" aren't always perfectly uniform across the whole country, the same way US rules aren't uniform across every state either.</p>
+        `
+      },
+      {
+        title: "A Cross-Border Load, Start to Finish",
+        content: `
+          <p>Consider a load moving from Vancouver to Seattle. Here's what a well-prepared dispatcher does differently from an unprepared one, step by step:</p>
+          <ul>
+            <li><strong>Days before pickup:</strong> confirm the exact commodity being shipped, since customs documentation requirements vary by commodity type.</li>
+            <li><strong>Confirm driver eligibility:</strong> valid, current passport or equivalent documentation, and any carrier-level customs certifications required (like being enrolled in a trusted-trader program, which can speed up crossings significantly).</li>
+            <li><strong>Prepare documentation:</strong> the commercial invoice, bill of lading, and any commodity-specific customs paperwork, checking that quantities, values, and descriptions match exactly across every document, since a mismatch is a common reason for delay.</li>
+            <li><strong>Communicate the plan:</strong> tell the driver clearly what to expect, including which specific border crossing to use if that matters for this load.</li>
+          </ul>
+          <p>All of this happens before the truck is anywhere near the border — not as a last-minute scramble once the driver calls in from the crossing with a problem.</p>
+          ${dcDiagrams.crossBorderChecklist}
+        `
+      },
+      {
+        title: "What Changes for Cross-Border Loads",
+        content: `
+          <p>A load moving between Canada and the US needs to clear customs at the border, which means the dispatcher (often working alongside a dedicated customs broker) needs specific paperwork in place before the truck arrives at the crossing, generally including:</p>
+          <ul>
+            <li>A commercial invoice describing the freight and its value</li>
+            <li>A bill of lading confirming the shipment details</li>
+            <li>Customs documentation specific to the type of goods being moved (requirements vary meaningfully by commodity)</li>
+            <li>Driver documentation confirming legal authorization to cross (passport or equivalent, and in some cases specific carrier certifications)</li>
+          </ul>
+          <p>Missing or incorrect paperwork is one of the most common causes of a truck being held at the border, which creates costly delays and can cascade into missed delivery windows further down the schedule. Experienced dispatchers handling cross-border freight build a habit of confirming documentation well before a truck is anywhere near the crossing, not as a last-minute check.</p>
+        `
+      },
+      {
+        title: "Staying Current on This Topic",
+        content: `
+          <p>Cross-border compliance details change based on the specific commodity, the carrier's certifications, and current trade agreements — this chapter gives you the conceptual foundation, but real cross-border dispatch work requires staying current with official government sources (CBSA and CBP specifically) rather than relying on any single training course as a permanently fixed reference.</p>
+          <p>A practical habit worth building: bookmark the official CBSA (Canada Border Services Agency) and CBP (US Customs and Border Protection) websites, and get in the habit of checking them periodically, especially if you're regularly handling cross-border freight in a specific commodity category. Regulations in this space do shift — new trade agreements, updated security programs, and commodity-specific rule changes are all things a genuinely reliable cross-border dispatcher stays aware of, rather than treating this chapter's content as permanently fixed.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What is the CVSA?", opts:["A Canadian-only trucking company","A joint Canada-US-Mexico body coordinating commercial vehicle inspection standards","A load board platform","A driver's union"], correct:1, ex:"CVSA (Commercial Vehicle Safety Alliance) coordinates commercial vehicle inspection standards across Canada, the US, and Mexico."},
+      {q:"Can a dispatcher apply US hours-of-service limits directly to a Canadian driver?", opts:["Yes, the rules are identical","No — Canadian and US HOS rules follow a similar structure but are not identical", "Only on weekends","Only for cross-border loads"], correct:1, ex:"While structurally similar, Canadian and US HOS rules have different specific numbers and cycles — they should not be assumed interchangeable."},
+      {q:"In the Vancouver-to-Seattle example, when does a well-prepared dispatcher confirm documentation?", opts:["After the truck is already at the border","Days before pickup, well ahead of the crossing","Only if the driver reports a problem","Documentation is never actually necessary"], correct:1, ex:"Proactive dispatchers confirm all documentation well before pickup, not as a last-minute response to a border problem."},
+      {q:"What is one of the most common causes of a truck being held at the border?", opts:["The truck's paint color","Missing or incorrect customs paperwork","The driver's height","Having too much fuel in the tank"], correct:1, ex:"Missing or incorrect documentation is a leading cause of border delays for commercial freight."},
+      {q:"What two official government agencies does the chapter recommend staying current with for cross-border compliance?", opts:["CBSA and CBP","Only the Bank of Canada","Only FMCSA","Elections Canada and the FEC"], correct:0, ex:"CBSA (Canada Border Services Agency) and CBP (US Customs and Border Protection) are the official sources to stay current with on cross-border rules."}
+    ]
+  },
+  {
+    id: 7, free: false,
+    title: "Rate Negotiation and Freight Pricing",
+    intro: "How freight rates actually get set, and the real skill of negotiating a fair rate on both sides of a deal.",
+    pages: [
+      {
+        title: "What Actually Sets a Rate",
+        content: `
+          <p>Freight rates aren't fixed prices — they shift constantly based on supply and demand: how many trucks are available in a given area versus how much freight needs to move out of it. A lane with lots of available trucks and little freight will have lower rates; a lane with heavy freight demand and few available trucks will command higher rates. Understanding this dynamic is the foundation of effective rate negotiation.</p>
+          <p>Both major load boards (DAT and Truckstop) provide market rate data showing average rates for a given lane and trailer type, which gives you a genuine benchmark before you negotiate rather than guessing. A posted rate significantly below the market average is worth questioning — it may mean the broker is trying to move a load cheaply, or it may reflect something about the load (difficult delivery location, tight time window) that makes it less desirable.</p>
+        `
+      },
+      {
+        title: "A Realistic Negotiation, Walked Through",
+        content: `
+          <p>Here's roughly how a real negotiation conversation might go. A broker posts a load at $1,800 for a lane where market data shows the average is closer to $2,100. You call and say something like: "I've got a truck available for this lane on the date you need — I'm seeing market average closer to $2,100 for this trailer type and distance, can we get closer to that?"</p>
+          <p>The broker might counter at $1,950. At this point you weigh it: is $1,950 still below what makes this load worthwhile once you factor in any deadhead miles to reach the pickup? If yes, you might hold firm or counter again; if the gap is small and the load otherwise sets your driver up well for their next assignment, accepting a small compromise might be the smarter move than losing the load entirely over $50-100.</p>
+          <p>Negotiation isn't about winning every single dollar — it's about understanding your real floor (the rate below which this load genuinely isn't worth taking) and negotiating confidently up to that point, not beyond it.</p>
+        `
+      },
+      {
+        title: "Doing the Math Properly",
+        content: `
+          ${dcDiagrams.rateMath}
+          <ul>
+            <li><strong>Know your costs before you negotiate.</strong> A rate that sounds reasonable can still be unprofitable once fuel, driver pay, and deadhead miles are factored in. If you don't know your actual cost per mile, you're negotiating blind.</li>
+            <li><strong>Factor in deadhead miles concretely.</strong> A rough way to think about it: divide the total payout by the TOTAL miles driven (loaded plus deadhead), not just the loaded miles, to get a true per-mile comparison between options.</li>
+            <li><strong>Be willing to walk away.</strong> Booking a load at a loss just to keep a truck moving is usually a worse outcome than a short wait for a better one. This is genuinely hard for new dispatchers, who often feel pressure to keep a truck "always moving" — but a truck sitting idle for two hours waiting for a decent load is often better than a truck moving on a load that loses money.</li>
+            <li><strong>Build relationships, not just transactions.</strong> Brokers and shippers who trust a dispatcher to deliver reliably are often more willing to negotiate favorably on future loads, since reliability has real value to them too.</li>
+          </ul>
+        `
+      },
+      {
+        title: "Reading the Other Side of the Table",
+        content: `
+          <p>Brokers negotiate for a living, and they'll sometimes claim a rate is "the best they can do" even when there's real room to move — this is a normal part of any negotiation, not a sign of bad faith, and it's worth staying calm and simply restating your position with the market data you have rather than getting frustrated.</p>
+          <p>On the flip side, a broker who genuinely has no room to move (because their own margin is already thin, or the shipper set a hard rate ceiling) will usually tell you directly if you ask plainly — most experienced brokers would rather be straightforward than waste both parties' time going back and forth on a rate that truly isn't moving.</p>
+          <p>For independent dispatchers working on commission, rate negotiation directly affects income — a stronger negotiated rate means a larger commission on the same load, which is part of why this is one of the most practically valuable skills covered in this entire course. Even a consistent extra $50-100 per load, negotiated well across dozens of loads a month, adds up to meaningfully more income over a year — this is a skill worth deliberately practicing, not something to treat as secondary to the "real" logistics work.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What primarily determines freight rates on a given lane?", opts:["A fixed government price list","Supply and demand — available trucks versus available freight","The driver's years of experience","The season of the year only"], correct:1, ex:"Freight rates fluctuate based on supply and demand dynamics between available trucks and available freight in a given lane."},
+      {q:"What are 'deadhead miles'?", opts:["Miles driven while carrying freight","Empty miles driven to reach a pickup point","Miles driven only at night","Miles that don't count toward hours-of-service"], correct:1, ex:"Deadhead miles are empty miles driven without freight, typically to reach the next pickup location — they affect true load profitability."},
+      {q:"In the negotiation walkthrough, what should determine whether to accept a smaller compromise rate?", opts:["Always accept whatever is offered without question","Whether the rate is still above your real floor and whether the load sets up the next assignment well","Negotiation should never involve any compromise at all","Only the broker's opinion matters"], correct:1, ex:"A sensible negotiation weighs whether the offered rate is still profitable and strategically sound, not just whether you 'won' the negotiation."},
+      {q:"Why does the chapter recommend calculating rate per TOTAL miles (loaded plus deadhead), not just loaded miles?", opts:["It doesn't matter which miles are counted","It gives a true, accurate comparison of actual profitability between different load options","Deadhead miles are illegal to count","Only loaded miles ever matter for any calculation"], correct:1, ex:"Comparing rate against total miles driven (including deadhead) gives a genuinely accurate picture of a load's real profitability."},
+      {q:"Why does even a small consistent rate improvement matter over time, according to the chapter?", opts:["It doesn't matter at all","A small extra amount per load, repeated across many loads, adds up to meaningfully more income over a year","Only large one-time negotiations matter","Rate negotiation has no cumulative effect"], correct:1, ex:"Small, consistent improvements per load compound over dozens of loads a month into meaningfully higher annual income."}
+    ]
+  },
+  {
+    id: 8, free: false,
+    title: "Dispatch Software and Daily Tools",
+    intro: "The practical technology stack you'll actually use — from load boards to full transportation management systems.",
+    pages: [
+      {
+        title: "The Core Toolkit",
+        content: `
+          ${dcDiagrams.toolStack}
+          <p>Beyond load boards, professional dispatchers rely on a broader set of tools to run daily operations efficiently. Understanding this toolkit — even before you've used any specific platform — makes you far more prepared for how the actual job works.</p>
+          <ul>
+            <li><strong>Transportation Management Systems (TMS)</strong> — software that centralizes load information, driver assignments, invoicing, and reporting in one place. A TMS typically shows you, at a glance, every truck's current status, location, and next assignment — the kind of dashboard view that makes managing a larger fleet actually feasible for a small dispatch team.</li>
+            <li><strong>GPS tracking</strong> — real-time location tracking for trucks, letting a dispatcher see exactly where every vehicle in their fleet is at any given moment. Good GPS tracking also lets you proactively notice a problem — a truck that's stopped for an unusually long time on a route with no scheduled break — before the driver even calls to report it.</li>
+            <li><strong>ELD data platforms</strong> — as covered in the US regulations chapter, these show driver hours-of-service status directly, often integrated with GPS and TMS platforms into one unified dashboard.</li>
+            <li><strong>Communication tools</strong> — beyond phone calls, many carriers use dedicated driver communication apps or in-cab messaging systems that log communication for recordkeeping purposes.</li>
+          </ul>
+        `
+      },
+      {
+        title: "A Software-Driven Morning, Walked Through",
+        content: `
+          <p>Here's what this looks like in practice at a mid-size carrier: you open your TMS dashboard and see, at a glance, which of your 15 trucks are currently loaded and en route, which are empty and available, and which are scheduled for maintenance. You cross-reference this with your ELD integration to see which drivers have enough remaining hours to take on a new same-day assignment.</p>
+          <p>You open the load board in a separate tab to search for freight matching your available trucks' locations. As you book a load, you enter it into the TMS, which automatically generates the paperwork and updates your dashboard. Throughout the day, GPS tracking updates automatically without you needing to call each driver individually just to check location — you only need to call when something needs active attention, which is a meaningfully more efficient way to manage a fleet than checking in with every driver by phone every hour.</p>
+        `
+      },
+      {
+        title: "You Won't Be Trained on Day One — And That's Fine",
+        content: `
+          <p>Specific software varies by employer — you're unlikely to walk into your first dispatching job already trained on that company's exact TMS platform, and most employers expect to provide platform-specific training. What matters going in is understanding the <em>categories</em> of tools and what each one is for, so that on-the-job training builds on a real foundation instead of starting from zero.</p>
+          <p>A new hire who already understands what a TMS does, why GPS tracking matters, and how ELD data connects to legal compliance will ramp up meaningfully faster than one encountering these concepts for the first time. This is exactly the kind of preparation this course is designed to give you — not platform-specific button-clicking, but the conceptual foundation that makes any specific platform's training make immediate sense.</p>
+        `
+      },
+      {
+        title: "Building Familiarity Before You Apply",
+        content: `
+          <p>If you're planning to work independently rather than for an employer, tool selection becomes a direct business decision — many load board platforms offer trial periods, which is a practical way to get hands-on familiarity before committing to a paid subscription.</p>
+          <p>Even if you're planning to apply for an employed position, spending some time exploring publicly available demo videos or free trials of common TMS platforms before an interview can genuinely help — being able to say "I've looked into how TMS platforms generally work, and I understand how ELD integration supports HOS compliance" is a meaningfully stronger answer in an interview than only knowing the job title. This kind of proactive preparation, combined with completing this course, puts you in a genuinely stronger position than most other entry-level candidates a hiring manager will see.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What does a Transportation Management System (TMS) primarily do?", opts:["Physically repairs trucks","Centralizes load information, assignments, invoicing, and reporting in one system","Only tracks driver salaries","Replaces the need for any human dispatcher"], correct:1, ex:"A TMS centralizes core dispatch operations — loads, assignments, invoicing, and reporting — into one system."},
+      {q:"Why is GPS tracking valuable to a dispatcher?", opts:["It has no practical use in dispatching","It shows real-time truck location, helping with accurate delivery estimates and early delay detection","It only matters for insurance purposes","GPS tracking is illegal in most provinces"], correct:1, ex:"Real-time location visibility helps dispatchers give accurate delivery estimates and catch potential delays early."},
+      {q:"In the software-driven morning example, what does the TMS + ELD integration together allow the dispatcher to quickly assess?", opts:["Only which trucks need a paint job","Which trucks are available and which drivers have enough remaining legal hours for a new assignment","Only driver birthdays","Nothing useful — they must be checked separately by phone"], correct:1, ex:"Combined TMS and ELD data lets a dispatcher quickly see truck availability and legal hour status together, without individual phone calls."},
+      {q:"Should a new dispatcher expect to already know a specific employer's exact software before their first day?", opts:["Yes, it's always required in advance","No — most employers expect to provide platform-specific training", "Only if they attended a certified bootcamp","Software training is never provided by employers"], correct:1, ex:"Employers typically train new hires on their specific platform — understanding the general categories of tools in advance is what's genuinely useful."},
+      {q:"Why might exploring free trials or demo videos before a job interview genuinely help a candidate?", opts:["It has no real effect on interview outcomes","It allows a candidate to speak concretely about understanding TMS/ELD concepts, strengthening their interview answers","Demo videos are required by law before applying","Only IT certifications matter for dispatch interviews"], correct:1, ex:"Being able to speak concretely about how these tools work, even from demos, gives a stronger, more informed interview answer than job-title-level familiarity alone."}
+    ]
+  },
+{
+    id: 9, free: false,
+    title: "Customer Service, Carrier Relations, and Handling Problems",
+    intro: "The human side of the job — because dispatching is ultimately a communication role as much as a logistics one.",
+    pages: [
+      {
+        title: "Communicating With Drivers",
+        content: `
+          <p>Every dispatcher eventually learns that the technical side of the job (routes, rates, regulations) is only half of it. The other half is managing relationships and communication — with drivers who need clear direction and genuine support, with brokers and shippers who need reliable updates, and with customers who are, understandably, unhappy when something goes wrong.</p>
+          <p>Drivers are on the road, often dealing with real physical fatigue, traffic, weather, and unpredictable delays — the way a dispatcher communicates directly affects a driver's day. Clear, specific instructions ("pickup at Dock 4, ask for Maria, appointment window 2-4pm") prevent confusion that costs everyone time, compared to a vague instruction like "head to the warehouse whenever" that leaves a driver guessing.</p>
+          <p>Here's a real example of the difference support makes: a driver calls in, clearly frustrated, saying they've been sitting at a receiving dock for three hours past their scheduled unload time with no explanation. A weak response is something like "that's not really my problem, just wait it out." A strong response acknowledges the frustration directly ("that's genuinely frustrating, I'd be annoyed too"), takes concrete action (calling the receiver to find out what's actually happening and when it'll resolve), and follows up with the driver with real information rather than silence. The driver's situation might not change immediately, but how they experience it — feeling supported versus feeling ignored — changes enormously based on how the dispatcher responds, and that difference is exactly what determines whether a good driver stays working with you long-term or starts looking elsewhere.</p>
+        `
+      },
+      {
+        title: "Handling an Upset Customer, With Real Scripts",
+        content: `
+          <p>When a delivery is delayed, the customer's frustration is legitimate — their business is affected too. A few practical principles, with example language:</p>
+          <ul>
+            <li><strong>Communicate proactively rather than waiting to be asked.</strong> "I wanted to give you a heads-up before you noticed — the delivery scheduled for 2pm is now looking closer to 4pm due to a mechanical delay. I'll update you the moment I have a firmer time." A customer who hears this before they'd have noticed reacts very differently than one who has to call and ask why their shipment hasn't arrived.</li>
+            <li><strong>Be honest about what you actually know versus what you're still finding out.</strong> "I know the truck is currently 45 minutes out, but I don't yet have a confirmed reason for the earlier delay — I'm following up with the driver now and will circle back within the hour" is more trustworthy than a vague "it's on the way" that avoids the real question.</li>
+            <li><strong>Always follow up with a concrete next step or updated timeline.</strong> "I'll call you back by 3pm with a confirmed delivery window" — and then actually calling back at 3pm, even if the update is simply "still confirming, will know more by 3:30" — builds far more trust than silence.</li>
+          </ul>
+        `
+      },
+      {
+        title: "When Something Genuinely Goes Wrong",
+        content: `
+          <p>Breakdowns, accidents, weather closures, and paperwork errors all happen, regularly, in this industry — they are a normal part of the job, not a sign that something has been done wrong. What separates a strong dispatcher from a weak one isn't whether problems happen, but how quickly and calmly they're addressed: has a backup plan been identified, has the customer been informed, has the driver been supported with what they actually need (a tow, a nearby repair shop, updated instructions)?</p>
+          <p>A short case study: a driver hauling a reefer load reports the trailer's cooling unit has failed at a highway rest stop, three hours from delivery. A strong dispatcher's sequence: first, confirm the cargo's current temperature and how much time remains before the product is at real risk (this determines how urgent the response needs to be). Second, locate the nearest reefer repair service and get the driver moving there or dispatch a mobile repair unit if available. Third, call the customer immediately — not to apologize excessively, but to give them real information and ask how they'd like to proceed if the delay becomes significant. Fourth, document the entire incident thoroughly for the carrier's records and any potential insurance claim. Fifth, follow up with the driver afterward, not just to close the loose end operationally, but because a stressful roadside incident is genuinely hard on a driver, and checking in shows you see them as a person, not just a truck number.</p>
+        `
+      },
+      {
+        title: "The Core Lesson of This Chapter",
+        content: `
+          <p>This chapter's core message is simple: technical knowledge gets you through the routine days, but communication skill is what gets you through the hard ones — and the hard days are where reputations, both a dispatcher's and a carrier's, are actually built.</p>
+          <p>It's worth internalizing this early, because it directly shapes how you should think about the earlier chapters in this course too. Knowing HOS rules cold, understanding Incoterms or trailer types, negotiating a sharp rate — none of it matters if a driver doesn't trust you enough to call you the moment something goes wrong, or if a customer doesn't trust your updates enough to believe them. The technical chapters give you the tools; this chapter is about the relationship foundation that makes those tools actually usable in the moments that matter most.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"Why does clear, specific communication with drivers matter?", opts:["It doesn't matter — drivers figure things out on their own","Vague instructions cause confusion that costs time for everyone involved","Drivers prefer minimal communication","Only new drivers need clear instructions"], correct:1, ex:"Clear, specific instructions prevent the kind of confusion that creates delays and wasted time."},
+      {q:"In the frustrated driver example, what makes the 'strong response' different from the 'weak response'?", opts:["The strong response ignores the driver entirely","The strong response acknowledges frustration, takes concrete action, and follows up with real information","Both responses are equally effective","The weak response is actually preferred by most drivers"], correct:1, ex:"Acknowledging the driver's frustration and taking real, followed-up action builds trust, unlike dismissing the concern."},
+      {q:"What's the recommended approach when communicating a delay to a customer?", opts:["Wait until the customer calls to ask","Communicate proactively, before they'd have noticed the issue themselves","Avoid mentioning the delay entirely","Blame the driver directly to the customer"], correct:1, ex:"Proactive communication is received very differently than a customer having to chase down information themselves."},
+      {q:"In the reefer breakdown case study, what's the FIRST thing the dispatcher should confirm?", opts:["The driver's lunch preferences","The cargo's current temperature and how much time remains before real risk to the product","The exact cost of the eventual repair","Whether the customer will be angry"], correct:1, ex:"Confirming the cargo's actual risk level first determines how urgent every subsequent step needs to be."},
+      {q:"According to the chapter's closing message, why does the relationship foundation matter more than technical knowledge alone?", opts:["Technical knowledge is irrelevant to dispatching","Without trust, drivers and customers won't rely on a dispatcher's communication even when the technical knowledge is correct","Relationships matter only for independent dispatchers","This chapter contradicts the rest of the course"], correct:1, ex:"The chapter argues that technical skill only becomes useful in practice when drivers and customers trust the dispatcher enough to rely on it."}
+    ]
+  },
+  {
+    id: 10, free: false,
+    title: "Your Next Step: Employment vs. Starting Independently",
+    intro: "Two real paths forward, and what to genuinely expect from each as you finish this course.",
+    pages: [
+      {
+        title: "Two Paths, Compared",
+        content: `
+          ${dcDiagrams.careerPaths}
+          <p>By this point, you understand the core mechanics of the role — daily responsibilities, tools, regulations on both sides of the border, negotiation, and the communication skills the job actually runs on. The final decision ahead of you is which path to pursue: working as an employed dispatcher for a carrier or brokerage, or building an independent dispatching business supporting owner-operators directly.</p>
+          <p>Working for an established carrier or brokerage means stepping into existing systems, tools, and processes — you'll typically receive structured onboarding, a fixed salary, and the stability of a defined role within a larger operation. This path is often the more accessible starting point for someone new to the industry, since you're learning inside a system that already has established procedures, rather than building everything from scratch while also trying to earn income.</p>
+        `
+      },
+      {
+        title: "What a Realistic Job Search Looks Like",
+        content: `
+          <p>Search for titles like "dispatcher," "dispatch coordinator," "logistics coordinator," or "fleet coordinator" — postings use these somewhat interchangeably. Many carriers, especially larger ones, hire entry-level dispatchers without requiring direct prior dispatch experience, provided you can demonstrate genuine understanding of the fundamentals — this is exactly why completing this course and being able to speak confidently about HOS rules, load boards, and rate negotiation in an interview meaningfully strengthens your application, even without a work history in the field yet.</p>
+          <p>Prepare specific examples you can speak to in an interview — being able to explain the 14-hour HOS window correctly, or walk through how you'd evaluate whether a posted load rate is fair, demonstrates real preparation that separates you from other entry-level candidates who've only read a job description.</p>
+        `
+      },
+      {
+        title: "What Starting Independently Actually Involves",
+        content: `
+          <p>Working independently — typically supporting one or more owner-operators on a commission basis — offers more autonomy and, over time, potentially stronger income, but it comes with real early-stage challenges: you're responsible for finding your own clients, building a legal business structure, and establishing your own reputation from zero.</p>
+          <p>Concretely, this involves: registering a business (a sole proprietorship or incorporated entity, depending on your province/state and preferences — this is worth a conversation with a local accountant or business advisor, since the right structure depends on your specific situation); setting up a simple service agreement template that clearly states your commission rate and responsibilities to each owner-operator client; choosing and subscribing to a load board platform; and — the hardest part — finding your first one or two owner-operator clients, which usually happens through direct outreach, trucking-industry online communities and forums, or word of mouth once you've proven yourself with even one client.</p>
+          <p>As mentioned in Chapter 3, the first 30-90 days of an independent dispatch business are typically slower, since carrier trust takes time to build. This path suits people who are comfortable with some early income uncertainty in exchange for long-term independence and upside. Treat your first client relationship as the foundation your reputation will be built on — over-deliver on communication and reliability early, since that first client's word of mouth is often how you'll find your second and third.</p>
+        `
+      },
+      {
+        title: "What to Actually Do Next",
+        content: `
+          <p><strong>If pursuing employment:</strong> look specifically for entry-level dispatcher or dispatch coordinator postings, and prepare the concrete examples mentioned above for your interviews.</p>
+          <p><strong>If pursuing independence:</strong> research the legal business requirements in your specific province or state, look into which load board platform fits your plans, and consider starting by supporting just one or two owner-operators rather than trying to scale immediately.</p>
+          <p><strong>Either way:</strong> the fundamentals in this course — regulations, communication, rate awareness, and tool familiarity — apply regardless of which path you choose. That foundation is what makes you genuinely job-ready, not just familiar with the job title.</p>
+          <p>This concludes the core course. Dispatching is a career that rewards people who stay current — regulations, technology, and market rates all shift over time, and the best dispatchers treat learning as ongoing rather than something that ends after training. You now have a genuinely comprehensive foundation to build on — the next step is applying it, in a real interview or a real first client conversation, and building the practical experience that only comes from actually doing the work.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What's a key advantage of the employment path over independent dispatching for someone new to the industry?", opts:["Employment pays less in every case","Structured onboarding and existing systems, rather than building everything from scratch","Employment requires a CDL","There is no meaningful difference between the two paths"], correct:1, ex:"Employment offers structured onboarding and established processes, which is often more accessible for someone new to the field."},
+      {q:"According to the chapter, why does completing this course meaningfully strengthen a job application even without prior dispatch experience?", opts:["It doesn't help at all","Being able to speak confidently about HOS rules, load boards, and negotiation in an interview demonstrates genuine understanding of the fundamentals","Employers never care about knowledge, only experience","This course guarantees a job offer"], correct:1, ex:"Demonstrating real understanding of core concepts in an interview is identified as a genuine, practical advantage even without direct work history."},
+      {q:"What's a genuine early-stage challenge of independent dispatching?", opts:["There are no challenges — independent dispatching is always immediately profitable","Finding your own clients and building trust/reputation from zero","Independent dispatchers are not allowed to use load boards","It requires a college degree"], correct:1, ex:"Independent dispatchers must build their own client base and reputation, which takes real time, especially early on."},
+      {q:"What does the course suggest for someone starting independent dispatching regarding their first client?", opts:["Try to sign as many owner-operators as possible immediately","Treat the first client relationship as the foundation for reputation, over-delivering on communication and reliability","Skip understanding load boards entirely","Avoid any legal business registration"], correct:1, ex:"The first client relationship is described as foundational — over-delivering early helps generate the word-of-mouth needed to find future clients."},
+      {q:"What mindset does the course recommend for long-term success in dispatching?", opts:["Treat training as complete once this course ends","Treat learning as ongoing, since regulations, technology, and rates shift over time","Avoid learning new software once comfortable with one system","Focus only on one country's regulations permanently"], correct:1, ex:"The course closes by emphasizing that staying current is an ongoing part of the job, not something that ends after initial training."}
+    ]
+  }
   ]
 };
 
@@ -4932,7 +5363,7 @@ const courseCatalog = {
     price: "$49.99",
     priceNote: "CAD",
     hours: "8–10 hours",
-    paymentLink: "https://buy.stripe.com/REPLACE_WITH_REAL_DISPATCH_COURSE_LINK",
+    paymentLink: "https://buy.stripe.com/8x27sM2gHamegLF5bk3cc03",
     productKey: "dispatch_course",
   },
   freight: {
@@ -4956,7 +5387,7 @@ const courseCatalog = {
     price: "$59.99",
     priceNote: "CAD",
     hours: "10–12 hours",
-    paymentLink: "https://buy.stripe.com/REPLACE_WITH_REAL_FREIGHT_COURSE_LINK",
+    paymentLink: "https://buy.stripe.com/8x27sM2gHamegLF5bk3cc03",
     productKey: "freight_course",
   },
 };
@@ -5056,11 +5487,12 @@ function goToCoursePaymentLink(courseKey){
   window.location.href = url;
 }
 
-function openDcChapter(chapterId){
+function openDcChapter(chapterId, pageIndex){
   const c = courseCatalog[currentCourseKey];
   const chapter = c.data.chapters.find(ch => ch.id === chapterId);
   if(!chapter) return;
   window.dcCurrentChapterId = chapterId;
+  window.dcCurrentPageIndex = pageIndex || 0;
   const totalChapters = c.data.chapters.length;
   const unlocked = chapter.free || courseAccess[currentCourseKey];
   showView('coursechapter');
@@ -5087,28 +5519,75 @@ function openDcChapter(chapterId){
   }
 
   dcQuizState[currentCourseKey][chapterId] = dcQuizState[currentCourseKey][chapterId] || {};
+  renderDcPage();
+}
+
+function renderDcPage(){
+  const c = courseCatalog[currentCourseKey];
+  const chapter = c.data.chapters.find(ch => ch.id === window.dcCurrentChapterId);
+  const totalChapters = c.data.chapters.length;
+  const totalPages = chapter.pages.length;
+  const pageIndex = window.dcCurrentPageIndex;
+  const page = chapter.pages[pageIndex];
+  const isLastPage = pageIndex === totalPages - 1;
+  const el = document.getElementById('dc-chapter-reader');
+
   el.innerHTML = `
     <div class="dc-reader">
-      <div class="dc-reader-eyebrow">Chapter ${chapter.id} of ${totalChapters} ${chapter.free ? '· Free' : '· Premium'}</div>
+      <div class="dc-reader-eyebrow">Chapter ${chapter.id} of ${totalChapters} ${chapter.free ? '· Free' : '· Premium'} · Page ${pageIndex+1} of ${totalPages}</div>
       <h1>${chapter.title}</h1>
-      <p class="dc-reader-intro">${chapter.intro}</p>
-      <div class="dc-reader-content">${chapter.content}</div>
-      <div class="section-head" style="margin-top:36px;"><h2 style="font-size:18px;">Check your understanding</h2></div>
-      <div id="dc-quiz-${chapter.id}"></div>
+      ${pageIndex === 0 ? `<p class="dc-reader-intro">${chapter.intro}</p>` : ''}
+      <div class="dc-page-dots">${chapter.pages.map((p,i) => `<span class="dc-page-dot ${i===pageIndex?'active':''} ${i<pageIndex?'done':''}" onclick="dcGoToPage(${i})"></span>`).join('')}</div>
+      <h2 class="dc-page-title">${page.title}</h2>
+      <div class="dc-reader-content">${page.content}</div>
+      ${isLastPage ? `
+        <div class="section-head" style="margin-top:36px;"><h2 style="font-size:18px;">Check your understanding</h2></div>
+        <div id="dc-quiz-${chapter.id}"></div>
+      ` : ''}
       <div class="dc-reader-nav">
-        <button class="btn btn-ghost" onclick="dcNavChapter(-1)" ${chapter.id===1?'disabled style="opacity:.4;"':''}>← Previous chapter</button>
-        <button class="btn btn-primary" onclick="dcNavChapter(1)" ${chapter.id===totalChapters?'disabled style="opacity:.4;"':''}>Next chapter →</button>
+        <button class="btn btn-ghost" onclick="dcPrevPage()" ${(pageIndex===0 && chapter.id===1)?'disabled style="opacity:.4;"':''}>← Previous</button>
+        <button class="btn btn-primary" onclick="dcNextPage()" ${(isLastPage && chapter.id===totalChapters)?'disabled style="opacity:.4;"':''}>${isLastPage ? (chapter.id===totalChapters ? 'Finished' : 'Next chapter →') : 'Next page →'}</button>
       </div>
     </div>
   `;
-  renderDcQuiz(chapter);
+  if(isLastPage) renderDcQuiz(chapter);
 }
 
-function dcNavChapter(direction){
+function dcGoToPage(pageIndex){
+  window.dcCurrentPageIndex = pageIndex;
+  renderDcPage();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+function dcNextPage(){
+  const c = courseCatalog[currentCourseKey];
+  const chapter = c.data.chapters.find(ch => ch.id === window.dcCurrentChapterId);
+  if(window.dcCurrentPageIndex < chapter.pages.length - 1){
+    window.dcCurrentPageIndex++;
+    renderDcPage();
+    window.scrollTo({top:0, behavior:'instant'});
+  } else {
+    dcNavChapter(1);
+  }
+}
+
+function dcPrevPage(){
+  if(window.dcCurrentPageIndex > 0){
+    window.dcCurrentPageIndex--;
+    renderDcPage();
+    window.scrollTo({top:0, behavior:'instant'});
+  } else {
+    dcNavChapter(-1, true);
+  }
+}
+
+function dcNavChapter(direction, jumpToLastPage){
   const totalChapters = courseCatalog[currentCourseKey].data.chapters.length;
   const nextId = window.dcCurrentChapterId + direction;
   if(nextId < 1 || nextId > totalChapters) return;
-  openDcChapter(nextId);
+  const nextChapter = courseCatalog[currentCourseKey].data.chapters.find(ch => ch.id === nextId);
+  const startPage = jumpToLastPage ? nextChapter.pages.length - 1 : 0;
+  openDcChapter(nextId, startPage);
 }
 
 function renderDcQuiz(chapter){
@@ -5393,8 +5872,12 @@ async function syncEntitlements(){
       hasPhotoToolAccess = true;
       hasResumeBuilderAccess = true;
     }
-    if(products.includes('dispatch_course')) courseAccess.dispatch = true;
-    if(products.includes('freight_course')) courseAccess.freight = true;
+    // Dispatcher and Freight Forwarding courses currently share the same
+    // $49.99 CAD payment link, so either purchase record unlocks both.
+    if(products.includes('dispatch_course') || products.includes('freight_course')){
+      courseAccess.dispatch = true;
+      courseAccess.freight = true;
+    }
     // Re-render whatever's currently on screen so newly-unlocked content shows immediately
     if(document.querySelector('[data-view="home"].active')) renderChapterGrid();
     if(document.querySelector('[data-view="ielts-hub"].active')) renderIeltsTabContent();

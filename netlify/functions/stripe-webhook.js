@@ -38,8 +38,11 @@ const PRICE_ID_TO_PRODUCT = {
   [process.env.STRIPE_PRICE_LANGUAGE_PREMIUM]: 'language_premium',
   [process.env.STRIPE_PRICE_PHOTO_TOOL]: 'photo_tool',
   [process.env.STRIPE_PRICE_RESUME_BUILDER]: 'resume_builder',
+  // Dispatcher and Freight Forwarding courses currently share the exact
+  // same Stripe price ($49.99 CAD), so only one env var is needed here —
+  // the shared price maps to 'dispatch_course', and productsToGrant below
+  // expands that into both course entitlements.
   [process.env.STRIPE_PRICE_DISPATCH_COURSE]: 'dispatch_course',
-  [process.env.STRIPE_PRICE_FREIGHT_COURSE]: 'freight_course',
 };
 
 exports.handler = async (event) => {
@@ -85,7 +88,10 @@ exports.handler = async (event) => {
     // The Photo Tool and Resume Builder currently share one $3.99 payment
     // link, so a purchase of that price unlocks both — write one
     // entitlement row per product rather than just the one detected.
-    const productsToGrant = product === 'photo_tool' ? ['photo_tool', 'resume_builder'] : [product];
+    const productsToGrant =
+      product === 'photo_tool' ? ['photo_tool', 'resume_builder'] :
+      product === 'dispatch_course' ? ['dispatch_course', 'freight_course'] :
+      [product];
 
     const { error } = await supabase
       .from('entitlements')
