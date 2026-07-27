@@ -90,7 +90,7 @@ exports.handler = async (event) => {
     // entitlement row per product rather than just the one detected.
     const productsToGrant =
       product === 'photo_tool' ? ['photo_tool', 'resume_builder'] :
-      product === 'dispatch_course' ? ['dispatch_course', 'freight_course'] :
+      product === 'dispatch_course' ? ['dispatch_course', 'freight_course', 'customs_course'] :
       [product];
 
     const { error } = await supabase
