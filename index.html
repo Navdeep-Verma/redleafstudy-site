@@ -677,11 +677,11 @@
       <button class="dc-promo-close" onclick="dismissCourseBanner()" aria-label="Dismiss">✕</button>
       <div class="dc-promo-icon">🚛</div>
       <div class="dc-promo-text">
-        <div class="dc-promo-eyebrow">2 New Courses · Free chapters to start</div>
-        <h2>Truck Dispatcher &amp; Freight Forwarding Training</h2>
+        <div class="dc-promo-eyebrow">4 Courses · Free chapters to start</div>
+        <h2>Dispatcher, Freight Forwarding &amp; Customs Compliance Training</h2>
         <p>Real chapters, real practice questions, and a certificate of completion for each. Learn what these logistics careers actually look like, day one.</p>
       </div>
-      <button class="btn dc-promo-btn" onclick="switchMode('courses')">Browse both courses →</button>
+      <button class="btn dc-promo-btn" onclick="switchMode('courses')">Browse all 4 courses →</button>
     </div>
 
     <section class="hero">
@@ -1071,7 +1071,7 @@
     <div class="dc-sidebar">
       <div class="dc-price-card">
         <div class="dc-price-amount" id="dc-detail-price"></div>
-        <div class="dc-price-note">One-time payment · lifetime access · unlocks both courses</div>
+        <div class="dc-price-note">One-time payment · lifetime access</div>
         <div id="dc-enroll-cta"></div>
         <ul class="dc-included-list" id="dc-detail-included"></ul>
       </div>
@@ -1359,7 +1359,7 @@ en: {
   exploreLangTitle:"Language Exams", exploreLangDesc:"IELTS, CELPIP, PTE Core, and TEF Canada — vocabulary, grammar, reading, and listening practice.",
   exploreToolsTitle:"Free Study Tools", exploreToolsDesc:"Physical presence calculator, flashcards, study plans, and an application tracker.",
   exploreBlogTitle:"Blog & Guides", exploreBlogDesc:"In-depth articles on test formats, scoring, and what to expect on exam day.",
-  exploreCoursesTitle:"Courses", exploreCoursesDesc:"2 new courses: Truck Dispatcher and Freight Forwarding — free chapters to start.",
+  exploreCoursesTitle:"Courses", exploreCoursesDesc:"4 courses: Dispatcher, Freight Forwarding, Customs Compliance, and Digital Marketing — free chapters to start.",
   exploreArrow:"Explore →", comingSoonBadge:"Coming soon",
   coursesEyebrow:"New — coming soon", coursesTitle:"Structured courses are on the way.",
   coursesBody:"We're building guided video courses to go alongside the practice questions you already have here. Leave your email and we'll let you know the moment they're available.",
@@ -1521,7 +1521,7 @@ fr: {
   exploreLangTitle:"Examens de langue", exploreLangDesc:"IELTS, CELPIP, PTE Core et TEF Canada — vocabulaire, grammaire, lecture et écoute.",
   exploreToolsTitle:"Outils d'étude gratuits", exploreToolsDesc:"Calculateur de présence physique, cartes-éclair, plans d'étude et suivi de demande.",
   exploreBlogTitle:"Blogue et guides", exploreBlogDesc:"Articles approfondis sur les formats d'examen, la notation et le jour de l'examen.",
-  exploreCoursesTitle:"Cours", exploreCoursesDesc:"2 nouveaux cours : répartiteur de camions et transitaire — chapitres gratuits pour commencer.",
+  exploreCoursesTitle:"Cours", exploreCoursesDesc:"4 cours : répartiteur de camions, transitaire, conformité douanière et marketing numérique — chapitres gratuits pour commencer.",
   exploreArrow:"Découvrir →", comingSoonBadge:"Bientôt disponible",
   coursesEyebrow:"Nouveau — bientôt disponible", coursesTitle:"Des cours structurés arrivent bientôt.",
   coursesBody:"Nous préparons des cours vidéo guidés pour accompagner les questions pratiques déjà disponibles ici. Laissez votre courriel et nous vous aviserons dès qu'ils seront prêts.",
@@ -1683,7 +1683,7 @@ es: {
   exploreLangTitle:"Exámenes de idioma", exploreLangDesc:"IELTS, CELPIP, PTE Core y TEF Canada — vocabulario, gramática, lectura y comprensión auditiva.",
   exploreToolsTitle:"Herramientas de estudio gratuitas", exploreToolsDesc:"Calculadora de presencia física, tarjetas de memoria, planes de estudio y seguimiento de solicitud.",
   exploreBlogTitle:"Blog y guías", exploreBlogDesc:"Artículos detallados sobre formatos de examen, puntuación y qué esperar el día del examen.",
-  exploreCoursesTitle:"Cursos", exploreCoursesDesc:"2 cursos nuevos: despachador de camiones y transitario — capítulos gratis para empezar.",
+  exploreCoursesTitle:"Cursos", exploreCoursesDesc:"4 cursos: despachador de camiones, transitario, cumplimiento aduanero y marketing digital — capítulos gratis para empezar.",
   exploreArrow:"Explorar →", comingSoonBadge:"Próximamente",
   coursesEyebrow:"Nuevo — próximamente", coursesTitle:"Cursos estructurados están en camino.",
   coursesBody:"Estamos creando cursos en video guiados para acompañar las preguntas de práctica que ya tienes aquí. Deja tu correo y te avisaremos en cuanto estén disponibles.",
@@ -2668,30 +2668,87 @@ const examScoreScales = {
   }
 };
 
+function aggregateExamPracticeScore(examCode){
+  const data = examContentSources[examCode];
+  let totalCorrect = 0, totalAttempted = 0;
+
+  // Vocabulary + Grammar
+  ['vocabulary','grammar'].forEach(key=>{
+    const state = examQuizState[examCode][key];
+    const items = data[key];
+    Object.keys(state).forEach(qi=>{
+      totalAttempted++;
+      if(state[qi] === items[qi].correct) totalCorrect++;
+    });
+  });
+
+  // Reading (nested by passage) — PTE uses a different shape (mcq/reorder split)
+  const readingState = examReadingState[examCode];
+  const readingPassages = examCode === 'pte' ? (data.reading && data.reading.mcq) : data.reading;
+  (readingPassages || []).forEach((passage, pi)=>{
+    const pState = readingState[pi];
+    if(!pState) return;
+    Object.keys(pState).forEach(qi=>{
+      totalAttempted++;
+      if(pState[qi] === passage.questions[qi].correct) totalCorrect++;
+    });
+  });
+
+  // Listening (nested by passage)
+  const listeningState = examListeningState[examCode];
+  (data.listening || []).forEach((passage, pi)=>{
+    const pState = listeningState[pi];
+    if(!pState) return;
+    Object.keys(pState).forEach(qi=>{
+      totalAttempted++;
+      if(pState[qi] === passage.questions[qi].correct) totalCorrect++;
+    });
+  });
+
+  // Full Test 1 and Full Test 2
+  ['full1','full2'].forEach(suffix=>{
+    const key = `${examCode}_${suffix}`;
+    const pool = examPools && examPools[key];
+    const answers = examAnswers && examAnswers[key];
+    if(!pool || !answers) return;
+    Object.keys(answers).forEach(qi=>{
+      totalAttempted++;
+      if(answers[qi] === pool[qi].correct) totalCorrect++;
+    });
+  });
+
+  return { totalCorrect, totalAttempted };
+}
+
 function renderExamCalculator(examCode, el){
   const scale = examScoreScales[examCode];
+  const { totalCorrect, totalAttempted } = aggregateExamPracticeScore(examCode);
+
+  if(totalAttempted === 0){
+    el.innerHTML = `
+      <div class="note-card">
+        <h3>${scale.label}</h3>
+        <p>This calculates automatically from your real answers — no manual entry needed. Go answer some vocabulary, grammar, reading, listening, or full test questions, then come back to this tab and your estimated score will be here.</p>
+      </div>
+      <p class="full-disclaimer">${scale.disclaimer}</p>
+    `;
+    return;
+  }
+
+  const accuracy = totalCorrect / totalAttempted;
+  const scaledScore = Math.round(accuracy * scale.maxScore);
+  const match = scale.table.find(row => scaledScore >= row.min) || scale.table[scale.table.length - 1];
+
   el.innerHTML = `
     <div class="note-card">
       <h3>${scale.label}</h3>
-      <p>Enter your number of ${scale.scoreName} (out of ${scale.maxScore}) to see an approximate score estimate.</p>
-      <label style="font-size:13px; font-weight:700; display:block; margin:14px 0 6px;">Correct answers (out of ${scale.maxScore})</label>
-      <input type="number" id="${examCode}-raw-score" min="0" max="${scale.maxScore}" style="padding:10px 14px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:14px; width:140px;">
-      <button class="btn btn-primary" onclick="calculateExamScore('${examCode}')" style="margin-left:12px;">Calculate</button>
-      <div id="${examCode}-score-result"></div>
+      <p>Calculated automatically from your real answers so far — across vocabulary, grammar, reading, listening, and any full tests you've attempted. No manual entry needed; this updates every time you practice more.</p>
+      <div class="presence-result-card" style="margin-top:14px;">
+        <div class="big-num" style="font-size:26px;">${match.band}</div>
+        <p style="margin-top:8px; font-size:13px;">Based on ${totalCorrect}/${totalAttempted} correct so far (${Math.round(accuracy*100)}% accuracy) across everything you've practiced.</p>
+      </div>
     </div>
     <p class="full-disclaimer">${scale.disclaimer}</p>
-  `;
-}
-function calculateExamScore(examCode){
-  const scale = examScoreScales[examCode];
-  const raw = parseInt(document.getElementById(`${examCode}-raw-score`).value);
-  if(isNaN(raw) || raw < 0 || raw > scale.maxScore){ return; }
-  const match = scale.table.find(row => raw >= row.min);
-  document.getElementById(`${examCode}-score-result`).innerHTML = `
-    <div class="presence-result-card">
-      <div class="big-num" style="font-size:26px;">${match.band}</div>
-      <p style="margin-top:8px; font-size:13px;">Approximate estimate based on ${raw}/${scale.maxScore} correct answers.</p>
-    </div>
   `;
 }
 
@@ -6863,6 +6920,93 @@ const ccDiagrams = {
 };
 
 
+const ccDiagrams2 = {
+  ccSalaryPath: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Typical Pay Progression (Reference)</text>
+    <text x="30" y="48" font-size="10" fill="#0B1B33">Entry-level</text>
+    <rect x="30" y="54" width="130" height="16" rx="3" fill="#0F766E"/>
+    <text x="168" y="66" font-size="9" fill="#64748B">supported role</text>
+    <text x="30" y="92" font-size="10" fill="#0B1B33">Independent files</text>
+    <rect x="30" y="98" width="190" height="16" rx="3" fill="#14B8A6"/>
+    <text x="228" y="110" font-size="9" fill="#64748B">1-2+ years in</text>
+    <text x="30" y="136" font-size="10" fill="#0B1B33">Specialist / manager</text>
+    <rect x="30" y="142" width="240" height="16" rx="3" fill="#5EEAD4"/>
+    <text x="278" y="154" font-size="9" fill="#0B1B33">certified, senior</text>
+    <text x="170" y="188" text-anchor="middle" font-size="10" fill="#64748B">Figures vary by employer, region, and specialization.</text>
+  </svg>`,
+
+  agencyVsDepartments: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Two Different Questions to Ask</text>
+    <rect x="20" y="40" width="145" height="70" rx="8" fill="#CCFBF1"/>
+    <text x="92" y="62" text-anchor="middle" font-size="10" font-weight="700" fill="#0F766E">Customs question</text>
+    <text x="92" y="82" text-anchor="middle" font-size="9" fill="#334155">Classification, value,</text>
+    <text x="92" y="94" text-anchor="middle" font-size="9" fill="#334155">origin, duty</text>
+    <rect x="175" y="40" width="145" height="70" rx="8" fill="#FEF3C7"/>
+    <text x="247" y="62" text-anchor="middle" font-size="10" font-weight="700" fill="#B45309">Other-department question</text>
+    <text x="247" y="82" text-anchor="middle" font-size="9" fill="#334155">Permits, safety,</text>
+    <text x="247" y="94" text-anchor="middle" font-size="9" fill="#334155">certifications</text>
+    <text x="170" y="150" text-anchor="middle" font-size="10" fill="#64748B">A shipment can pass one and still fail the other.</text>
+  </svg>`,
+
+  dailyTaskSplitCC: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Where a Typical Day Goes</text>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#E2E8F0" stroke-width="22"/>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#0F766E" stroke-width="22" stroke-dasharray="130 280" transform="rotate(-90 120 112)"/>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#14B8A6" stroke-width="22" stroke-dasharray="90 280" stroke-dashoffset="-130" transform="rotate(-90 120 112)"/>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#5EEAD4" stroke-width="22" stroke-dasharray="60 280" stroke-dashoffset="-220" transform="rotate(-90 120 112)"/>
+    <rect x="215" y="72" width="14" height="14" fill="#0F766E"/>
+    <text x="234" y="84" font-size="9.5" fill="#0B1B33">Classification/valuation</text>
+    <rect x="215" y="97" width="14" height="14" fill="#14B8A6"/>
+    <text x="234" y="109" font-size="9.5" fill="#0B1B33">Documentation review</text>
+    <rect x="215" y="122" width="14" height="14" fill="#5EEAD4"/>
+    <text x="234" y="134" font-size="9.5" fill="#0B1B33">Research &amp; corrections</text>
+    <text x="170" y="188" text-anchor="middle" font-size="10" fill="#64748B">A rough breakdown of a typical day's focus.</text>
+  </svg>`,
+
+  originExample: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">One Product, Two Non-Member Inputs</text>
+    <rect x="20" y="40" width="130" height="34" rx="5" fill="#94A3B8"/>
+    <text x="85" y="61" text-anchor="middle" font-size="9.5" fill="#fff">Wood (non-member)</text>
+    <rect x="190" y="40" width="130" height="34" rx="5" fill="#94A3B8"/>
+    <text x="255" y="61" text-anchor="middle" font-size="9.5" fill="#fff">Hardware (non-member)</text>
+    <text x="170" y="96" text-anchor="middle" font-size="16" fill="#0B1B33">↓ assembled in member country ↓</text>
+    <rect x="90" y="112" width="160" height="34" rx="5" fill="#0F766E"/>
+    <text x="170" y="133" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Finished furniture</text>
+    <text x="170" y="176" text-anchor="middle" font-size="10" fill="#64748B">Tariff shift or regional value content decides eligibility.</text>
+  </svg>`,
+
+  auditPrepChecklist: `<svg viewBox="0 0 340 190" class="dc-diagram">
+    <rect width="340" height="190" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Staying Audit-Ready</text>
+    ${["Classification reasoning documented at the time","Consistent records across invoices and declarations","A clear log of any past corrections made"].map((label,i) => `
+      <rect x="30" y="${38+i*36}" width="18" height="18" rx="4" fill="none" stroke="#0F766E" stroke-width="2"/>
+      <path d="M33 ${47+i*36} l4 4 l8 -8" stroke="#14B8A6" stroke-width="2.5" fill="none"/>
+      <text x="58" y="${52+i*36}" font-size="9.5" fill="#0B1B33">${label}</text>
+    `).join('')}
+    <text x="170" y="176" text-anchor="middle" font-size="10" fill="#64748B">A habit built well before any audit notice arrives.</text>
+  </svg>`,
+
+  reliefDecision: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Which Program Fits?</text>
+    <rect x="90" y="34" width="160" height="30" rx="6" fill="#0B1B33"/>
+    <text x="170" y="53" text-anchor="middle" font-size="10" fill="#fff">Will the goods be re-exported?</text>
+    <line x1="170" y1="64" x2="70" y2="90" stroke="#CBD5E1" stroke-width="1.5"/>
+    <line x1="170" y1="64" x2="270" y2="90" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="15" y="92" width="120" height="44" rx="6" fill="#0F766E"/>
+    <text x="75" y="112" text-anchor="middle" font-size="9" fill="#fff">Yes, known in advance</text>
+    <text x="75" y="126" text-anchor="middle" font-size="8" fill="#CCFBF1">→ Relief program</text>
+    <rect x="205" y="92" width="120" height="44" rx="6" fill="#B45309">
+    </rect>
+    <text x="265" y="112" text-anchor="middle" font-size="9" fill="#fff">Already paid duty</text>
+    <text x="265" y="126" text-anchor="middle" font-size="8" fill="#FEF3C7">→ Drawback</text>
+    <text x="170" y="170" text-anchor="middle" font-size="10" fill="#64748B">Storage-related deferral needs → bonded warehouse.</text>
+  </svg>`,
+};
 const customsCourse = {
   chapters: [
 {
@@ -6904,7 +7048,20 @@ const customsCourse = {
           <p>A Canadian company imports a shipment of specialized kitchen equipment from Italy. A compliance specialist handling this file works through: confirming the correct tariff classification for this specific type of equipment (checking whether it falls under general machinery provisions or a more specific heading for kitchen equipment); calculating the value for duty based on the actual transaction price plus any required additions like certain freight or assist costs; checking whether the shipment qualifies for a reduced duty rate under a relevant trade agreement, which depends on where the equipment was actually manufactured and what portion of its value originated there; and preparing the import documentation accurately before the shipment arrives.</p>
           <p>If any one of these steps is wrong — the wrong classification code, a missed required addition to the value, an origin claim that doesn't actually qualify — the consequence ranges from a minor correction to a real financial penalty, depending on how the error is discovered and how it's handled once found. This is exactly why the role rewards genuine care and accuracy over speed alone.</p>
         `
-      }
+      },
+      {
+        title: "What Pay Looks Like Over Time",
+        content: `
+          ${ccDiagrams2.ccSalaryPath}
+          <p>Compensation in this field generally grows with experience and specialization, similar to other trade-related careers — entry-level supported roles build the practical foundation, independent file handling develops over the first couple of years, and formal certification or a move into a specialist or management role opens the door to senior compensation. Specific figures vary considerably by employer, region, and industry specialization, so treat any number as a general reference point.</p>
+        `
+      },
+      {
+        title: "A Second Example: When Everything Goes Smoothly",
+        content: `
+          <p>Not every file involves a complication. A routine shipment of standard industrial fasteners, correctly classified under a well-established heading with no ambiguity, valued straightforwardly at the actual invoice price with no assists or related-party complications, and requiring no permits from any other regulating department, clears without incident. This is what the majority of a compliance specialist's work actually looks like day to day — the complex, ambiguous cases get the attention in training and in courses like this one, precisely because they're where real skill gets tested, but routine, correctly-handled files are the genuine bulk of the job.</p>
+        `
+      },
     ],
     quiz: [
       {q:"What is the core focus of a customs compliance specialist's role?", opts:["Physically transporting goods across the border","The regulatory and financial accuracy of a shipment — classification, valuation, origin, and documentation","Only negotiating freight rates","Only managing warehouse inventory"], correct:1, ex:"A compliance specialist focuses on whether a shipment is correctly classified, valued, documented, and legally compliant, not the physical logistics of moving it."},
@@ -6953,7 +7110,20 @@ const customsCourse = {
           <p>Consider a company importing a shipment of children's toys. Beyond standard classification and valuation, this product category is also subject to consumer product safety requirements enforced by a separate regulatory body, covering things like choking hazard testing and labelling standards. A compliance specialist working this file needs to know, before the shipment even arrives, that this additional regulatory layer exists and what documentation or certification it requires — otherwise a shipment that's perfectly correct from a pure customs standpoint can still be detained.</p>
           <p>This is a genuinely common pattern across many product categories — food, cosmetics, electronics with wireless components, vehicles, and firearms-adjacent products all carry their own additional regulatory layers beyond standard customs requirements. Building a mental list of which product categories in your own work regularly trigger this kind of additional scrutiny is one of the most practically useful things an experienced compliance specialist develops over time.</p>
         `
-      }
+      },
+      {
+        title: "Two Different Questions, Side by Side",
+        content: `
+          ${ccDiagrams2.agencyVsDepartments}
+          <p>Keeping these two questions mentally separate — is this correctly classified and valued, versus does this need anything from another regulating department — is one of the simplest and most useful habits a compliance specialist can build. A shipment can pass one test perfectly and still fail the other, and treating them as a single combined question is a common source of overlooked requirements.</p>
+        `
+      },
+      {
+        title: "A Second Regulated Product Example",
+        content: `
+          <p>Consider an import of cosmetics. Beyond standard classification and valuation, cosmetic products in Canada are subject to labelling and ingredient disclosure requirements enforced by a health-focused regulatory body, separate from the border agency's own rules. A compliance specialist working this file needs to confirm, before the shipment arrives, that the product's labelling meets these separate requirements — since a cosmetics shipment that's perfectly classified and valued can still be detained if this additional regulatory layer hasn't been addressed, exactly the same pattern seen with the toy and food examples covered earlier in this course.</p>
+        `
+      },
     ],
     quiz: [
       {q:"What is the border agency's role for goods regulated by other government departments?", opts:["It has no involvement with these goods at all","It largely enforces those other departments' requirements at the point of entry","It replaces the other department's authority entirely","It only handles these goods for exports, never imports"], correct:1, ex:"The border agency enforces many other departments' regulatory requirements on their behalf at the point of entry, even though those departments set the actual rules."},
@@ -7006,7 +7176,20 @@ const customsCourse = {
           <p>Not memorizing every possible classification code — that's neither realistic nor how the job actually works day to day, since even experienced specialists regularly research unfamiliar products. What matters starting out is understanding the underlying logic this course builds toward: why classification determines duty, why value for duty follows a specific defined method rather than just "whatever price was on the invoice," why origin genuinely matters for trade agreement eligibility, and why small errors compound into real financial and legal consequences over time.</p>
           <p>Someone entering an interview or a first role with this conceptual foundation — able to explain why these pieces connect, even without yet having handled hundreds of real files — is genuinely better prepared than someone who's only heard the job title. The remaining chapters of this course build out each of these pieces in real, practical depth.</p>
         `
-      }
+      },
+      {
+        title: "Where a Typical Day Actually Goes",
+        content: `
+          ${ccDiagrams2.dailyTaskSplitCC}
+          <p>Seeing a rough breakdown of how a day typically splits helps set realistic expectations — a meaningful share goes to the core classification and valuation work, a further share to documentation review, and the remainder to research and proactive correction work. The exact split shifts depending on whether you're in an entry-level supported role or handling files independently, but this general shape holds across most compliance roles.</p>
+        `
+      },
+      {
+        title: "What a Realistic First Few Months Looks Like",
+        content: `
+          <p>A new compliance specialist typically spends the first weeks reviewing real classification decisions made by more experienced colleagues, understanding the reasoning behind them rather than immediately making independent calls. Over the following months, this shifts toward handling more straightforward files independently, with more complex or ambiguous questions still reviewed by someone more experienced before finalizing. This gradual, supervised ramp-up is normal and expected — nobody enters this field making confident independent judgment calls on genuinely ambiguous classification questions on day one, and that's a realistic, not a discouraging, expectation.</p>
+        `
+      },
     ],
     quiz: [
       {q:"How does the pace of a compliance specialist's typical day compare to a dispatcher's or forwarder's?", opts:["It's identical in every way","Generally steadier and more research-driven, with less constant phone-based urgency","Far more chaotic with no analytical work involved","There is no meaningful difference in daily pace"], correct:1, ex:"Compliance work tends to be steadier and more analytically focused day to day, compared to the more constant phone-based urgency of dispatching or forwarding."},
@@ -7054,7 +7237,19 @@ const customsCourse = {
           <p>It might seem like smuggling offences are only relevant to genuinely illegal activity, but understanding this part of the legal framework matters even for a compliance specialist working entirely with legitimate businesses — because the legal definition of smuggling isn't limited to deliberate criminal evasion. Knowingly providing false or misleading information on a customs declaration, even to save on duty rather than to import something illegal, can fall within this same legal territory.</p>
           <p>This is precisely why proper valuation and classification aren't just administrative best practice — they're the difference between a compliant business and one that's inadvertently exposed to serious legal risk. A compliance specialist's genuine value to an employer or client is, in real part, protecting the business from ever crossing that line, even unintentionally.</p>
         `
-      }
+      },
+      {
+        title: "A Practical Habit: Checking Before Assuming",
+        content: `
+          <p>Given the escalating powers described in this chapter, a practical habit worth building early is treating any uncertainty about whether a specific product might be restricted or require a permit as worth a few minutes of research before a shipment is booked, rather than after. This is a small time investment compared to the cost and disruption of a shipment being detained or, in a worse case, seized because a restriction wasn't caught in time.</p>
+        `
+      },
+      {
+        title: "A Second Worked Example: A Borderline Case",
+        content: `
+          <p>A company wants to import a specific type of laser device for industrial use. Depending on its power output and specific classification, this kind of product can fall anywhere from completely unrestricted to requiring a specific safety certification, since certain laser categories are treated as regulated equipment. A compliance specialist handling this file needs to determine, before the shipment moves, exactly which category this specific device falls into — the answer isn't obvious just from knowing "it's a laser," and getting it wrong in either direction (assuming it's unrestricted when it isn't, or assuming restrictions apply when they genuinely don't) creates real problems, either at the border or in unnecessarily delaying a legitimate shipment.</p>
+        `
+      },
     ],
     quiz: [
       {q:"What do the two foundational pieces of legislation covered in this chapter together establish?", opts:["Only rules for domestic sales","The legal foundation for border processing and the tariff/classification system","Only rules for hiring customs staff","Nothing related to actual compliance work"], correct:1, ex:"Together, these two pieces of legislation establish the legal basis for both the border reporting process and the tariff classification system."},
@@ -7104,7 +7299,19 @@ const customsCourse = {
           <p>Consider classifying a reusable insulated water bottle made primarily of stainless steel with a plastic lid. A quick, careless approach might jump straight to a general "plastic household articles" heading because of the visible lid, or a general "steel articles" heading because of the primary material — but the correct approach starts by checking whether a more specific heading exists for vacuum-insulated flasks and similar items, since a more specific applicable description generally takes priority over a broader, more general one covering the same underlying material.</p>
           <p>This example illustrates why classification genuinely requires deliberate, step-by-step work rather than an instinctive first guess based on the most visually obvious material or feature — the "obvious" answer and the technically correct answer aren't always the same thing, and the gap between them is exactly where real, costly classification errors happen.</p>
         `
-      }
+      },
+      {
+        title: "Building the Comparison Skill Deliberately",
+        content: `
+          <p>Comparing candidate headings correctly — at the same structural level, following the interpretive rules rather than instinct — is a skill that genuinely improves with deliberate practice, not just passive exposure. A useful exercise for someone building this skill: when a classification decision feels obvious, pause and explicitly write out why the alternative headings that seemed plausible at first glance were actually ruled out. This habit, done consistently, builds the kind of rigorous classification instinct that experienced specialists rely on, rather than leaving that reasoning implicit and unexamined.</p>
+        `
+      },
+      {
+        title: "A Second Worked Example",
+        content: `
+          <p>Consider classifying a set of decorative garden solar lights — objects that are simultaneously lighting fixtures, solar-powered electronic devices, and garden decor items. A careless approach might default to a general "lighting fixtures" heading based on the most visually obvious function, but a careful approach checks whether a more specific heading exists for solar-powered lighting devices specifically, since — following the same principle as the earlier insulated water bottle example — a more specific applicable heading generally takes priority over a broader, more general one when both could plausibly apply.</p>
+        `
+      },
     ],
     quiz: [
       {q:"What makes the first six digits of a tariff classification code internationally significant?", opts:["They have no special significance","They are shared internationally under the Harmonized System, meaning the same digits mean the same thing across many countries","They only apply within Canada","They are randomly assigned with no shared meaning"], correct:1, ex:"The first six digits are internationally standardized under the Harmonized System, allowing consistent meaning across many trading countries."},
@@ -7153,7 +7360,19 @@ const customsCourse = {
           <p>A Canadian company imports machinery from its own parent company overseas for $80,000 CAD as stated on the invoice. Because the buyer and seller are related, the compliance specialist first needs to confirm the relationship didn't influence the price — checking this against comparable arm's-length transactions or other accepted tests before the transaction value method can be used at all. Suppose the buyer also separately provided $5,000 worth of specialized tooling to the overseas manufacturer, free of charge, specifically to help produce this machinery — that $5,000 needs to be added to the value for duty as an assist, even though it never appeared on the invoice, bringing the correct value for duty to $85,000, not the $80,000 the invoice alone suggested.</p>
           <p>This example illustrates why valuation work requires asking questions beyond just reading the invoice — the true value for duty sometimes depends on details of the broader business relationship that aren't automatically visible on the paperwork in front of you.</p>
         `
-      }
+      },
+      {
+        title: "Related-Party Transactions in Practice",
+        content: `
+          <p>Related-party imports — a Canadian subsidiary importing from its own overseas parent company, for example — come up often enough in real practice that understanding how to confirm the transaction value method can still be used is a genuinely practical, recurring skill. This generally involves comparing the related-party price against how the same or similar goods are priced in genuinely arm's-length transactions, or applying other accepted tests that demonstrate the relationship didn't distort the price. Simply asserting that a related-party price is fair isn't sufficient — real supporting evidence is expected.</p>
+        `
+      },
+      {
+        title: "A Second Worked Valuation Example",
+        content: `
+          <p>A company imports promotional display units from an overseas supplier at no charge, since the units are provided specifically to support in-store marketing rather than being sold. Even though no purchase price exists on an invoice in the usual sense, these units still have a genuine value for duty purposes — this is exactly the kind of situation where the fallback valuation methods, like comparing to the value of identical or similar goods that are genuinely sold, become necessary rather than optional, since the primary transaction-value method simply has no transaction price to work from in the first place.</p>
+        `
+      },
     ],
     quiz: [
       {q:"Why does customs valuation follow a defined method rather than simply using whatever price is on the invoice?", opts:["Invoice prices are always perfectly accurate","A defined method keeps the system fair and consistent, since relying on invoice price alone could be manipulated","There is no actual reason for this","Defined methods only apply to very large shipments"], correct:1, ex:"A defined valuation methodology exists specifically to prevent manipulation, such as artificially low prices between related parties, and to ensure consistency."},
@@ -7201,7 +7420,20 @@ const customsCourse = {
           <p>A company imports furniture assembled in one trade-agreement member country, using wood sourced from a non-member country and hardware components sourced from another non-member country. Whether this furniture qualifies for preferential duty treatment depends on the specific product-specific rule for furniture under the relevant agreement — if that rule requires a tariff shift, the compliance specialist needs to confirm that the wood and hardware, both starting outside any furniture-related classification, were transformed enough during assembly to shift into the furniture heading itself, which they generally would be, given how substantially raw wood and separate hardware components change when combined into finished furniture.</p>
           <p>But if the applicable rule instead requires meeting a specific regional value content threshold, the calculation becomes different — now requiring a genuine accounting exercise: does the assembly labor, packaging, and any regionally-sourced components add up to enough of the furniture's total value, calculated according to the agreement's specific formula, to meet that threshold? This is exactly the kind of real, non-obvious analysis that makes origin determination a genuine specialist skill rather than a quick lookup.</p>
         `
-      }
+      },
+      {
+        title: "Reading a Product-Specific Rule",
+        content: `
+          ${ccDiagrams2.originExample}
+          <p>Every product-specific origin rule needs to actually be looked up and read carefully for the specific product and specific trade agreement in question — assuming a rule based on a similar product's requirements, without verifying the specific rule that actually applies, is a genuine and avoidable source of origin errors. Two products that seem similar on the surface can have meaningfully different origin requirements depending on their specific tariff classification.</p>
+        `
+      },
+      {
+        title: "A Second Worked Example",
+        content: `
+          <p>A company imports electronic components assembled in one trade-agreement member country, using semiconductor chips manufactured in a non-member country. Semiconductor-heavy products often carry particularly specific origin rules, since the underlying chip technology itself frequently doesn't originate within trade-agreement regions even when final assembly does. A compliance specialist working this file needs to check the specific rule for this exact product category rather than assuming a general electronics rule applies uniformly — the applicable rule might require a regional value content calculation that's genuinely difficult for chip-heavy products to satisfy, precisely because the chips themselves typically represent a large share of the product's total value.</p>
+        `
+      },
     ],
     quiz: [
       {q:"Why isn't 'where final assembly happened' automatically the same as a product's country of origin for trade purposes?", opts:["Final assembly location is always the same as origin","Origin depends on specific defined rules that consider components, materials, and manufacturing steps, not just final assembly location","Origin has no defined rules at all","Final assembly is legally irrelevant to origin"], correct:1, ex:"Origin determination follows specific, defined technical rules considering the full manufacturing process, not simply where final assembly took place."},
@@ -7249,7 +7481,19 @@ const customsCourse = {
           <p>Six months after a shipment cleared, a compliance specialist reviewing the company's product catalog for an unrelated reason notices that a batch of imported components was classified under a general parts heading, when a more specific heading — carrying a different duty rate — actually applied given a closer read of the chapter notes. This wasn't caught at the time because the general heading seemed reasonable on a quick review, and nobody had reason to look closer until this later, unrelated review surfaced it.</p>
           <p>The appropriate next step is a voluntary correction covering that specific shipment (and, if the same product was imported repeatedly under the same incorrect classification, likely covering those repeated shipments too) — filed proactively, with a clear explanation of what the error was and how it's being corrected, rather than waiting to see whether it surfaces on its own in a future audit. This kind of proactive habit is exactly what separates a genuinely strong compliance program from one that's only ever reacting to problems after they've already become serious.</p>
         `
-      }
+      },
+      {
+        title: "Building Documentation Consistency Into Daily Work",
+        content: `
+          <p>Rather than treating document consistency-checking as a separate, occasional task, the strongest practice folds it directly into the normal workflow of preparing every single declaration — a brief, deliberate cross-check of quantities and values across the invoice, supporting documents, and the declaration itself, every time, rather than only when something feels uncertain. This habit, done consistently across hundreds of routine files, is what actually prevents the kind of avoidable documentation-mismatch delays covered earlier in this chapter.</p>
+        `
+      },
+      {
+        title: "A Second Worked Example: A Timing Correction",
+        content: `
+          <p>A compliance specialist reviewing recent import activity notices that a shipment's declared value was understated by a modest amount, due to a currency conversion error made at the time of filing. Because this is caught relatively soon after the original filing — before an audit, before a formal question from the border agency — a straightforward voluntary correction can be filed, generally treated as a more routine matter than the same error discovered much later or during an active audit. This timing difference is exactly why building a habit of periodic review, rather than only reacting to external questions, genuinely matters.</p>
+        `
+      },
     ],
     quiz: [
       {q:"What is the primary purpose of the commercial invoice in an import declaration?", opts:["It has no real function","Stating what's being sold, the quantity, and the price — the starting point for classification and valuation","Only confirming the carrier's identity","Recording the shipment's insurance details exclusively"], correct:1, ex:"The commercial invoice states the core sale details and forms the starting point for both classification and valuation work."},
@@ -7297,7 +7541,20 @@ const customsCourse = {
           <p>A mid-size importer receives notice of a compliance audit covering the past several years of a specific product line's import history. The compliance specialist assigned to support this audit gathers the relevant classification decisions, the reasoning documented at the time each decision was made, and the supporting invoices and correspondence — presenting a clear, organized record rather than scrambling to reconstruct reasoning after the fact. Because this business had maintained genuine internal documentation explaining its classification logic all along, the audit review moves relatively smoothly, with the reasoning clearly available to review rather than needing to be reconstructed from memory months or years later.</p>
           <p>Contrast this with a business that never documented its reasoning at the time — facing the same audit, that business's compliance specialist would need to reconstruct the original logic from scratch, under time pressure, with far less credibility than a contemporaneous record would have provided. This difference illustrates precisely why the proactive documentation habits described earlier in this chapter matter well beyond the moment a classification decision is first made.</p>
         `
-      }
+      },
+      {
+        title: "Staying Audit-Ready as an Ongoing Habit",
+        content: `
+          ${ccDiagrams2.auditPrepChecklist}
+          <p>The practices that make an audit go smoothly aren't things done in a rush once an audit notice arrives — they're habits built into daily work well beforehand: documenting classification reasoning as decisions are made, keeping records consistent across systems, and maintaining a clear log of any past corrections. A business (or an individual compliance specialist) that builds these habits consistently is, in effect, always prepared for an audit, rather than needing to scramble when one is announced.</p>
+        `
+      },
+      {
+        title: "A Second Worked Example: A Random Audit",
+        content: `
+          <p>A smaller importer, with no history of any compliance issues, receives notice of a routine audit selected through general risk-based or random selection criteria rather than any specific concern about their filings. Because this business had never built strong documentation habits, treating classification decisions as informal, quick calls that were never written down, the compliance specialist supporting this audit faces real difficulty reconstructing the original reasoning for decisions made months or years earlier. This example reinforces, from a different angle than the mid-size importer example earlier in this chapter, why documentation habits matter regardless of a business's past compliance record — audits can happen even without any specific trigger, and preparation needs to be a constant practice, not a reaction.</p>
+        `
+      },
     ],
     quiz: [
       {q:"Why do administrative penalties generally increase for repeated violations of the same rule?", opts:["Penalties are actually always identical regardless of repetition","To create a genuine incentive to fix underlying problems rather than repeat them indefinitely","Repeated violations are never actually penalized more heavily","This escalation has no real practical purpose"], correct:1, ex:"Escalating penalties for repeated violations are designed to genuinely incentivize businesses to fix root causes, not just treat penalties as a routine cost."},
@@ -7345,7 +7602,20 @@ const customsCourse = {
           <p>Across all ten chapters of this course, one theme keeps recurring: this field rewards genuine care, structured thinking, and a willingness to ask "am I sure this is actually correct" rather than assuming a first-glance answer is right. Classification, valuation, origin, documentation, and audit management are all, at their core, applications of this same underlying discipline — working through a defined process carefully, rather than guessing based on what seems obvious.</p>
           <p>Trade rules, tariff schedules, and trade agreements all continue to evolve over time — which is exactly why the strongest compliance specialists treat this course, and any formal training, as a foundation to build ongoing learning on top of, not a finish line. If you've worked through this course with genuine attention, you now have a real, substantive foundation in how Canadian customs compliance actually works — a foundation meaningfully stronger than simply knowing the job title existed.</p>
         `
-      }
+      },
+      {
+        title: "Choosing the Right Program",
+        content: `
+          ${ccDiagrams2.reliefDecision}
+          <p>When evaluating whether relief, bonded warehousing, or drawback fits a specific business situation, the practical starting question is timing: is the future re-export known in advance, before the goods are even imported (favoring a relief program), is ongoing flexible storage with deferred duty the real need (favoring a bonded warehouse), or has duty already been paid on goods that are only now being exported or used to produce exported goods (favoring drawback)? This timing-based framework is a genuinely useful mental shortcut for quickly narrowing which program actually fits a given situation.</p>
+        `
+      },
+      {
+        title: "Your Own Next Concrete Step",
+        content: `
+          <p>If you're applying for roles in this field now, consider preparing a brief, concrete walkthrough of one interesting classification or origin question you've worked through — even a hypothetical one based on this course's worked examples — since being able to talk through real reasoning, out loud, in an interview setting is a meaningfully stronger signal of genuine understanding than simply listing the topics this course covered. This kind of preparation, combined with the technical foundation built across all ten chapters, puts you in a genuinely strong position to start real work in Canadian customs compliance.</p>
+        `
+      },
     ],
     quiz: [
       {q:"What is the key difference between a relief program and a drawback program?", opts:["They are identical mechanisms with different names","A relief program avoids paying duty upfront for goods that will be re-exported; drawback refunds duty already paid after the fact","Drawback applies only to imports, never exports","Relief programs only apply to exported raw materials"], correct:1, ex:"Relief avoids upfront duty payment for goods that will be re-exported, while drawback provides a refund mechanism after duty has already been paid."},
@@ -7358,6 +7628,867 @@ const customsCourse = {
       {q:"Why does the chapter describe this course as a 'foundation' rather than a finish line?", opts:["Because trade rules and tariff schedules never actually change","Because trade rules, tariff schedules, and trade agreements continue to evolve, requiring ongoing learning","Because the course covers absolutely everything needed permanently","Because further learning is discouraged after completing this course"], correct:1, ex:"Given how much this field continues to evolve, the course positions itself as a foundation for ongoing learning, not a complete, final education."},
       {q:"What example is given of a business potentially 'leaving money on the table'?", opts:["A business with no import or export activity at all","A business that regularly imports components, produces finished goods, and exports a meaningful portion, without ever evaluating relief/drawback programs","A business that only ever imports for domestic sale","This scenario never actually occurs in practice"], correct:1, ex:"A business with a genuine re-export pattern that's never evaluated relief or drawback programs may be missing legitimate cost savings."},
       {q:"According to the final chapter, what makes someone who has completed this course meaningfully more prepared than someone who only knows the job title?", opts:["Nothing — the job title alone is sufficient preparation","Having a real, substantive foundation in how classification, valuation, origin, and compliance actually work together","Having memorized every possible tariff code","Completion alone guarantees employment regardless of understanding"], correct:1, ex:"Genuine understanding of how these interconnected pieces work is what meaningfully differentiates course completion from simply knowing the job exists."}
+    ]
+  }
+  ]
+};
+// Original diagrams for the Digital Marketing course — entirely
+// custom-drawn, no external images, no copyright risk.
+const dmDiagrams = {
+  channelOverview: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">The Core Digital Marketing Channels</text>
+    ${["SEO — organic search visibility","Content marketing — blogs, video, guides","Social media — organic and community","Paid ads — search, social, display","Email — owned, direct communication"].map((label,i) => `
+      <rect x="24" y="${34+i*30}" width="292" height="22" rx="5" fill="#fff" stroke="#DB2777" stroke-width="1.5"/>
+      <text x="170" y="${49+i*30}" text-anchor="middle" font-size="9" fill="#0B1B33">${label}</text>
+    `).join('')}
+  </svg>`,
+
+  funnelDiagram: `<svg viewBox="0 0 340 220" class="dc-diagram">
+    <rect width="340" height="220" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">The Marketing Funnel</text>
+    <polygon points="40,40 300,40 260,90 80,90" fill="#DB2777"/>
+    <text x="170" y="70" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Awareness</text>
+    <polygon points="80,94 260,94 235,140 105,140" fill="#EC4899"/>
+    <text x="170" y="122" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Consideration</text>
+    <polygon points="105,144 235,144 210,190 130,190" fill="#F472B6"/>
+    <text x="170" y="172" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Conversion</text>
+    <text x="170" y="210" text-anchor="middle" font-size="10" fill="#64748B">Each channel plays a different role at each stage.</text>
+  </svg>`,
+
+  audienceResearch: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Sources of Real Audience Insight</text>
+    ${["Analytics: who's already visiting and buying","Customer interviews and support conversations","Competitor content and review sites","Search and social listening data"].map((label,i) => `
+      <rect x="24" y="${38+i*36}" width="292" height="28" rx="5" fill="#fff" stroke="#DB2777" stroke-width="1.5"/>
+      <text x="170" y="${55+i*36}" text-anchor="middle" font-size="9.5" fill="#0B1B33">${label}</text>
+    `).join('')}
+  </svg>`,
+
+  personaCard: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">A Persona Is a Pattern, Not a Person</text>
+    <rect x="30" y="40" width="280" height="130" rx="10" fill="#FDF2F8" stroke="#DB2777" stroke-width="1.5"/>
+    <text x="170" y="66" text-anchor="middle" font-size="11" font-weight="700" fill="#DB2777">"Busy Priya" — Segment, not individual</text>
+    <text x="170" y="92" text-anchor="middle" font-size="9.5" fill="#334155">Real goal: save time evaluating options</text>
+    <text x="170" y="112" text-anchor="middle" font-size="9.5" fill="#334155">Real objection: worried about hidden fees</text>
+    <text x="170" y="132" text-anchor="middle" font-size="9.5" fill="#334155">Where she's found: comparison articles, reviews</text>
+    <text x="170" y="188" text-anchor="middle" font-size="10" fill="#64748B">Built from real data, not guesswork.</text>
+  </svg>`,
+
+  dailyTaskDM: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Where a Typical Day Goes</text>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#E2E8F0" stroke-width="22"/>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#DB2777" stroke-width="22" stroke-dasharray="120 280" transform="rotate(-90 120 112)"/>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#EC4899" stroke-width="22" stroke-dasharray="90 280" stroke-dashoffset="-120" transform="rotate(-90 120 112)"/>
+    <circle cx="120" cy="112" r="65" fill="none" stroke="#F9A8D4" stroke-width="22" stroke-dasharray="70 280" stroke-dashoffset="-210" transform="rotate(-90 120 112)"/>
+    <rect x="215" y="72" width="14" height="14" fill="#DB2777"/>
+    <text x="234" y="84" font-size="9.5" fill="#0B1B33">Content &amp; campaigns</text>
+    <rect x="215" y="97" width="14" height="14" fill="#EC4899"/>
+    <text x="234" y="109" font-size="9.5" fill="#0B1B33">Analytics review</text>
+    <rect x="215" y="122" width="14" height="14" fill="#F9A8D4"/>
+    <text x="234" y="134" font-size="9.5" fill="#0B1B33">Testing &amp; optimization</text>
+    <text x="170" y="188" text-anchor="middle" font-size="10" fill="#64748B">A rough breakdown of a typical day's focus.</text>
+  </svg>`,
+
+  careerPathDM: `<svg viewBox="0 0 340 190" class="dc-diagram">
+    <rect width="340" height="190" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">A Realistic Career Path</text>
+    ${[["Entry","Content or social media assistant",42],["1-2 yrs","Specialist in one channel",76],["3+ yrs","Multi-channel strategist",110],["5+ yrs","Marketing manager / consultant",144]].map(([label,desc,y]) => `
+      <circle cx="34" cy="${y}" r="6" fill="#DB2777"/>
+      <text x="50" y="${y-3}" font-size="10" font-weight="700" fill="#0B1B33">${label}</text>
+      <text x="50" y="${y+11}" font-size="9" fill="#64748B">${desc}</text>
+    `).join('')}
+    <line x1="34" y1="48" x2="34" y2="138" stroke="#CBD5E1" stroke-width="2"/>
+  </svg>`,
+
+  seoTriangle: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Three Pillars of SEO</text>
+    <rect x="20" y="40" width="90" height="70" rx="8" fill="#DB2777"/>
+    <text x="65" y="65" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Technical</text>
+    <text x="65" y="82" text-anchor="middle" font-size="8" fill="#FDF2F8">Crawlable, fast,</text>
+    <text x="65" y="94" text-anchor="middle" font-size="8" fill="#FDF2F8">mobile-friendly</text>
+    <rect x="125" y="40" width="90" height="70" rx="8" fill="#EC4899"/>
+    <text x="170" y="65" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Content</text>
+    <text x="170" y="82" text-anchor="middle" font-size="8" fill="#FDF2F8">Genuinely answers</text>
+    <text x="170" y="94" text-anchor="middle" font-size="8" fill="#FDF2F8">the search intent</text>
+    <rect x="230" y="40" width="90" height="70" rx="8" fill="#F472B6"/>
+    <text x="275" y="65" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Authority</text>
+    <text x="275" y="82" text-anchor="middle" font-size="8" fill="#FDF2F8">Trusted links and</text>
+    <text x="275" y="94" text-anchor="middle" font-size="8" fill="#FDF2F8">signals to the site</text>
+    <text x="170" y="140" text-anchor="middle" font-size="10" fill="#0B1B33" font-weight="700">Weak in any one pillar limits the other two.</text>
+  </svg>`,
+
+  searchIntent: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Four Types of Search Intent</text>
+    ${[["Informational","\"how does X work\""],["Navigational","\"[brand name] login\""],["Commercial","\"best X for Y\""],["Transactional","\"buy X near me\""]].map(([label,ex],i)=>`
+      <rect x="24" y="${38+i*36}" width="292" height="28" rx="5" fill="#fff" stroke="#DB2777" stroke-width="1.5"/>
+      <text x="45" y="${55+i*36}" font-size="9.5" font-weight="700" fill="#DB2777">${label}</text>
+      <text x="230" y="${55+i*36}" font-size="9" fill="#64748B" text-anchor="middle">${ex}</text>
+    `).join('')}
+  </svg>`,
+
+  keywordPitfalls: `<svg viewBox="0 0 340 190" class="dc-diagram">
+    <rect width="340" height="190" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Common SEO Mistakes</text>
+    <rect x="20" y="38" width="300" height="30" rx="6" fill="#FEE2E2"/>
+    <text x="170" y="58" text-anchor="middle" font-size="9.5" fill="#991B1B">Targeting high-volume keywords with no real intent match</text>
+    <rect x="20" y="76" width="300" height="30" rx="6" fill="#FEE2E2"/>
+    <text x="170" y="96" text-anchor="middle" font-size="9.5" fill="#991B1B">Writing for search engines instead of real readers</text>
+    <rect x="20" y="114" width="300" height="30" rx="6" fill="#FEE2E2"/>
+    <text x="170" y="134" text-anchor="middle" font-size="9.5" fill="#991B1B">Ignoring page speed and mobile experience</text>
+    <text x="170" y="168" text-anchor="middle" font-size="10" fill="#64748B">Each one caps how well content can actually rank.</text>
+  </svg>`,
+
+  contentFormats: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Matching Format to Goal</text>
+    <rect x="20" y="38" width="140" height="60" rx="8" fill="#DB2777"/>
+    <text x="90" y="60" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Blog / guide</text>
+    <text x="90" y="78" text-anchor="middle" font-size="8.5" fill="#FDF2F8">SEO, education</text>
+    <rect x="175" y="38" width="140" height="60" rx="8" fill="#EC4899"/>
+    <text x="245" y="60" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Video</text>
+    <text x="245" y="78" text-anchor="middle" font-size="8.5" fill="#FDF2F8">Engagement, trust</text>
+    <rect x="97" y="108" width="140" height="60" rx="8" fill="#F472B6"/>
+    <text x="170" y="130" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Case study</text>
+    <text x="170" y="148" text-anchor="middle" font-size="8.5" fill="#FDF2F8">Conversion, proof</text>
+    <text x="170" y="188" text-anchor="middle" font-size="10" fill="#64748B">The goal should decide the format, not the reverse.</text>
+  </svg>`,
+
+  headlineFormula: `<svg viewBox="0 0 340 190" class="dc-diagram">
+    <rect width="340" height="190" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">A Simple Headline Checklist</text>
+    ${["Specific, not vague","States a real benefit","Matches what the content delivers"].map((label,i) => `
+      <rect x="30" y="${38+i*36}" width="18" height="18" rx="4" fill="none" stroke="#DB2777" stroke-width="2"/>
+      <path d="M33 ${47+i*36} l4 4 l8 -8" stroke="#EC4899" stroke-width="2.5" fill="none"/>
+      <text x="58" y="${52+i*36}" font-size="9.5" fill="#0B1B33">${label}</text>
+    `).join('')}
+    <text x="170" y="176" text-anchor="middle" font-size="10" fill="#64748B">A clickbait headline that under-delivers hurts trust.</text>
+  </svg>`,
+
+  platformFit: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Different Platforms, Different Jobs</text>
+    ${["Visual/lifestyle brands → image-first platforms","B2B and professional audiences → LinkedIn-style networks","Quick trends, younger audiences → short-form video","Customer service, real-time → X/Twitter-style feeds"].map((label,i) => `
+      <rect x="24" y="${38+i*36}" width="292" height="28" rx="5" fill="#fff" stroke="#DB2777" stroke-width="1.5"/>
+      <text x="170" y="${55+i*36}" text-anchor="middle" font-size="9" fill="#0B1B33">${label}</text>
+    `).join('')}
+  </svg>`,
+
+  organicVsPaidSocial: `<svg viewBox="0 0 340 190" class="dc-diagram">
+    <rect width="340" height="190" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Organic vs. Paid Social</text>
+    <rect x="20" y="40" width="145" height="80" rx="8" fill="#FDF2F8"/>
+    <text x="92" y="62" text-anchor="middle" font-size="10" font-weight="700" fill="#DB2777">Organic</text>
+    <text x="92" y="82" text-anchor="middle" font-size="9" fill="#334155">Free, slower reach,</text>
+    <text x="92" y="94" text-anchor="middle" font-size="9" fill="#334155">builds community</text>
+    <rect x="175" y="40" width="145" height="80" rx="8" fill="#FCE7F3"/>
+    <text x="247" y="62" text-anchor="middle" font-size="10" font-weight="700" fill="#BE185D">Paid</text>
+    <text x="247" y="82" text-anchor="middle" font-size="9" fill="#334155">Costs money, precise</text>
+    <text x="247" y="94" text-anchor="middle" font-size="9" fill="#334155">targeting, fast reach</text>
+    <text x="170" y="150" text-anchor="middle" font-size="10" fill="#64748B">Most real strategies genuinely need both.</text>
+  </svg>`,
+
+  adAuctionBasics: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">What Wins a Paid Search Auction</text>
+    <text x="30" y="48" font-size="10" fill="#0B1B33">Bid amount</text>
+    <rect x="30" y="54" width="150" height="16" rx="3" fill="#DB2777"/>
+    <text x="30" y="92" font-size="10" fill="#0B1B33">Ad relevance / quality</text>
+    <rect x="30" y="98" width="220" height="16" rx="3" fill="#EC4899"/>
+    <text x="30" y="136" font-size="10" fill="#0B1B33">Expected click-through rate</text>
+    <rect x="30" y="142" width="190" height="16" rx="3" fill="#F472B6"/>
+    <text x="170" y="180" text-anchor="middle" font-size="10" fill="#64748B">The highest bid alone doesn't guarantee the top spot.</text>
+  </svg>`,
+
+  campaignStructure: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">A Well-Structured Ad Account</text>
+    <rect x="110" y="34" width="120" height="28" rx="5" fill="#DB2777"/>
+    <text x="170" y="52" text-anchor="middle" font-size="9.5" fill="#fff">Campaign (goal)</text>
+    <line x1="170" y1="62" x2="90" y2="86" stroke="#CBD5E1" stroke-width="1.5"/>
+    <line x1="170" y1="62" x2="250" y2="86" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="30" y="88" width="120" height="26" rx="5" fill="#EC4899"/>
+    <text x="90" y="105" text-anchor="middle" font-size="9" fill="#fff">Ad Set A (audience)</text>
+    <rect x="190" y="88" width="120" height="26" rx="5" fill="#EC4899"/>
+    <text x="250" y="105" text-anchor="middle" font-size="9" fill="#fff">Ad Set B (audience)</text>
+    <rect x="30" y="130" width="120" height="26" rx="5" fill="#F9A8D4"/>
+    <text x="90" y="147" text-anchor="middle" font-size="8.5" fill="#0B1B33">Ad variations</text>
+    <rect x="190" y="130" width="120" height="26" rx="5" fill="#F9A8D4"/>
+    <text x="250" y="147" text-anchor="middle" font-size="8.5" fill="#0B1B33">Ad variations</text>
+    <text x="170" y="190" text-anchor="middle" font-size="10" fill="#64748B">Clear structure makes results actually analyzable.</text>
+  </svg>`,
+
+  emailLifecycle: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">A Basic Email Lifecycle</text>
+    ${[["Welcome","New subscriber, set expectations",42],["Nurture","Ongoing value, build trust",76],["Convert","A clear, timed offer",110],["Win-back","Re-engage the inactive",144]].map(([label,desc,y]) => `
+      <circle cx="34" cy="${y}" r="6" fill="#DB2777"/>
+      <text x="50" y="${y-3}" font-size="10" font-weight="700" fill="#0B1B33">${label}</text>
+      <text x="50" y="${y+11}" font-size="9" fill="#64748B">${desc}</text>
+    `).join('')}
+    <line x1="34" y1="48" x2="34" y2="138" stroke="#CBD5E1" stroke-width="2"/>
+  </svg>`,
+
+  emailMetrics: `<svg viewBox="0 0 340 190" class="dc-diagram">
+    <rect width="340" height="190" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">What Each Email Metric Actually Tells You</text>
+    <text x="30" y="50" font-size="9.5" font-weight="700" fill="#DB2777">Open rate</text>
+    <text x="110" y="50" font-size="9" fill="#334155">→ subject line worked</text>
+    <text x="30" y="80" font-size="9.5" font-weight="700" fill="#EC4899">Click rate</text>
+    <text x="110" y="80" font-size="9" fill="#334155">→ content/offer resonated</text>
+    <text x="30" y="110" font-size="9.5" font-weight="700" fill="#F472B6">Unsubscribe rate</text>
+    <text x="150" y="110" font-size="9" fill="#334155">→ frequency or fit issue</text>
+    <text x="170" y="160" text-anchor="middle" font-size="10" fill="#64748B">Each metric answers a different, specific question.</text>
+  </svg>`,
+
+  metricsHierarchy: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Vanity Metrics vs. Real Business Metrics</text>
+    <rect x="20" y="40" width="145" height="70" rx="8" fill="#FEE2E2"/>
+    <text x="92" y="60" text-anchor="middle" font-size="10" font-weight="700" fill="#991B1B">Vanity</text>
+    <text x="92" y="80" text-anchor="middle" font-size="9" fill="#334155">Followers, impressions,</text>
+    <text x="92" y="92" text-anchor="middle" font-size="9" fill="#334155">page views alone</text>
+    <rect x="175" y="40" width="145" height="70" rx="8" fill="#DCFCE7"/>
+    <text x="247" y="60" text-anchor="middle" font-size="10" font-weight="700" fill="#15803D">Real business impact</text>
+    <text x="247" y="80" text-anchor="middle" font-size="9" fill="#334155">Leads, sales, retained</text>
+    <text x="247" y="92" text-anchor="middle" font-size="9" fill="#334155">customers, revenue</text>
+    <text x="170" y="150" text-anchor="middle" font-size="10" fill="#64748B">Both have a place, but only one pays the bills.</text>
+  </svg>`,
+
+  attributionModels: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Attribution: Who Gets the Credit?</text>
+    ${["First touch — the very first interaction","Last touch — the final interaction before conversion","Multi-touch — credit spread across the journey"].map((label,i) => `
+      <rect x="24" y="${38+i*36}" width="292" height="28" rx="5" fill="#fff" stroke="#DB2777" stroke-width="1.5"/>
+      <text x="170" y="${55+i*36}" text-anchor="middle" font-size="9" fill="#0B1B33">${label}</text>
+    `).join('')}
+    <text x="170" y="172" text-anchor="middle" font-size="10" fill="#64748B">The model chosen changes which channel "looks" best.</text>
+  </svg>`,
+
+  abTestFlow: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">Running a Real A/B Test</text>
+    ${[["1","Change one variable at a time",42],["2","Split traffic evenly and randomly",76],["3","Run until statistically meaningful",110],["4","Apply the winner, then test again",144]].map(([n,label,y]) => `
+      <circle cx="30" cy="${y}" r="13" fill="#DB2777"/>
+      <text x="30" y="${y+4}" text-anchor="middle" font-size="10" fill="#fff" font-weight="800">${n}</text>
+      <text x="52" y="${y+4}" font-size="9.5" fill="#0B1B33">${label}</text>
+    `).join('')}
+  </svg>`,
+
+  croChecklist: `<svg viewBox="0 0 340 190" class="dc-diagram">
+    <rect width="340" height="190" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">A Landing Page Quick Audit</text>
+    ${["One clear call to action, not several competing","Headline matches the ad that brought them here","Real proof: reviews, numbers, or specifics"].map((label,i) => `
+      <rect x="30" y="${38+i*36}" width="18" height="18" rx="4" fill="none" stroke="#DB2777" stroke-width="2"/>
+      <path d="M33 ${47+i*36} l4 4 l8 -8" stroke="#EC4899" stroke-width="2.5" fill="none"/>
+      <text x="58" y="${52+i*36}" font-size="9.5" fill="#0B1B33">${label}</text>
+    `).join('')}
+    <text x="170" y="176" text-anchor="middle" font-size="10" fill="#64748B">Small, testable changes, not full redesigns.</text>
+  </svg>`,
+
+  martechStack: `<svg viewBox="0 0 340 210" class="dc-diagram">
+    <rect width="340" height="210" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">A Typical Marketing Tech Stack</text>
+    <rect x="20" y="38" width="145" height="60" rx="8" fill="#DB2777"/>
+    <text x="92" y="60" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Analytics</text>
+    <text x="92" y="78" text-anchor="middle" font-size="8.5" fill="#FDF2F8">Traffic &amp; behavior</text>
+    <rect x="175" y="38" width="145" height="60" rx="8" fill="#EC4899"/>
+    <text x="247" y="60" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">CRM/Email</text>
+    <text x="247" y="78" text-anchor="middle" font-size="8.5" fill="#FDF2F8">Contacts &amp; automation</text>
+    <rect x="97" y="108" width="145" height="60" rx="8" fill="#F472B6"/>
+    <text x="170" y="130" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">Ad platforms</text>
+    <text x="170" y="148" text-anchor="middle" font-size="8.5" fill="#FDF2F8">Paid campaign management</text>
+    <text x="170" y="188" text-anchor="middle" font-size="10" fill="#64748B">Tools change; the underlying job doesn't.</text>
+  </svg>`,
+
+  portfolioPieces: `<svg viewBox="0 0 340 200" class="dc-diagram">
+    <rect width="340" height="200" fill="#F8F9FC" rx="12"/>
+    <text x="170" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#0B1B33">What a Strong Portfolio Actually Shows</text>
+    ${["A real campaign you ran (even a small one)","The actual numbers, good or mixed","What you'd do differently next time"].map((label,i) => `
+      <rect x="24" y="${38+i*36}" width="292" height="28" rx="5" fill="#fff" stroke="#DB2777" stroke-width="1.5"/>
+      <text x="170" y="${55+i*36}" text-anchor="middle" font-size="9" fill="#0B1B33">${label}</text>
+    `).join('')}
+  </svg>`,
+};
+
+
+const digitalMarketingCourse = {
+  chapters: [
+{
+    id: 1, free: true,
+    title: "What Digital Marketing Actually Involves",
+    intro: "The real, practical scope of this field — well beyond just 'posting on social media.'",
+    pages: [
+      {
+        title: "The Core Channels, Working Together",
+        content: `
+          ${dmDiagrams.channelOverview}
+          <p>Digital marketing covers a genuinely wide set of distinct disciplines that all work toward the same goal: getting the right message in front of the right person at the right moment, in a way that actually moves them toward a decision. Search engine optimization (SEO) helps people find you when they're actively searching. Content marketing builds genuine trust and answers real questions. Social media builds community and awareness. Paid advertising buys precise, immediate reach. Email marketing communicates directly with people who've already shown interest.</p>
+          <p>A common misconception, especially among people new to the field, is treating these as interchangeable or picking just one to focus on entirely. In practice, they work together — content gets discovered through SEO, promoted through social and paid ads, and nurtured further through email. Understanding how these channels connect is more valuable early on than becoming narrowly expert in just one.</p>
+        `
+      },
+      {
+        title: "The Funnel: Matching Channel to Stage",
+        content: `
+          ${dmDiagrams.funnelDiagram}
+          <p>Marketers commonly think in terms of a funnel — awareness, consideration, and conversion — because different channels genuinely do different jobs at each stage. Someone at the awareness stage doesn't know your brand yet and isn't ready to buy; content that pushes a hard sale too early often backfires. Someone at the conversion stage already trusts you and just needs a clear, low-friction path to actually purchase or sign up.</p>
+          <p>A genuinely common, avoidable mistake is running the same message across every stage — showing someone who's never heard of you a hard "buy now" ad, or showing someone who's ready to buy a generic brand-awareness message that doesn't actually ask for the sale. Matching the right message to the right funnel stage is one of the most practically useful mental models in this entire field.</p>
+        `
+      },
+      {
+        title: "What the Job Actually Involves Day to Day",
+        content: `
+          <p>Beyond the strategic thinking, digital marketing work involves genuinely hands-on tasks: writing copy for ads, emails, and web pages; analyzing performance data to see what's actually working; setting up and monitoring ad campaigns; creating or coordinating visual and video content; and constantly testing small variations to improve results incrementally over time. This blend of creative work and analytical, numbers-driven work is part of what makes the field appealing to people who don't want to choose between the two.</p>
+        `
+      },
+      {
+        title: "A Realistic Example: One Product Launch",
+        content: `
+          <p>Consider a small business launching a new product. A realistic digital marketing plan might include: publishing a detailed blog post answering common questions about the problem the product solves (content + SEO), sharing that post and behind-the-scenes content on social media (organic social), running a small paid ad campaign targeting people who've shown related interest (paid ads), and sending an announcement email to the existing customer list (email marketing) — all pointing toward the same launch, each doing a different part of the job, rather than any single channel being expected to carry the whole launch alone.</p>
+          <p>This is the kind of coordinated, multi-channel thinking this course builds toward — not mastering one tactic in isolation, but understanding how the pieces genuinely fit together.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What is a common misconception about digital marketing channels, according to this chapter?", opts:["That they should never be used together","Treating them as interchangeable or picking just one to focus on entirely, rather than understanding how they connect","That SEO is the only channel that matters","That email marketing is obsolete"], correct:1, ex:"A common mistake is picking just one channel rather than understanding how the different channels genuinely work together toward the same goal."},
+      {q:"What role does SEO play in this cross-channel picture?", opts:["It replaces the need for any other channel","It helps people find you when they're actively searching","SEO has no real function in modern marketing","It only matters for large companies"], correct:1, ex:"SEO specifically helps capture people who are actively searching, complementing other channels that serve different functions."},
+      {q:"Why does showing a 'buy now' ad to someone at the awareness stage often backfire?", opts:["Awareness-stage people always want to buy immediately","They don't know your brand yet and aren't ready to buy, making a hard sell premature","This never actually happens in real campaigns","Awareness stage doesn't require any specific messaging"], correct:1, ex:"People early in the funnel haven't built trust yet, so a premature hard sell is often mismatched to where they actually are."},
+      {q:"What does the chapter identify as a genuinely useful mental model for marketers?", opts:["Using identical messaging across every funnel stage","Matching the right message to the right funnel stage","Ignoring the funnel concept entirely","Only focusing on the conversion stage"], correct:1, ex:"Matching messaging to the appropriate funnel stage — awareness, consideration, or conversion — is identified as a genuinely useful practical model."},
+      {q:"What blend of skills does digital marketing work involve, according to the chapter?", opts:["Only creative skills, with no analytical component","Both creative work (writing, content) and analytical, numbers-driven work","Only technical programming skills","Only sales skills"], correct:1, ex:"The role blends creative work like writing and content creation with analytical work like performance analysis and testing."},
+      {q:"In the product launch example, what role does the blog post play?", opts:["It replaces the need for any other marketing activity","It supports content marketing and SEO by answering common questions related to the product","It's purely for internal documentation","Blog posts have no real marketing function"], correct:1, ex:"The blog post serves both content marketing and SEO purposes by addressing genuine customer questions."},
+      {q:"Why does the example use multiple channels rather than relying on just one?", opts:["Using only one channel is always more effective","Each channel does a different part of the job, rather than expecting one channel to carry the whole launch","Multiple channels are never actually necessary","This approach wastes resources unnecessarily"], correct:1, ex:"The coordinated approach reflects how different channels serve different functions, rather than over-relying on a single channel."},
+      {q:"What does email marketing specifically communicate with, according to this chapter?", opts:["Completely new audiences who've never heard of the brand","People who've already shown interest, communicated with directly","Only competitors","Random cold contacts with no prior relationship"], correct:1, ex:"Email marketing specifically reaches people who've already opted in or shown interest, a genuinely different audience than cold outreach."},
+      {q:"What is the funnel concept fundamentally organized around?", opts:["Random marketing activities with no structure","Stages of awareness, consideration, and conversion","Only the final sale, ignoring earlier stages","Social media metrics exclusively"], correct:1, ex:"The funnel organizes marketing thinking around distinct stages — awareness, consideration, and conversion — each requiring different approaches."},
+      {q:"What does this chapter suggest is more valuable early in a marketing career than narrow channel expertise?", opts:["Avoiding all channels except one","Understanding how the different channels genuinely connect and work together","Ignoring strategy entirely","Focusing only on paid advertising"], correct:1, ex:"Broad understanding of how channels interconnect is identified as more valuable early on than narrow, single-channel expertise."}
+    ]
+  },
+  {
+    id: 2, free: true,
+    title: "Understanding Your Audience and Market Research",
+    intro: "Real marketing starts with genuine understanding of who you're actually talking to, not assumptions.",
+    pages: [
+      {
+        title: "Where Real Audience Insight Actually Comes From",
+        content: `
+          ${dmDiagrams.audienceResearch}
+          <p>Effective marketing starts with genuine research, not assumptions about who a customer is or what they want. Real insight comes from multiple sources working together: analytics data showing who's already visiting and buying, direct customer interviews and support conversations revealing actual language and objections, competitor content and reviews showing what similar customers already care about, and search or social listening data showing what people are genuinely asking about in their own words.</p>
+          <p>A genuinely common mistake, especially for newer marketers or small businesses, is skipping this research step entirely and marketing based on internal assumptions about the customer — which frequently diverge meaningfully from how real customers actually think, talk, and decide.</p>
+        `
+      },
+      {
+        title: "Personas: A Pattern, Not a Person",
+        content: `
+          ${dmDiagrams.personaCard}
+          <p>A marketing persona is a semi-fictional representation of a customer segment, built from real research rather than invented from imagination. A genuinely useful persona captures the real goal a segment is trying to achieve, the real objections or hesitations that hold them back, and where they're actually found — which specific content, platforms, or search terms they genuinely use.</p>
+          <p>The key distinction worth remembering: a persona represents a pattern across many real customers, not a literal single individual — and it should be built from actual data (analytics, interviews, reviews) rather than a marketing team's assumptions about "what our customer is probably like." A persona built on assumption rather than real evidence can actively mislead a campaign rather than help it.</p>
+        `
+      },
+      {
+        title: "Competitive Research, Done Properly",
+        content: `
+          <p>Studying competitors isn't about copying their approach — it's about identifying genuine gaps and opportunities. What questions are competitors' customers asking in reviews that aren't being well-answered? What content ranks well for relevant searches, and what's genuinely missing or done poorly in that content? What messaging do competitors emphasize, and does that suggest something about what the market actually cares about?</p>
+          <p>This kind of research directly informs real strategic decisions — a content gap in competitor coverage is a genuine opportunity; a messaging angle competitors haven't tried might be worth testing; a common customer complaint about competitors' service is a real differentiation opportunity worth highlighting honestly in your own marketing.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A small business selling ergonomic office furniture assumes their customers are primarily interested in back pain relief — but reviewing actual customer support conversations and reviews reveals a genuinely different, more common concern: many customers are working from home for the first time and are worried about looking "unprofessional" during video calls, with back pain relief as a secondary concern rather than the primary one.</p>
+          <p>This real insight — gathered from actual customer language, not assumption — meaningfully changes the marketing approach: leading with professional appearance and video-call confidence, with ergonomic comfort as genuine supporting benefit, rather than leading with back pain as the primary message. This is exactly the kind of insight that only emerges from real research, not internal guessing about what customers probably want.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"Why does the chapter emphasize research over assumptions when understanding an audience?", opts:["Assumptions are always accurate","Internal assumptions frequently diverge meaningfully from how real customers actually think and decide","Research is unnecessary in modern marketing","Assumptions are faster and equally reliable"], correct:1, ex:"Real customer behavior and language often differ meaningfully from internal assumptions, making genuine research essential."},
+      {q:"What does a genuinely useful marketing persona capture?", opts:["A single, literal individual customer","A real goal, real objections, and where the segment is actually found, built from real data","Random demographic guesses","Only the customer's age and location"], correct:1, ex:"A strong persona captures real goals, objections, and discovery channels, built from genuine research rather than imagination."},
+      {q:"Why is competitive research valuable, according to the chapter?", opts:["To copy competitors' exact approach","To identify genuine content gaps and opportunities the market may be missing","Competitive research has no real value","To simply match competitor pricing"], correct:1, ex:"Competitive research is valuable for identifying real gaps and opportunities, not for direct imitation."},
+      {q:"In the worked example, what was the actual primary customer concern discovered through research?", opts:["Only back pain relief, as originally assumed","Looking unprofessional during video calls, with back pain as secondary","Price was the only real concern","Shipping speed was the primary issue"], correct:1, ex:"Real customer research revealed video-call professionalism as the more prominent concern, contrary to the original assumption."},
+      {q:"What kind of insight does reviewing actual customer support conversations provide?", opts:["No useful insight at all","Real language and objections directly from actual customers","Only technical support information","Information unrelated to marketing"], correct:1, ex:"Customer support conversations reveal genuine language and objections that inform more accurate marketing messaging."},
+      {q:"What does the chapter say a persona should NOT be built from?", opts:["Real analytics and customer interviews","A marketing team's assumptions about what the customer is probably like","Genuine search and social listening data","Actual customer reviews"], correct:1, ex:"Personas built on assumption rather than real evidence can actively mislead a campaign rather than help it."},
+      {q:"What real strategic value can a content gap in competitor coverage represent?", opts:["No strategic value at all","A genuine opportunity to create content addressing an underserved need","Evidence that content marketing doesn't work","A sign to avoid that topic entirely"], correct:1, ex:"An identified content gap represents a real opportunity to create genuinely valuable, underserved content."},
+      {q:"How did the worked example's insight change the business's marketing approach?", opts:["It had no effect on their approach","It shifted the lead message toward professional appearance, with ergonomic comfort as supporting benefit","It eliminated the need for any marketing","It confirmed the original back-pain-focused assumption was correct"], correct:1, ex:"The research-based insight shifted the primary marketing message toward the actual leading customer concern."},
+      {q:"What does search and social listening data reveal, according to the chapter?", opts:["Nothing useful for marketing purposes","What people are genuinely asking about in their own words","Only competitor pricing information","Only technical website performance data"], correct:1, ex:"Search and social listening reveals genuine, real-world language and questions people are actually using."},
+      {q:"What is the fundamental starting point for effective marketing, according to this chapter?", opts:["Assuming what customers probably want","Genuine research into who the audience actually is and what they actually think","Copying whatever competitors are doing","Skipping strategy and focusing only on execution"], correct:1, ex:"Genuine research into the real audience is identified as the fundamental starting point for effective marketing."}
+    ]
+  },
+  {
+    id: 3, free: true,
+    title: "A Day in the Life: Skills, Tools, and Career Path",
+    intro: "What this work genuinely looks like day to day, the skills it rewards, and a realistic path into the field.",
+    pages: [
+      {
+        title: "Where a Typical Day Actually Goes",
+        content: `
+          ${dmDiagrams.dailyTaskDM}
+          <p>A digital marketer's day typically blends creating or coordinating content and campaigns, reviewing analytics to see what's genuinely working, and ongoing testing and optimization of existing campaigns. The exact mix shifts depending on specialization — someone focused on paid ads spends more time in campaign platforms and performance data; someone focused on content spends more time writing and coordinating; but nearly every role in this field touches all three areas to some degree.</p>
+        `
+      },
+      {
+        title: "The Skills That Actually Matter",
+        content: `
+          <ul>
+            <li><strong>Clear, persuasive writing</strong> — genuinely central to nearly every channel, from ad copy to email to blog content</li>
+            <li><strong>Comfort with data and basic analysis</strong> — understanding what a metric actually means, not just watching a number go up or down</li>
+            <li><strong>Genuine curiosity about the audience</strong> — the best marketers are consistently curious about what a customer is actually thinking, not just executing a plan on autopilot</li>
+            <li><strong>Comfort with ongoing testing</strong> — treating most decisions as hypotheses to test, not settled facts</li>
+            <li><strong>Basic visual and design sense</strong> — not necessarily professional design skill, but a working sense of what looks credible and clear</li>
+          </ul>
+        `
+      },
+      {
+        title: "A Realistic Career Path",
+        content: `
+          ${dmDiagrams.careerPathDM}
+          <p>Most people enter this field in an entry-level role focused on one specific channel — social media coordination, content writing, or basic ad campaign support — building practical experience with real campaigns and real data. Over the following year or two, this typically develops into deeper specialization in a specific channel, or broader responsibility across multiple channels. Beyond that, a move into a strategist or marketing manager role, or specialized consulting, becomes the realistic path forward.</p>
+        `
+      },
+      {
+        title: "What Makes Someone Genuinely Prepared to Start",
+        content: `
+          <p>Not knowing every specific platform's exact interface — those change constantly, and every employer trains on their specific tools. What matters starting out is understanding the underlying logic this course builds toward: why different channels serve different funnel stages, why real audience research beats assumption, why testing beats guessing, and how to read a basic set of metrics and understand what they actually mean for a real business.</p>
+          <p>Someone entering an interview with this conceptual foundation, able to talk through a real example of matching a channel to a funnel stage or explaining why a specific metric matters, is genuinely more prepared than someone who's only used the job title. The remaining chapters of this course build out each of the core channels and skills in real, practical depth.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"How does the daily task mix shift depending on specialization, according to the chapter?", opts:["It never changes regardless of specialization","Someone focused on paid ads spends more time in campaign platforms; content-focused roles spend more time writing and coordinating","All marketing roles have identical daily tasks","Specialization has no effect on daily work"], correct:1, ex:"The specific mix of daily tasks shifts based on specialization, though most roles touch content, analytics, and testing to some degree."},
+      {q:"Why does the chapter emphasize comfort with data over simply watching numbers change?", opts:["Data has no real importance in marketing","Understanding what a metric actually means is more valuable than just observing whether it goes up or down","Numbers should always be ignored","Only technical staff need to understand data"], correct:1, ex:"Genuine understanding of what a metric means is emphasized over surface-level observation of numbers changing."},
+      {q:"What does 'genuine curiosity about the audience' mean in this context?", opts:["Following a plan on autopilot without further thought","Consistently being curious about what a customer is actually thinking, beyond just executing a set plan","Avoiding any audience research","Only caring about internal company priorities"], correct:1, ex:"The best marketers stay curious about actual customer thinking, rather than mechanically executing a fixed plan."},
+      {q:"What mindset does the chapter recommend toward most marketing decisions?", opts:["Treating decisions as permanently settled facts","Treating most decisions as hypotheses worth testing, not settled facts","Avoiding any testing to save time","Making decisions purely on instinct with no verification"], correct:1, ex:"A testing mindset — treating decisions as hypotheses rather than settled facts — is identified as a key practical skill."},
+      {q:"What typically happens over the first year or two in this field, according to the realistic career path?", opts:["Immediate promotion to marketing manager","Deeper specialization in a channel or broader responsibility across channels develops","No meaningful development occurs","Entry-level roles never lead anywhere further"], correct:1, ex:"The first year or two typically brings either deeper channel specialization or broader multi-channel responsibility."},
+      {q:"Why doesn't the chapter emphasize memorizing every specific platform's exact interface?", opts:["Platforms never change, so memorization is permanent","Platforms change constantly and employers train on their specific tools; conceptual understanding matters more","Platform knowledge is completely irrelevant","Only senior employees need to know any platform"], correct:1, ex:"Since specific platforms change frequently and employers provide tool-specific training, conceptual understanding is emphasized as more durable and valuable."},
+      {q:"What specific example does the chapter suggest a prepared candidate should be able to discuss?", opts:["Their personal social media follower count","A real example of matching a channel to a funnel stage or explaining why a specific metric matters","Only their academic credentials","Nothing beyond the job title itself"], correct:1, ex:"Being able to discuss concrete examples like channel-funnel matching demonstrates genuine understanding beyond just knowing the job title."},
+      {q:"What kind of entry-level roles does the chapter mention as common starting points?", opts:["Marketing director or VP roles","Social media coordination, content writing, or basic ad campaign support","Only executive strategy roles","Only technical programming roles"], correct:1, ex:"Common entry points include focused, channel-specific roles like social media coordination or content writing."},
+      {q:"Why does basic visual and design sense matter for this role, according to the chapter?", opts:["Professional design skill is always required","A working sense of what looks credible and clear is useful, even without professional design training","Visual sense is entirely irrelevant to digital marketing","Only designers need any visual judgment"], correct:1, ex:"A working sense of visual credibility is useful, even though professional design expertise isn't necessarily required."},
+      {q:"What does the chapter identify as more valuable than specific platform interface knowledge for someone starting out?", opts:["Nothing is more valuable than platform knowledge","Understanding the underlying logic — why channels serve different funnel stages, why research beats assumption, why testing beats guessing","Knowing how to code websites","Having a large personal social media following"], correct:1, ex:"Conceptual understanding of the underlying marketing logic is identified as more valuable and durable than specific platform knowledge."}
+    ]
+  },
+  {
+    id: 4, free: false,
+    title: "Search Engine Optimization (SEO) Fundamentals",
+    intro: "Getting found when people are actively searching — the technical and content-based work that makes this possible.",
+    pages: [
+      {
+        title: "The Three Pillars of SEO",
+        content: `
+          ${dmDiagrams.seoTriangle}
+          <p>SEO rests on three pillars working together, and weakness in any one genuinely limits what the others can achieve. Technical SEO ensures a site can actually be crawled and indexed correctly, loads quickly, and works well on mobile devices — the foundation everything else depends on. Content quality ensures pages genuinely answer what someone searching is actually looking for, rather than superficially mentioning a keyword without real substance. Authority, built through genuine trust signals like other reputable sites linking to yours, tells search engines this content is credible and worth ranking well.</p>
+        `
+      },
+      {
+        title: "Understanding Search Intent",
+        content: `
+          ${dmDiagrams.searchIntent}
+          <p>Every search query carries an underlying intent, and matching content to that real intent matters more than simply including the right keywords. Informational searches ("how does X work") want genuine explanation, not a sales pitch. Navigational searches ("brand name login") want a direct path to a specific destination. Commercial searches ("best X for Y") want comparison and guidance toward a decision. Transactional searches ("buy X near me") want a fast, frictionless path to actually purchase.</p>
+          <p>Creating content that technically includes the right keywords but doesn't actually match the underlying intent — a hard sales page for an informational search, for example — genuinely underperforms regardless of how well-optimized the keywords themselves are, since search engines increasingly evaluate whether content actually satisfies what the searcher wanted.</p>
+        `
+      },
+      {
+        title: "Common Mistakes",
+        content: `
+          ${dmDiagrams.keywordPitfalls}
+          <p>Three mistakes account for a disproportionate share of real SEO underperformance. First, targeting high-volume keywords without checking whether the actual search intent genuinely matches what the page offers — high search volume with poor intent match rarely converts into real results. Second, writing content primarily to satisfy a search algorithm's perceived preferences rather than genuinely serving real readers, which tends to produce content that ranks poorly anyway, since modern search algorithms are built to evaluate genuine reader value. Third, neglecting page speed and mobile experience, which can undermine even genuinely strong content through a poor technical foundation.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A business selling accounting software targets the keyword "accounting software" — a high-volume term, but genuinely broad and highly competitive, with unclear specific intent (comparison shopping? just researching what accounting software even is? looking for a specific brand?). A more effective approach targets a more specific phrase like "accounting software for small retail businesses," which carries much clearer commercial intent, faces realistically less competition, and allows content to genuinely and specifically address that particular audience's actual needs rather than trying to be everything to everyone.</p>
+          <p>This illustrates a recurring SEO principle: a more specific, clearly-intentioned keyword with a real, addressable audience frequently outperforms a broader, higher-volume term with vague or mismatched intent — precisely because the content built around it can actually deliver exactly what that specific searcher wants.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What are the three pillars of SEO described in this chapter?", opts:["Speed, color, and layout","Technical foundation, content quality, and authority","Price, location, and reviews","Social media, email, and paid ads"], correct:1, ex:"SEO rests on technical foundation, genuine content quality, and authority (trust signals like backlinks) working together."},
+      {q:"Why does weakness in one SEO pillar limit the others?", opts:["The pillars are entirely unrelated to each other","They work together — for example, great content on a technically broken site still won't rank well","Only technical SEO actually matters","Content quality has no connection to technical factors"], correct:1, ex:"The three pillars are interconnected — strong content on a technically poor site, for instance, still won't perform well."},
+      {q:"What does an 'informational' search intent generally want?", opts:["A fast path to purchase","Genuine explanation, not a sales pitch","A specific brand's login page","Nothing — informational searches don't reflect real intent"], correct:1, ex:"Informational searches seek genuine explanation and understanding, not a premature sales pitch."},
+      {q:"Why does content matching keywords but not matching search intent tend to underperform?", opts:["Keyword matching alone guarantees strong performance","Search engines increasingly evaluate whether content actually satisfies what the searcher wanted, beyond just keyword presence","Search intent has no bearing on rankings","This never actually happens in practice"], correct:1, ex:"Modern search evaluation goes beyond keyword matching to assess whether content genuinely satisfies the underlying search intent."},
+      {q:"Why does writing primarily for a search algorithm rather than real readers tend to backfire?", opts:["Algorithms always reward this approach","Modern algorithms are built to evaluate genuine reader value, so algorithm-focused content often ranks poorly anyway","This approach always works better than writing for readers","Algorithms cannot evaluate content quality at all"], correct:1, ex:"Since algorithms are designed to assess genuine reader value, content written primarily to game the algorithm often underperforms."},
+      {q:"In the worked example, why did the more specific keyword phrase outperform the broader one?", opts:["Specific phrases are always worse for SEO","It carried clearer commercial intent, faced less competition, and allowed content to specifically address that audience's real needs","Broader keywords always rank better regardless of intent","Specificity has no effect on SEO performance"], correct:1, ex:"The specific, clearly-intentioned phrase allowed for more precisely targeted, genuinely useful content with realistic competition."},
+      {q:"What genuine risk exists in targeting only high-volume keywords without checking intent match?", opts:["No risk exists — volume alone guarantees success","High volume with poor intent match rarely converts into real business results","High-volume keywords are always the correct choice","Intent match is irrelevant to keyword selection"], correct:1, ex:"High search volume without a genuine intent match to your content rarely translates into meaningful real-world results."},
+      {q:"What can undermine even genuinely strong content, according to this chapter?", opts:["Nothing can undermine strong content","Poor technical foundation, like slow page speed or poor mobile experience","Having too many internal links","Using proper grammar"], correct:1, ex:"Technical weaknesses like poor page speed or mobile experience can undermine otherwise strong content."},
+      {q:"What does a 'commercial' search intent generally seek?", opts:["A direct login page","Comparison and guidance toward a decision","No specific outcome at all","Only entertainment content"], correct:1, ex:"Commercial intent searches, like 'best X for Y,' typically seek comparison information to help guide a decision."},
+      {q:"Why might targeting a more specific, narrower keyword be a genuinely sound SEO strategy?", opts:["Narrow keywords are always worse for business","Specific keywords with real, addressable intent frequently outperform broad, high-volume terms with unclear intent","Narrow keywords guarantee higher search volume","This strategy never actually works in practice"], correct:1, ex:"A specific keyword with clear, addressable intent can genuinely outperform a broader term where the intent is vague or mismatched."}
+    ]
+  },
+  {
+    id: 5, free: false,
+    title: "Content Marketing and Copywriting That Converts",
+    intro: "Turning genuine expertise into content that actually earns attention and trust — and copy that moves people to act.",
+    pages: [
+      {
+        title: "Matching Format to Goal",
+        content: `
+          ${dmDiagrams.contentFormats}
+          <p>Different content formats genuinely serve different purposes, and a common mistake is choosing a format out of habit or trend rather than matching it to the actual goal. A detailed blog post or guide works well for SEO and genuine education, since it can be indexed and thoroughly answer a specific question. Video builds a different kind of trust and engagement, since seeing and hearing someone conveys credibility that text alone often can't. A case study or customer story works especially well for conversion, since real proof of results is often what moves someone from considering to actually deciding.</p>
+        `
+      },
+      {
+        title: "A Simple Headline Checklist",
+        content: `
+          ${dmDiagrams.headlineFormula}
+          <p>A genuinely effective headline is specific rather than vague, states a real, concrete benefit rather than a vague promise, and — critically — actually matches what the content delivers. A headline that overpromises relative to the actual content ("This One Trick Will Change Everything") might generate an initial click, but it damages trust when the content doesn't deliver, which has real long-term costs: readers become less likely to trust future headlines from the same source, and search engines and platforms increasingly penalize content with poor engagement after the click, not just before it.</p>
+        `
+      },
+      {
+        title: "Copywriting Principles That Actually Move People",
+        content: `
+          <p>Effective copywriting centers on the reader's genuine problem or goal, not the company's features in isolation — "saves you 3 hours a week" tends to land better than "our software has an automated scheduling feature," even though they might describe the exact same functionality, because the first version speaks directly to the reader's actual benefit rather than a feature description they have to translate into personal relevance themselves.</p>
+          <p>Specificity also genuinely matters — "improves efficiency" is vague and easy to dismiss; "cuts average response time from 2 days to 4 hours" is concrete, credible, and memorable. This kind of specific, benefit-focused, reader-centered writing is a learnable skill built through deliberate practice and genuine attention to how real customers describe their own problems, not an innate talent some people simply have and others don't.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A software company's initial homepage headline reads "Advanced Analytics Platform for Enterprise Teams" — technically accurate, but vague and centered on the product rather than the reader's actual problem. A revised version, based on genuine customer interviews about their real frustration, reads "Stop Waiting Days for the Reports You Need Today" — specific, centered on a real pain point customers actually described in their own words, and immediately clear about the concrete benefit being offered.</p>
+          <p>This revision didn't come from cleverness alone — it came from listening to how real customers described their actual frustration and reflecting that language back to them, which is precisely the kind of audience research covered in Chapter 2 feeding directly into stronger, more effective copy.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"Why does the chapter emphasize matching content format to the actual goal rather than habit or trend?", opts:["Format never actually matters for content performance","Different formats genuinely serve different purposes — video builds trust differently than a blog post, for example","All formats are completely interchangeable","Only video content is ever effective"], correct:1, ex:"Different formats serve genuinely different functions, so matching format to the specific goal matters more than following trends."},
+      {q:"Why does a case study work especially well for the conversion stage?", opts:["Case studies have no real persuasive value","Real proof of results is often what moves someone from considering to actually deciding","Case studies are best suited to the awareness stage only","Case studies are rarely used in real marketing"], correct:1, ex:"Concrete proof of real results is particularly effective for readers who are close to deciding, matching the conversion stage well."},
+      {q:"What real cost does an overpromising, clickbait-style headline create, according to the chapter?", opts:["No real cost — clickbait always works well long-term","Damaged reader trust and platform/algorithm penalties for poor post-click engagement","It always increases long-term brand loyalty","Overpromising headlines have no measurable effect"], correct:1, ex:"Overpromising headlines damage trust and can trigger algorithmic penalties tied to poor engagement after the click."},
+      {q:"Why might 'saves you 3 hours a week' be more effective copy than 'has an automated scheduling feature'?", opts:["Feature descriptions are always more persuasive","It speaks directly to the reader's actual benefit rather than requiring them to translate a feature into personal relevance","Both phrasings are equally effective in every context","Benefit-focused copy never actually performs better"], correct:1, ex:"Benefit-focused language connects directly to what the reader actually gains, rather than requiring them to interpret a feature's relevance themselves."},
+      {q:"Why does specificity matter in copywriting, according to the chapter?", opts:["Vague claims are always more persuasive","Specific claims like 'cuts response time from 2 days to 4 hours' are more concrete, credible, and memorable than vague ones","Specificity has no real effect on persuasiveness","Only vague language should ever be used"], correct:1, ex:"Specific, concrete claims are more credible and memorable than vague ones like 'improves efficiency.'"},
+      {q:"Is strong, benefit-focused copywriting described as an innate talent or a learnable skill?", opts:["An innate talent some people simply have and others don't","A learnable skill built through deliberate practice and attention to how customers actually describe their problems","Copywriting cannot be improved through practice","Only formally trained writers can ever write effective copy"], correct:1, ex:"The chapter frames strong copywriting as a learnable skill developed through practice and genuine attention to real customer language."},
+      {q:"In the worked example, what made the revised headline more effective than the original?", opts:["It used more technical jargon","It was specific, centered on a real customer pain point described in their own words, with a concrete benefit","It was longer than the original","It focused more heavily on the product's technical specifications"], correct:1, ex:"The revised headline reflected genuine customer language about a real frustration, making it more specific and relevant."},
+      {q:"Where did the insight for the revised headline actually come from?", opts:["A random creative brainstorm with no research basis","Genuine customer interviews revealing how they actually described their frustration","Copying a competitor's headline directly","An algorithm-generated suggestion"], correct:1, ex:"The stronger headline emerged directly from real customer interviews, connecting back to the audience research covered earlier in the course."},
+      {q:"What does the chapter say about writing content primarily focused on company features versus reader benefits?", opts:["Features and benefits are identical in marketing effectiveness","Benefit-focused language centered on the reader's problem tends to land better than isolated feature descriptions","Features should always be emphasized over benefits","Benefits are irrelevant to effective copywriting"], correct:1, ex:"Centering copy on the reader's actual benefit, rather than isolated feature descriptions, tends to be more persuasive."},
+      {q:"What genuine long-term risk does the chapter identify with headlines that consistently overpromise?", opts:["No risk exists at all","Readers become less likely to trust future headlines from the same source over time","Overpromising headlines always increase long-term trust","This has no measurable effect on audience behavior"], correct:1, ex:"Repeated overpromising erodes trust over time, making readers increasingly skeptical of future headlines from that source."}
+    ]
+  },
+  {
+    id: 6, free: false,
+    title: "Social Media Marketing Across Platforms",
+    intro: "Building genuine presence and community — and understanding why different platforms genuinely need different approaches.",
+    pages: [
+      {
+        title: "Different Platforms, Different Jobs",
+        content: `
+          ${dmDiagrams.platformFit}
+          <p>A recurring, genuinely costly mistake is treating every social platform as interchangeable and posting identical content everywhere. Different platforms attract genuinely different audiences with different expectations and different content formats that actually perform well — visual, lifestyle-oriented content suits image-first platforms; professional, industry-focused content suits business-oriented networks; quick, trend-driven content suits short-form video platforms; and real-time, conversational content suits fast-moving text-based feeds.</p>
+          <p>Understanding which platforms your genuine target audience actually uses — and adapting content specifically to fit each platform's real norms and expectations, rather than copy-pasting the same post everywhere — is one of the most practically important social media skills, and one that's frequently skipped by newer marketers eager to be "everywhere at once."</p>
+        `
+      },
+      {
+        title: "Organic vs. Paid Social",
+        content: `
+          ${dmDiagrams.organicVsPaidSocial}
+          <p>Organic social media (unpaid posts) builds genuine community and long-term brand affinity, but reach is often limited and results build slowly over time. Paid social advertising costs money directly, but offers genuinely precise audience targeting and much faster, more predictable reach. Most effective real-world social strategies use both together — organic content builds trust and a genuine following over time, while paid social accelerates reach for specific goals, like a launch or a time-sensitive promotion, that can't wait for organic growth alone.</p>
+        `
+      },
+      {
+        title: "Building Genuine Community, Not Just an Audience",
+        content: `
+          <p>A subtle but genuinely important distinction: an "audience" passively consumes content, while a "community" actively engages, discusses, and often defends or advocates for a brand unprompted. Building genuine community requires actually responding to comments and messages, asking real questions rather than only broadcasting, and consistently showing up rather than posting sporadically then disappearing for weeks.</p>
+          <p>This is genuinely harder and slower than simply broadcasting content, but it produces real, durable value that pure broadcast-style content generally doesn't — customers who feel genuinely heard and engaged with are measurably more likely to become repeat customers and organic advocates who bring in new customers without any direct marketing cost at all.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A small skincare brand initially posts identical polished product photos across every platform they're on, seeing modest results everywhere. After adapting their approach — more casual, authentic behind-the-scenes content and quick tips on short-form video platforms, versus more polished, aspirational imagery on image-first platforms, versus direct customer service responses on fast-moving text feeds — engagement improves meaningfully across all three, precisely because each platform's content now actually matches what that platform's real users genuinely expect and respond to.</p>
+          <p>This example illustrates the core principle of this chapter concretely: the same underlying brand and message can, and often should, look genuinely different across platforms, without that being inconsistent — it's platform-appropriate adaptation, not a mixed message.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What is a recurring, costly mistake in social media marketing, according to this chapter?", opts:["Adapting content specifically for each platform","Treating every platform as interchangeable and posting identical content everywhere","Using paid advertising at all","Responding to customer comments"], correct:1, ex:"Posting identical content across all platforms without adapting to each platform's real audience and norms is a common, costly mistake."},
+      {q:"What is the key trade-off between organic and paid social media?", opts:["They are functionally identical with no real difference","Organic builds community slowly at no direct cost; paid offers precise targeting and fast reach at a direct cost","Organic social always outperforms paid social","Paid social has no real advantages over organic"], correct:1, ex:"Organic social builds long-term community without direct ad spend but grows more slowly; paid social costs money but offers faster, more targeted reach."},
+      {q:"What is the key distinction between an 'audience' and a 'community,' according to the chapter?", opts:["There is no meaningful difference","An audience passively consumes content; a community actively engages, discusses, and advocates unprompted","Audiences are always larger than communities","Communities never actually engage with content"], correct:1, ex:"A community is distinguished by active engagement and advocacy, beyond the passive consumption that characterizes an audience."},
+      {q:"What real, durable value can genuine community building produce that pure broadcasting doesn't?", opts:["No real additional value exists","Customers who feel heard becoming repeat customers and organic advocates without direct marketing cost","Community building always costs more money than broadcasting","Broadcasting always produces stronger long-term results"], correct:1, ex:"Genuine engagement can produce repeat customers and organic advocacy, a real, durable value beyond simple content broadcasting."},
+      {q:"In the skincare brand example, what change led to improved engagement across platforms?", opts:["Posting even more frequently with the same content","Adapting content style specifically to match each platform's real audience expectations","Removing all paid advertising entirely","Reducing posting frequency to nearly zero"], correct:1, ex:"Adapting content style to fit each specific platform's real norms, rather than posting identical content everywhere, drove the improvement."},
+      {q:"Is adapting the same brand message differently across platforms considered inconsistent, according to the chapter?", opts:["Yes, this always creates a mixed, confusing message","No — it's framed as platform-appropriate adaptation, not an inconsistent message","This question is never actually addressed","Adaptation is only acceptable for very large brands"], correct:1, ex:"The chapter explicitly frames platform-specific adaptation of the same core message as appropriate, not inconsistent."},
+      {q:"What kind of content does the chapter suggest suits image-first, visual platforms?", opts:["Long-form technical documentation only","Visual, lifestyle-oriented content","Only text-based real-time conversation","Only professional industry reports"], correct:1, ex:"Visual, lifestyle-oriented content is identified as well-suited to image-first platforms specifically."},
+      {q:"Why do most effective real-world social strategies use both organic and paid social together?", opts:["Using both is never actually more effective than one alone","Organic builds trust over time while paid accelerates reach for specific, time-sensitive goals","Paid social is illegal without organic content","Only one of the two should ever be used at a time"], correct:1, ex:"Organic and paid social serve complementary purposes — sustained trust-building versus fast, targeted reach for specific goals."},
+      {q:"What genuinely important social media skill does the chapter say is frequently skipped by newer marketers?", opts:["Posting as frequently as possible","Adapting content specifically to each platform's real audience and norms, rather than being 'everywhere at once' with identical content","Avoiding paid advertising entirely","Ignoring analytics data"], correct:1, ex:"Newer marketers eager to be present everywhere often skip the important step of genuinely adapting content per platform."},
+      {q:"What does building genuine community require, according to the chapter?", opts:["Only broadcasting polished content on a fixed schedule","Actually responding to comments, asking real questions, and consistently showing up over time","Avoiding any direct interaction with followers","Posting sporadically for maximum novelty"], correct:1, ex:"Genuine community building requires real interaction, consistent presence, and engagement beyond one-way broadcasting."}
+    ]
+  },
+{
+    id: 7, free: false,
+    title: "Paid Advertising: Search, Social, and Display",
+    intro: "Buying precise, immediate reach — and understanding what actually determines whether an ad campaign performs well.",
+    pages: [
+      {
+        title: "What Actually Wins a Paid Search Auction",
+        content: `
+          ${dmDiagrams.adAuctionBasics}
+          <p>A genuinely common misconception is that paid search advertising simply goes to the highest bidder. In reality, most platforms combine bid amount with ad relevance and quality, and expected click-through rate, into an overall ranking — meaning a highly relevant, well-targeted ad with a lower bid can genuinely outrank a less relevant ad with a higher bid. This matters practically: improving ad relevance and targeting quality is often a more cost-effective way to improve results than simply raising the bid.</p>
+        `
+      },
+      {
+        title: "Structuring an Ad Account Properly",
+        content: `
+          ${dmDiagrams.campaignStructure}
+          <p>A well-structured ad account organizes campaigns around a clear goal (brand awareness, lead generation, direct sales), ad sets within each campaign around a specific audience segment, and individual ad variations within each ad set to test different creative approaches. This clear structure isn't just organizational neatness — it's what makes results genuinely analyzable, since a poorly structured account (everything mixed together with no clear organization) makes it genuinely difficult to tell which audience, message, or creative approach is actually driving results versus which is underperforming.</p>
+        `
+      },
+      {
+        title: "Choosing Between Search, Social, and Display",
+        content: `
+          <p>Paid search ads reach people actively searching for something specific — genuinely high intent, since they've expressed a real need through their search query. Paid social ads reach people based on demographic and interest targeting, regardless of whether they're actively searching — useful for building awareness and reaching people before they'd think to search. Display ads (banner-style ads on other websites) generally offer the broadest, lowest-intent reach, best suited for brand awareness rather than immediate conversion.</p>
+          <p>A genuinely common budget allocation mistake is putting most or all budget into one channel by default, without considering which channel actually fits the current marketing goal — search ads for someone already searching for a solution to their problem, social ads for building awareness among a well-defined but not-yet-searching audience, and display for broad, low-cost brand visibility.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A company launching a new product with a limited ad budget considers three options: search ads (but almost nobody is searching for this specific new product yet, since it's unfamiliar), social ads targeting people with clearly relevant interests (a much better fit for a genuinely new product, since it can reach the right audience before they'd know to search), or display ads (broad reach, but very low intent for a considered purchase). Given the goal — building initial awareness for an unfamiliar new product among a well-defined interested audience — social ads are the clearer strategic fit here, with search ads becoming more valuable later, once the product has built enough awareness that people are actually beginning to search for it by name.</p>
+          <p>This kind of goal-and-context-based channel selection, rather than defaulting to whichever channel is most familiar or trendy, is exactly the strategic thinking this chapter builds toward.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What actually determines who wins a paid search ad auction, according to this chapter?", opts:["Only the highest bid amount","A combination of bid amount, ad relevance/quality, and expected click-through rate","Random selection with no real logic","Whichever advertiser has spent the most historically"], correct:1, ex:"Most platforms combine bid with relevance and expected engagement, meaning a highly relevant lower bid can outrank a less relevant higher bid."},
+      {q:"Why might improving ad relevance be more cost-effective than simply raising a bid?", opts:["Relevance has no effect on ad performance or cost","A more relevant, well-targeted ad can outrank less relevant ads even at a lower bid, improving results without simply spending more","Bidding higher is always the only effective strategy","Relevance and bid amount are unrelated to each other"], correct:1, ex:"Since relevance factors into ranking, improving it can achieve strong results without needing to simply outbid competitors."},
+      {q:"Why does clear campaign/ad set/ad structure matter for a paid advertising account?", opts:["Structure is purely cosmetic with no real function","It makes results genuinely analyzable, since a poorly organized account makes it hard to tell what's actually driving performance","Structure only matters for very large advertising budgets","Ad platforms don't actually support any structural organization"], correct:1, ex:"Clear structure allows genuine analysis of which audience, message, or creative is actually driving results."},
+      {q:"What kind of intent do paid search ads typically capture?", opts:["Low intent, since search ads reach random users","Genuinely high intent, since the person has expressed a real need through their search query","No measurable intent at all","The same intent level as display ads"], correct:1, ex:"Paid search captures high intent because the searcher has actively expressed a specific need through their query."},
+      {q:"What are display ads generally best suited for, according to this chapter?", opts:["Immediate, high-intent conversion","Broad brand awareness rather than immediate conversion","Only highly targeted niche audiences","Replacing the need for any other ad type"], correct:1, ex:"Display ads generally offer broad, lower-intent reach, making them well-suited for brand awareness rather than direct conversion."},
+      {q:"In the worked example, why were social ads the better initial fit over search ads?", opts:["Search ads are always superior regardless of context","Almost nobody was searching for the new, unfamiliar product yet, while social ads could reach a relevant interested audience directly","Social ads are always cheaper than search ads","The company had no budget for search ads specifically"], correct:1, ex:"Since the product was unfamiliar, few people were actively searching for it, making socially-targeted awareness ads the better strategic fit initially."},
+      {q:"According to the worked example, when might search ads become more valuable for this same product?", opts:["Search ads would never become relevant for this product","Once the product builds enough awareness that people begin actively searching for it by name","Search ads are irrelevant regardless of product awareness level","Immediately, before any awareness has been built"], correct:1, ex:"As awareness grows and people begin searching for the product by name, search ads become a more relevant, high-intent channel."},
+      {q:"What common budget allocation mistake does the chapter identify?", opts:["Diversifying budget thoughtfully across channels based on goals","Putting most or all budget into one channel by default, without considering actual fit for the current goal","Using search ads exclusively is always correct","There is no such thing as a budget allocation mistake"], correct:1, ex:"Defaulting to one channel without considering actual strategic fit for the current goal is identified as a common mistake."},
+      {q:"What does an 'ad set' represent within a well-structured advertising account?", opts:["An overall campaign goal","A specific audience segment within a broader campaign","An individual piece of creative content only","A billing or payment method"], correct:1, ex:"Ad sets organize a campaign around specific audience segments, sitting between the overall campaign and individual ad creative."},
+      {q:"What is the core strategic principle this chapter builds toward regarding channel selection?", opts:["Always choosing whichever channel is most familiar or trendy","Selecting a channel based on genuine fit with the specific goal and context, not habit or trend","Using only one channel regardless of circumstances","Channel selection doesn't meaningfully affect results"], correct:1, ex:"The chapter emphasizes selecting channels based on actual strategic fit with the goal and context, rather than defaulting to habit or trend."}
+    ]
+  },
+  {
+    id: 8, free: false,
+    title: "Email Marketing and Marketing Automation",
+    intro: "Direct, owned communication with people who've already shown interest — and building the automated sequences that nurture them over time.",
+    pages: [
+      {
+        title: "A Basic Email Lifecycle",
+        content: `
+          ${dmDiagrams.emailLifecycle}
+          <p>A well-structured email program generally moves subscribers through a lifecycle: a welcome sequence setting expectations for new subscribers, ongoing nurture content building genuine trust and value over time, clear conversion-focused emails with a specific, timed offer, and a win-back sequence attempting to re-engage subscribers who've gone quiet. Each stage serves a genuinely distinct purpose, and skipping stages — jumping straight from welcome to hard sales pitch, for example — tends to underperform compared to a properly paced sequence.</p>
+        `
+      },
+      {
+        title: "What Email Metrics Actually Tell You",
+        content: `
+          ${dmDiagrams.emailMetrics}
+          <p>Each core email metric answers a genuinely different, specific question. Open rate primarily reflects whether the subject line and sender reputation worked — it's a genuine signal about that first impression, not the email's actual content. Click rate reflects whether the actual content and offer inside resonated once opened. Unsubscribe rate signals a frequency or fit problem — either emailing too often, or emailing content that's genuinely misaligned with what subscribers actually signed up expecting.</p>
+          <p>A common analytical mistake is treating a single metric as the complete picture — a high open rate with a low click rate, for example, suggests the subject line worked but the actual content or offer didn't land, which is a genuinely different problem (and requires a different fix) than a low open rate in the first place.</p>
+        `
+      },
+      {
+        title: "Marketing Automation, In Practice",
+        content: `
+          <p>Marketing automation uses triggers — a specific action a subscriber takes, or doesn't take — to automatically send the right email at the right time, without requiring manual sending for every individual subscriber. A genuinely useful automated sequence might trigger when someone abandons a shopping cart without completing a purchase, sending a timely reminder; or trigger when someone hasn't opened any emails in several months, sending a re-engagement email before simply removing them from the list.</p>
+          <p>The genuine value of automation isn't just saving manual effort — it's the ability to respond to an individual subscriber's specific behavior at exactly the right moment, something manual, one-size-fits-all email sending simply can't replicate at any meaningful scale.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>An online store notices a consistently high cart abandonment rate — many people add items to their cart but never complete the purchase. Rather than treating this as unsolvable, they set up a simple automated sequence: a reminder email an hour after abandonment (in case it was simple forgetfulness), followed by a second email 24 hours later including a small, genuine incentive if the cart is still abandoned (in case price or hesitation was the real blocker). Tracking results shows the first reminder alone recovers a meaningful share of otherwise-lost sales, with the second, incentivized email recovering a further smaller but still real share.</p>
+          <p>This example shows automation solving a specific, identifiable behavioral pattern (cart abandonment) with a correspondingly specific, timed response — exactly the kind of trigger-based thinking that makes automation genuinely more effective than generic, un-triggered bulk emails sent to an entire list regardless of individual behavior.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What does a welcome email sequence generally aim to do?", opts:["Immediately push a hard sales pitch","Set expectations for new subscribers","Remove inactive subscribers from the list","Replace the need for any further email content"], correct:1, ex:"A welcome sequence is meant to set clear expectations for what new subscribers can expect going forward."},
+      {q:"Why does skipping stages in the email lifecycle, like jumping straight to a hard sales pitch, tend to underperform?", opts:["Skipping stages always improves performance","Each stage serves a distinct purpose, and rushing past trust-building tends to reduce effectiveness","Email lifecycle stages have no real effect on performance","Hard sales pitches always work best regardless of timing"], correct:1, ex:"Each lifecycle stage serves a genuine purpose, and skipping the trust-building stages tends to reduce overall effectiveness."},
+      {q:"What does open rate primarily reflect, according to this chapter?", opts:["Whether the actual email content resonated","Whether the subject line and sender reputation worked to get the email opened","The email's conversion rate directly","Nothing measurable about the email"], correct:1, ex:"Open rate reflects the initial impression — subject line and sender reputation — not the content's actual effectiveness once opened."},
+      {q:"What does a high open rate combined with a low click rate suggest?", opts:["The email performed uniformly well overall","The subject line worked but the actual content or offer inside didn't resonate","This combination never actually occurs","The email should be sent more frequently"], correct:1, ex:"This combination suggests the subject line succeeded at getting opens, but the content itself failed to engage once seen."},
+      {q:"What does a rising unsubscribe rate typically signal?", opts:["Nothing meaningful about the email program","A frequency or fit problem — emailing too often or content misaligned with subscriber expectations","That the welcome sequence is working perfectly","Increased customer loyalty"], correct:1, ex:"Unsubscribe rate signals either excessive frequency or a genuine mismatch between content and subscriber expectations."},
+      {q:"What is a 'trigger' in marketing automation?", opts:["A random, unscheduled email blast","A specific subscriber action (or inaction) that automatically initiates a targeted email response","A type of email subject line format","A manual process requiring no automation"], correct:1, ex:"A trigger is a specific subscriber behavior that automatically initiates a correspondingly relevant, timed email."},
+      {q:"What is the genuine value of marketing automation, beyond saving manual effort?", opts:["Automation has no value beyond saving time","Responding to individual subscriber behavior at exactly the right moment, which manual sending can't replicate at scale","Automation always performs worse than manual sending","There is no meaningful difference between automated and manual email"], correct:1, ex:"Automation's real value lies in precisely timed, behavior-based responses that manual, one-size-fits-all sending can't achieve at scale."},
+      {q:"In the cart abandonment example, why was a two-stage email sequence used?", opts:["To address two different possible reasons for abandonment — forgetfulness and price hesitation — with an appropriately different response for each","Random chance with no strategic reasoning","Because a single email is always illegal to send","Because two emails always double the results regardless of content"], correct:1, ex:"The two stages addressed two different likely causes of abandonment (forgetfulness, then hesitation), each with a fitting response."},
+      {q:"What result did the worked example describe from the cart abandonment sequence?", opts:["No sales were recovered at all","The first reminder recovered a meaningful share of sales, with the second incentivized email recovering a further smaller share","Only the second email had any measurable effect","The sequence had no measurable business impact"], correct:1, ex:"Both emails in the sequence recovered real sales, with the first reminder capturing more than the second incentivized follow-up."},
+      {q:"What kind of thinking does the chapter identify as making automation genuinely more effective than generic bulk email?", opts:["Sending identical emails to the entire list regardless of behavior","Trigger-based thinking — responding to specific, identifiable behavioral patterns with a correspondingly specific response","Avoiding any use of subscriber data","Sending emails at completely random times"], correct:1, ex:"Trigger-based, behavior-specific responses are identified as the key advantage automation has over generic, un-triggered bulk email."}
+    ]
+  },
+  {
+    id: 9, free: false,
+    title: "Analytics, Metrics, and Measuring ROI",
+    intro: "Making sense of the numbers — separating what genuinely matters to a business from metrics that just feel good to look at.",
+    pages: [
+      {
+        title: "Vanity Metrics vs. Real Business Impact",
+        content: `
+          ${dmDiagrams.metricsHierarchy}
+          <p>A genuinely important distinction in marketing analytics separates "vanity metrics" — follower counts, impressions, page views in isolation — from metrics that reflect real business impact: leads generated, sales completed, customers retained, actual revenue. Vanity metrics aren't meaningless, since they often correlate loosely with real impact and can indicate genuine reach, but treating them as the primary measure of success is a common, genuinely costly mistake, since a campaign can show impressive vanity numbers while contributing little or nothing to actual business results.</p>
+        `
+      },
+      {
+        title: "Understanding Attribution",
+        content: `
+          ${dmDiagrams.attributionModels}
+          <p>Attribution answers the question of which marketing touchpoint genuinely deserves credit for a conversion, and different attribution models can give meaningfully different answers using the exact same underlying data. First-touch attribution credits the very first interaction a customer had with your brand. Last-touch attribution credits the final interaction right before conversion. Multi-touch attribution spreads credit across the entire journey, reflecting that most real customers interact with a brand multiple times across multiple channels before actually converting.</p>
+          <p>Understanding which attribution model a business is using — and its genuine limitations — matters because the choice of model can make one channel look disproportionately effective or ineffective, even when the underlying customer behavior is identical. A channel that excels at initial awareness might look "ineffective" under last-touch attribution, even though it's doing genuinely valuable work earlier in the journey that a different attribution model would credit properly.</p>
+        `
+      },
+      {
+        title: "Calculating and Interpreting ROI",
+        content: `
+          <p>Marketing return on investment, at its most basic, compares the revenue genuinely attributable to a specific marketing effort against the actual cost of that effort. This sounds simple, but real ROI calculation requires genuine care about what costs and what revenue actually get included — ignoring the real cost of staff time spent on a campaign, for example, or crediting a sale to a campaign when the customer would have genuinely purchased anyway, both distort the real picture in ways that can make a campaign look more successful than it genuinely was.</p>
+          <p>A practically useful habit is being honest and specific about what a given ROI calculation actually includes and excludes, rather than presenting a single number as if it captures the complete picture without important caveats.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A company's social media campaign generates impressive reach and engagement numbers — high impression counts, strong like and comment activity — but a closer look at actual sales data attributed to that specific campaign shows only a handful of real conversions. Meanwhile, a much less visually impressive email campaign, with modest open and click rates, drove meaningfully more actual revenue, since it reached people who were already close to a purchase decision.</p>
+          <p>Reporting only the social campaign's impressive vanity metrics without also reporting the actual revenue comparison would create a genuinely misleading picture of which effort was actually more valuable to the business — exactly the kind of gap between vanity metrics and real business impact this chapter has emphasized throughout.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What is a 'vanity metric,' according to this chapter?", opts:["A metric that always accurately reflects business success","Metrics like follower counts or impressions that don't necessarily reflect real business impact on their own","A metric used only in financial reporting","A metric that guarantees a campaign's failure"], correct:1, ex:"Vanity metrics like impressions or followers can correlate loosely with impact but don't directly reflect real business outcomes like sales or revenue."},
+      {q:"Why are vanity metrics not described as meaningless entirely?", opts:["They are actually the most important metrics to track","They can indicate genuine reach and often correlate loosely with real impact, even though they shouldn't be the primary success measure","Vanity metrics have zero relationship to real outcomes","The chapter states vanity metrics should never be tracked"], correct:1, ex:"Vanity metrics have some genuine value as reach indicators, even though they shouldn't be treated as the primary measure of success."},
+      {q:"What does attribution answer, according to this chapter?", opts:["How much a campaign cost to run","Which marketing touchpoint genuinely deserves credit for a conversion","How many employees worked on a campaign","The exact color scheme used in an ad"], correct:1, ex:"Attribution addresses which touchpoint in a customer's journey should be credited for an eventual conversion."},
+      {q:"Why can different attribution models give meaningfully different answers using identical underlying data?", opts:["Attribution models never actually differ in their conclusions","Each model (first-touch, last-touch, multi-touch) assigns credit differently across a customer's journey","Only one attribution model has ever existed","Attribution models only apply to email marketing"], correct:1, ex:"First-touch, last-touch, and multi-touch models distribute credit differently, which can change which channel appears most effective."},
+      {q:"Why might a channel focused on early-stage awareness look 'ineffective' under last-touch attribution?", opts:["Early-stage channels are always genuinely ineffective","Last-touch attribution only credits the final interaction, missing the real value awareness channels provide earlier in the journey","Last-touch attribution always favors awareness channels","This scenario never actually occurs in practice"], correct:1, ex:"Last-touch attribution credits only the final touchpoint, potentially undervaluing awareness channels that contribute earlier but aren't the final interaction."},
+      {q:"What real costs does the chapter warn against overlooking when calculating marketing ROI?", opts:["Only the direct ad spend needs to be considered","Staff time and other real costs, which if ignored can make a campaign appear more successful than it genuinely was","No costs beyond ad spend actually exist","ROI calculations never require considering any costs"], correct:1, ex:"Overlooking real costs like staff time can distort ROI calculations, making campaigns look more profitable than they genuinely are."},
+      {q:"What practical habit does the chapter recommend regarding ROI reporting?", opts:["Presenting a single ROI number with no further context","Being honest and specific about what a given ROI calculation actually includes and excludes","Avoiding ROI calculation entirely","Only reporting ROI for the most successful campaigns"], correct:1, ex:"Transparency about what a specific ROI calculation includes and excludes is recommended, rather than presenting one number as the complete picture."},
+      {q:"In the worked example, why was the email campaign more valuable despite less impressive engagement numbers?", opts:["Email campaigns are always more valuable than social campaigns","It drove meaningfully more actual revenue by reaching people already close to a purchase decision","The email campaign had higher impression counts","There was no real difference in value between the two campaigns"], correct:1, ex:"Despite less impressive surface metrics, the email campaign's targeting of people close to purchase drove more real revenue."},
+      {q:"What would reporting only the social campaign's vanity metrics, without revenue comparison, have created?", opts:["A completely accurate picture of campaign value","A genuinely misleading picture of which effort was actually more valuable to the business","No real difference in outcome either way","An improvement in actual campaign performance"], correct:1, ex:"Reporting only vanity metrics without real revenue context would misrepresent which campaign genuinely delivered more business value."},
+      {q:"What does crediting a sale to a campaign the customer would have made anyway distort, according to the chapter?", opts:["Nothing — this has no effect on ROI accuracy","The real picture of ROI, inflating the apparent success of the campaign", "This scenario is impossible to occur in practice","Only the campaign's vanity metrics, not its real ROI"], correct:1, ex:"Crediting sales that would have happened regardless of the campaign inflates the apparent ROI beyond its genuine impact."}
+    ]
+  },
+  {
+    id: 10, free: false,
+    title: "Conversion Rate Optimization and Landing Pages",
+    intro: "Turning more of your existing traffic into real results — often more cost-effective than simply generating more traffic.",
+    pages: [
+      {
+        title: "Why CRO Is Often More Efficient Than More Traffic",
+        content: `
+          <p>Conversion rate optimization (CRO) focuses on improving the percentage of existing visitors who take a desired action, rather than simply driving more visitors to a page that converts poorly. This distinction matters financially — doubling a landing page's conversion rate from 2% to 4% doubles results from the exact same traffic and exact same ad spend, while driving twice the traffic to an unchanged, poorly converting page requires genuinely doubling the ad budget for the same result. CRO work is frequently a more cost-effective lever than simply spending more on traffic acquisition.</p>
+        `
+      },
+      {
+        title: "A Landing Page Quick Audit",
+        content: `
+          ${dmDiagrams.croChecklist}
+          <p>A few concrete, checkable factors consistently affect landing page performance: having one clear call to action rather than several competing options that dilute the visitor's decision; ensuring the page's headline and content genuinely match the specific ad or link that brought the visitor there, since a mismatch creates confusion and erodes trust immediately; and including real, specific proof — genuine reviews, concrete numbers, specific case details — rather than only vague, generic claims of quality.</p>
+        `
+      },
+      {
+        title: "Running a Real A/B Test",
+        content: `
+          ${dmDiagrams.abTestFlow}
+          <p>A/B testing changes one variable at a time (a headline, a button color, an image) and splits traffic evenly and randomly between the original and the variant, running the test until results are statistically meaningful rather than stopping the moment an early trend appears, since small early samples can show misleading patterns that don't hold up with more data. Once a genuine winner is identified and applied, the process continues with a new test on a different variable — CRO is fundamentally an ongoing, iterative practice, not a one-time fix.</p>
+          <p>A common mistake, especially for newer marketers, is testing multiple variables simultaneously (a new headline AND a new image AND a new button color, all at once) — when this produces a result, it's genuinely unclear which specific change actually drove it, making the learning far less useful for future decisions than a clean, single-variable test.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A landing page for a free consultation offer has three competing calls to action — "Book Now," "Learn More," and "Download Our Guide" — spread across the page, alongside a headline that doesn't specifically mention the exact offer that brought visitors there from the ad. A focused revision removes the competing options down to a single, clear "Book Your Free Consultation" call to action, and updates the headline to specifically match the ad's exact wording, then tests this single, focused version against the original.</p>
+          <p>This kind of single-variable-at-a-time revision (in this case, a combined but clearly reasoned change addressing both the headline mismatch and the diluted call to action together as one coherent hypothesis) makes the eventual result genuinely interpretable — if conversions improve meaningfully, there's a clear, specific, actionable reason why, rather than a vague sense that "something about the new version worked better" with no clear path to the next improvement.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"Why can CRO be a more cost-effective lever than simply increasing traffic?", opts:["CRO never actually affects real results","Improving conversion rate multiplies results from the same existing traffic and ad spend, unlike needing to increase spend to get more traffic","Increasing traffic is always more efficient than CRO","CRO and traffic volume are unrelated to actual results"], correct:1, ex:"Improving conversion rate on existing traffic can double results without needing to double ad spend, unlike simply driving more traffic to an unchanged page."},
+      {q:"Why does having multiple competing calls to action tend to hurt landing page performance?", opts:["Multiple options always improve conversion rates","They dilute the visitor's decision, making it less clear what action to actually take","Calls to action have no real effect on visitor behavior","Landing pages should never include any call to action"], correct:1, ex:"Multiple competing options can dilute a visitor's focus and make the desired action less clear, generally reducing conversions."},
+      {q:"Why does a mismatch between an ad's message and a landing page's headline hurt performance?", opts:["Visitors never notice this kind of mismatch","It creates confusion and erodes trust immediately upon arrival","Mismatches always improve curiosity and engagement","This has no measurable effect on landing page performance"], correct:1, ex:"A mismatch between what an ad promised and what the landing page delivers creates immediate confusion and trust erosion."},
+      {q:"Why should an A/B test run until results are statistically meaningful, rather than stopping at an early trend?", opts:["Early trends are always reliable and accurate","Small early samples can show misleading patterns that don't hold up with more data","Statistical significance is irrelevant to A/B testing","Tests should always be stopped as early as possible"], correct:1, ex:"Small sample sizes can produce misleading early trends, so waiting for statistical significance avoids acting on unreliable patterns."},
+      {q:"Why is testing multiple variables simultaneously (headline, image, and button color all at once) a common mistake?", opts:["Testing multiple variables always produces clearer results","It becomes unclear which specific change actually drove the result, reducing the value of the learning","Multiple variable changes are illegal in A/B testing platforms","This approach always produces faster, more reliable results"], correct:1, ex:"Changing multiple variables at once makes it genuinely unclear which specific change drove any observed difference in results."},
+      {q:"Is CRO described as a one-time fix or an ongoing practice?", opts:["A one-time fix that's completed after a single successful test","A fundamentally ongoing, iterative practice, continuing with new tests after each winner is applied","CRO doesn't require any ongoing effort once started","Testing should stop entirely after the very first test"], correct:1, ex:"CRO is described as an ongoing, iterative process — testing continues on new variables even after a winner is identified and applied."},
+      {q:"What kind of proof does the chapter recommend including on a landing page, versus vague claims?", opts:["Only vague, generic claims of quality","Real, specific proof — genuine reviews, concrete numbers, specific case details","No proof of any kind is necessary","Only claims made by the company itself with no external validation"], correct:1, ex:"Specific, concrete proof — real reviews and numbers — is recommended over vague, generic quality claims."},
+      {q:"In the worked example, what two issues did the landing page revision address together?", opts:["Only the page's loading speed","The headline mismatch with the ad, and the diluted, competing calls to action","Only the color scheme of the page","Only the page's mobile responsiveness"], correct:1, ex:"The revision addressed both the headline-ad mismatch and the multiple competing calls to action as one coherent hypothesis."},
+      {q:"Why does the worked example's approach make the eventual test result more genuinely interpretable?", opts:["It doesn't — the result remains equally unclear either way","A clear, specific, reasoned change makes it possible to understand why a result improved, rather than a vague sense of 'something worked'","Interpretability has no real value in CRO work","Only completely random changes ever produce interpretable results"], correct:1, ex:"A clearly reasoned, specific change allows genuine understanding of why a result improved, supporting better future decisions."},
+      {q:"What does the chapter's core financial argument for CRO ultimately rest on?", opts:["CRO has no measurable financial benefit","Improving conversion rate can multiply the value of existing traffic and spend, rather than requiring additional spend for additional traffic","Only increased ad spend can ever improve marketing results","CRO and financial results are entirely unconnected"], correct:1, ex:"The chapter's core argument is that improving conversion rate leverages existing traffic and spend more efficiently than simply acquiring more traffic."}
+    ]
+  },
+  {
+    id: 11, free: false,
+    title: "Marketing Technology Stack and Tools",
+    intro: "The practical software ecosystem behind modern marketing work — understanding categories, not memorizing every specific platform.",
+    pages: [
+      {
+        title: "The Core Categories of Marketing Technology",
+        content: `
+          ${dmDiagrams.martechStack}
+          <p>Modern marketing relies on a genuinely interconnected set of tools, and understanding the categories matters more than memorizing any specific platform, since specific tools change frequently while the underlying categories remain fairly stable. Analytics platforms track visitor behavior and campaign performance. CRM and email platforms manage contact data and automated communication. Ad platforms manage paid campaign creation, targeting, and reporting across search, social, and display.</p>
+        `
+      },
+      {
+        title: "Why Tools Change But the Job Doesn't",
+        content: `
+          <p>Specific marketing platforms and tools genuinely change over time — new platforms emerge, existing ones add or remove features, and what's considered "standard" shifts every few years. This is precisely why understanding the underlying categories and what job each one does — rather than becoming attached to any single specific tool — is the more durable, transferable skill. Someone who genuinely understands why analytics matters, what a CRM is for, and how ad platforms structure campaigns can pick up a new specific tool relatively quickly; someone who's only ever learned one specific platform's exact interface struggles more when that platform changes or when a new employer uses something different.</p>
+        `
+      },
+      {
+        title: "Integration: Why Tools Need to Talk to Each Other",
+        content: `
+          <p>A genuinely important, sometimes overlooked aspect of a marketing tech stack is integration — whether these different tools can actually share data with each other. A CRM that can't receive data from the analytics platform, or an email platform that can't tell whether someone who clicked an email actually completed a purchase tracked elsewhere, creates real blind spots in understanding what's actually working. Well-integrated tools give a genuinely complete picture of a customer's full journey across channels; poorly integrated tools force marketers to work with fragmented, incomplete information, guessing at connections that better integration would make directly visible.</p>
+        `
+      },
+      {
+        title: "A Worked Example",
+        content: `
+          <p>A small business uses a CRM to track leads, a separate email platform to send campaigns, and a separate analytics tool to track website behavior — but these three tools don't share data with each other. When a lead who received a specific email campaign later converts on the website, there's no direct way to connect that specific conversion back to that specific email campaign, since the three systems simply don't communicate. The business ends up guessing at which marketing efforts are actually working, based on rough overall trends rather than genuine, specific attribution.</p>
+          <p>After connecting these tools so data flows between them, the business can suddenly see, concretely, that a specific email sequence directly preceded a meaningful share of website conversions — a connection that was always genuinely happening, but was invisible without the tools actually talking to each other. This illustrates why the integration question matters as much as which specific individual tools are chosen.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"Why does the chapter emphasize understanding tool categories over memorizing specific platforms?", opts:["Specific platforms never actually change","Categories remain fairly stable while specific tools change frequently, making category understanding more durable and transferable","Categories are entirely irrelevant to real marketing work","Only specific platform knowledge has any real value"], correct:1, ex:"Since specific platforms change over time while underlying categories remain stable, category-level understanding is more durable and transferable."},
+      {q:"What does an analytics platform primarily track, according to this chapter?", opts:["Only financial accounting data","Visitor behavior and campaign performance","Only employee productivity","Only social media follower counts"], correct:1, ex:"Analytics platforms are described as tracking visitor behavior and campaign performance specifically."},
+      {q:"Why might someone who's only learned one specific platform's interface struggle more over time?", opts:["Specific platform knowledge is always sufficient long-term","When that platform changes or a new employer uses a different tool, narrow platform-specific knowledge transfers less easily","This scenario never actually creates any real difficulty","Platform-specific knowledge is more valuable than conceptual understanding"], correct:1, ex:"Narrow platform-specific knowledge is less transferable when platforms change or when moving to an employer using different tools."},
+      {q:"What real problem can poor integration between marketing tools create?", opts:["No real problem — integration doesn't affect marketing work","Blind spots in understanding what's actually working, since tools can't share data about the full customer journey","Integration issues only affect very large companies","Poor integration always improves data accuracy"], correct:1, ex:"Without integration, tools can't share data, creating genuine blind spots in understanding the full customer journey."},
+      {q:"In the worked example, what problem did the business initially face with their disconnected tools?", opts:["No problems existed with the disconnected setup","No direct way to connect a specific email campaign to specific website conversions it may have driven","The tools were too expensive to use together","The CRM and email platform had identical functions"], correct:1, ex:"Without integration, the business couldn't directly connect specific email campaigns to the website conversions they influenced."},
+      {q:"What did connecting the tools in the worked example ultimately reveal?", opts:["No new information was revealed","A specific email sequence directly preceded a meaningful share of website conversions, a connection previously invisible","The tools were fundamentally incompatible and couldn't be connected","Integration had no measurable effect on marketing insight"], correct:1, ex:"Integration revealed a real, previously invisible connection between a specific email sequence and website conversions."},
+      {q:"What does a CRM primarily manage, according to this chapter?", opts:["Website page loading speed","Contact data and automated communication","Advertising creative design","Search engine rankings directly"], correct:1, ex:"CRM (and often paired email) platforms manage contact data and automated communication with those contacts."},
+      {q:"What do ad platforms manage, according to the chapter?", opts:["Only organic content publishing schedules","Paid campaign creation, targeting, and reporting across search, social, and display","Only customer support tickets","Only internal employee communications"], correct:1, ex:"Ad platforms specifically manage the creation, targeting, and reporting of paid campaigns across various channels."},
+      {q:"Why does the chapter frame integration as being 'as important as' tool selection itself?", opts:["Integration is actually less important than tool selection","Even well-chosen individual tools provide an incomplete, fragmented picture without genuine data sharing between them","Tool selection has no real bearing on marketing success","Integration and tool selection are entirely unrelated concerns"], correct:1, ex:"Without integration, even well-selected individual tools leave marketers working with fragmented, incomplete information."},
+      {q:"What is the more transferable, durable skill this chapter emphasizes for working with marketing technology?", opts:["Memorizing one specific tool's interface permanently","Understanding what job each category of tool does and why it matters","Avoiding the use of any marketing technology tools","Only learning tools used by direct competitors"], correct:1, ex:"Understanding the underlying purpose of each tool category is emphasized as more durable than memorizing any single specific platform."}
+    ]
+  },
+  {
+    id: 12, free: false,
+    title: "Building Your Career and Portfolio in Digital Marketing",
+    intro: "Turning this course into an actual career move — the concrete, practical next steps.",
+    pages: [
+      {
+        title: "What a Strong Portfolio Actually Shows",
+        content: `
+          ${dmDiagrams.portfolioPieces}
+          <p>Unlike some fields where formal credentials dominate hiring decisions, digital marketing hiring often weighs a genuine, concrete portfolio heavily — even a small, real campaign you personally ran, complete with actual results (good or mixed) and genuine reflection on what you'd do differently, demonstrates real, practical understanding far more convincingly than a list of course completions or certifications alone.</p>
+          <p>A genuinely useful starting portfolio project, even without a formal job yet: run a genuinely small campaign for a real cause — a local business, a personal project, a volunteer organization — through an actual channel covered in this course, track the real results honestly, and be prepared to explain what worked, what didn't, and what you learned from it. This kind of concrete, honest experience, even at a small scale, is genuinely more valuable in an interview than describing concepts abstractly.</p>
+        `
+      },
+      {
+        title: "What Entry-Level Roles Actually Look Like",
+        content: `
+          <p>Common entry points into this field include social media coordinator, content marketing assistant, SEO/content specialist, and marketing coordinator roles — titles that typically focus on one specific channel while building broader familiarity with how that channel connects to the rest of a marketing strategy. Many of these roles don't require a formal marketing degree specifically, but they do reward genuine demonstrated understanding — exactly what this course, combined with real hands-on practice, is designed to build.</p>
+        `
+      },
+      {
+        title: "Certifications Worth Knowing About",
+        content: `
+          <p>Several widely recognized industry certifications exist in specific channel areas — search advertising certifications from major ad platforms, analytics platform certifications, and broader inbound/content marketing certifications from established marketing software companies. These aren't strictly required to start working in the field, but they're genuinely worth pursuing once you have some practical experience to anchor them to, since a certification paired with real campaign experience demonstrates considerably more than either alone.</p>
+        `
+      },
+      {
+        title: "What Genuinely Makes Someone Ready to Start",
+        content: `
+          <p>Across every chapter of this course, a consistent theme recurs: digital marketing rewards genuine understanding of the audience, honest measurement of real results (not just vanity metrics), and a consistent willingness to test rather than assume. Channels, tools, and specific platforms will all continue to change — that's a genuine constant in this field — but the underlying logic covered throughout this course (matching message to funnel stage, researching before assuming, testing before scaling, measuring real business impact rather than surface-level numbers) remains durable and transferable regardless of which specific tools or platforms happen to be popular at any given moment.</p>
+          <p>If you've worked through this course attentively, you now have a genuine, practical foundation in how digital marketing actually works — considerably more than simply knowing the individual channel names. The next step is applying it: a real small campaign, a real portfolio piece, and a real conversation in an interview where you can speak concretely about what you've actually learned and tried.</p>
+        `
+      }
+    ],
+    quiz: [
+      {q:"What does digital marketing hiring often weigh heavily, according to this chapter?", opts:["Only formal academic credentials","A genuine, concrete portfolio showing real campaigns and honest results","Only the number of social media followers a candidate personally has","Nothing beyond a resume's list of job titles"], correct:1, ex:"A concrete portfolio demonstrating real campaign experience and honest results is emphasized as heavily weighed in hiring decisions."},
+      {q:"What does the chapter suggest as a genuinely useful starting portfolio project, even without a formal job?", opts:["Only describing marketing concepts abstractly without any real practice","Running a small, real campaign for an actual cause, tracking honest results, and reflecting on lessons learned","Avoiding any hands-on practice until formally employed","Only reading about marketing without any practical application"], correct:1, ex:"A small, real campaign with honest tracked results and genuine reflection is suggested as a valuable, concrete starting project."},
+      {q:"What common entry-level titles does the chapter mention for this field?", opts:["Only 'Chief Marketing Officer'","Social media coordinator, content marketing assistant, SEO/content specialist, or marketing coordinator","Only 'Marketing Director'","There are no common entry-level titles in this field"], correct:1, ex:"These specific, often channel-focused titles are identified as common entry points into digital marketing."},
+      {q:"Are formal marketing degrees typically required for entry-level roles, according to the chapter?", opts:["Yes, always strictly required","No — many entry-level roles reward genuine demonstrated understanding over a specific formal degree","Only candidates with graduate degrees are ever considered","Formal education has no relevance to hiring decisions at all"], correct:1, ex:"Many entry-level roles reward genuine demonstrated understanding rather than requiring a specific formal marketing degree."},
+      {q:"Are industry certifications described as strictly required to start in this field?", opts:["Yes, mandatory before any employment","No — they're not strictly required, but worth pursuing once paired with real practical experience","Certifications guarantee employment regardless of any other experience","Certifications have no value at any stage of a marketing career"], correct:1, ex:"Certifications aren't strictly required to start, but become more valuable when paired with genuine, real campaign experience."},
+      {q:"What consistent theme does the chapter say recurs throughout the entire course?", opts:["Only memorizing specific tools and platforms matters","Genuine audience understanding, honest measurement of real results, and consistently testing rather than assuming", "Following trends without any independent verification","Avoiding all forms of measurement and testing"], correct:1, ex:"The course consistently emphasizes genuine audience research, honest real-result measurement, and a testing mindset throughout."},
+      {q:"According to the final chapter, what remains durable even as specific tools and platforms change?", opts:["Nothing remains durable in this field","The underlying logic — matching message to funnel stage, researching before assuming, measuring real impact — remains transferable","Only knowledge of one specific platform remains durable","Durability is impossible to achieve in digital marketing"], correct:1, ex:"The underlying strategic logic taught throughout the course is framed as durable and transferable, regardless of which specific tools are currently popular."},
+      {q:"What is suggested as the concrete next step after completing this course?", opts:["Nothing further is needed after course completion","Applying the knowledge through a real small campaign, a real portfolio piece, and being able to discuss it concretely in an interview","Only reading additional books with no practical application","Waiting indefinitely before attempting any real marketing work"], correct:1, ex:"The course's final recommendation is genuine application — a real campaign and portfolio piece, discussed concretely in interviews."},
+      {q:"Why might a certification combined with real campaign experience demonstrate more than either alone?", opts:["Certifications and experience are entirely redundant with each other","Together they show both formal recognized knowledge and genuine practical application, which is more convincing than either in isolation","Certifications alone are always sufficient for hiring purposes","Real experience alone is always insufficient without certification"], correct:1, ex:"Combining formal certification with genuine hands-on experience creates a stronger, more complete demonstration of capability than either alone."},
+      {q:"What does the chapter identify as more valuable in an interview than describing concepts abstractly?", opts:["Reciting textbook definitions of marketing terms","Concrete, honest experience from even a small real campaign, including what worked and what didn't","Avoiding any specific examples entirely","Only discussing hypothetical, untested strategies"], correct:1, ex:"Concrete, honest experience — even from a small real campaign — is identified as more valuable in interviews than abstract conceptual descriptions."}
     ]
   }
   ]
@@ -7405,10 +8536,10 @@ const courseCatalog = {
       "💻 Digital freight forwarding and industry technology",
     ],
     expect: "This course is built for someone who wants to genuinely understand international freight forwarding — the technical frameworks (Incoterms, documentation, customs) that the job actually runs on, not just a job description.",
-    price: "$49.99",
+    price: "$24.99",
     priceNote: "CAD",
     hours: "10–12 hours",
-    paymentLink: "https://buy.stripe.com/8x27sM2gHamegLF5bk3cc03",
+    paymentLink: "https://buy.stripe.com/9B64gA6wX51U7b57js3cc04",
     productKey: "freight_course",
   },
   customs: {
@@ -7429,17 +8560,41 @@ const courseCatalog = {
       "💼 Duty relief, bonded warehousing, and drawback programs",
     ],
     expect: "This course is built for someone who wants a genuine, technical understanding of Canadian customs compliance — not just definitions, but how classification, valuation, and origin decisions actually get made and defended. Real chapters, real worked examples, in your own words throughout.",
-    price: "$49.99",
+    price: "$39.99",
     priceNote: "CAD",
     hours: "10–12 hours",
-    paymentLink: "https://buy.stripe.com/8x27sM2gHamegLF5bk3cc03",
+    paymentLink: "https://buy.stripe.com/dRmcN6cVlamefHBcDM3cc05",
     productKey: "customs_course",
+  },
+  digitalmarketing: {
+    data: digitalMarketingCourse,
+    badge: "📈 New Course",
+    title: "Digital Marketing — Strategy, Channels & Real Campaigns",
+    lede: "A detailed, practical course on digital marketing — SEO, content, social, paid ads, email automation, analytics, and conversion optimization, with real worked examples throughout.",
+    icon: "📈",
+    catalogDesc: "12 chapters, 120 questions. SEO, content, ads, email, analytics — real strategy, not just theory.",
+    learn: [
+      "📈 How the core channels actually work together",
+      "🎯 Real audience research, not assumptions",
+      "🔍 SEO fundamentals — intent, technical basics, and content",
+      "✍️ Copywriting and content that genuinely converts",
+      "📱 Social media strategy across different platforms",
+      "💰 Paid advertising — search, social, and display",
+      "📧 Email marketing and automation sequences",
+      "📊 Real analytics, ROI, and conversion optimization",
+    ],
+    expect: "This course is built for someone who wants genuine, practical digital marketing skill — real strategy and worked examples, not just definitions of channels.",
+    price: "$14.99",
+    priceNote: "CAD",
+    hours: "8–10 hours",
+    paymentLink: "https://buy.stripe.com/fZu00k6wXdyq671eLU3cc06",
+    productKey: "digitalmarketing_course",
   },
 };
 
 let currentCourseKey = null;
-let dcQuizState = { dispatch: {}, freight: {}, customs: {} };
-let courseAccess = { dispatch: false, freight: false, customs: false };
+let dcQuizState = { dispatch: {}, freight: {}, customs: {}, digitalmarketing: {} };
+let courseAccess = { dispatch: false, freight: false, customs: false, digitalmarketing: false };
 
 function initCourseCatalog(){
   const el = document.getElementById('dc-catalog-grid');
@@ -7917,14 +9072,12 @@ async function syncEntitlements(){
       hasPhotoToolAccess = true;
       hasResumeBuilderAccess = true;
     }
-    // Dispatcher, Freight Forwarding, and Customs Compliance courses all
-    // currently share the same $49.99 CAD payment link, so any one
-    // purchase record unlocks all three.
-    if(products.includes('dispatch_course') || products.includes('freight_course') || products.includes('customs_course')){
-      courseAccess.dispatch = true;
-      courseAccess.freight = true;
-      courseAccess.customs = true;
-    }
+    // Each course now has its own distinct payment link and price, so
+    // each unlocks independently based on which was actually purchased.
+    if(products.includes('dispatch_course')) courseAccess.dispatch = true;
+    if(products.includes('freight_course')) courseAccess.freight = true;
+    if(products.includes('customs_course')) courseAccess.customs = true;
+    if(products.includes('digitalmarketing_course')) courseAccess.digitalmarketing = true;
     // Re-render whatever's currently on screen so newly-unlocked content shows immediately
     if(document.querySelector('[data-view="home"].active')) renderChapterGrid();
     if(document.querySelector('[data-view="ielts-hub"].active')) renderIeltsTabContent();

@@ -38,11 +38,11 @@ const PRICE_ID_TO_PRODUCT = {
   [process.env.STRIPE_PRICE_LANGUAGE_PREMIUM]: 'language_premium',
   [process.env.STRIPE_PRICE_PHOTO_TOOL]: 'photo_tool',
   [process.env.STRIPE_PRICE_RESUME_BUILDER]: 'resume_builder',
-  // Dispatcher and Freight Forwarding courses currently share the exact
-  // same Stripe price ($49.99 CAD), so only one env var is needed here —
-  // the shared price maps to 'dispatch_course', and productsToGrant below
-  // expands that into both course entitlements.
+  // Each course now has its own distinct Stripe price and payment link,
+  // so each needs its own env var mapping to its own product.
   [process.env.STRIPE_PRICE_DISPATCH_COURSE]: 'dispatch_course',
+  [process.env.STRIPE_PRICE_FREIGHT_COURSE]: 'freight_course',
+  [process.env.STRIPE_PRICE_CUSTOMS_COURSE]: 'customs_course',
 };
 
 exports.handler = async (event) => {
@@ -85,12 +85,13 @@ exports.handler = async (event) => {
       return { statusCode: 200, body: 'ok (missing userId or unrecognized product, ignored)' };
     }
 
-    // The Photo Tool and Resume Builder currently share one $3.99 payment
+    // The Photo Tool and Resume Builder still share one $3.99 payment
     // link, so a purchase of that price unlocks both — write one
     // entitlement row per product rather than just the one detected.
+    // The three courses now each have their own distinct price and link,
+    // so they no longer bundle together.
     const productsToGrant =
       product === 'photo_tool' ? ['photo_tool', 'resume_builder'] :
-      product === 'dispatch_course' ? ['dispatch_course', 'freight_course', 'customs_course'] :
       [product];
 
     const { error } = await supabase
