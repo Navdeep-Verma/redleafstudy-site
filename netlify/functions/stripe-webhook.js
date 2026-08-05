@@ -40,9 +40,24 @@ const PRICE_ID_TO_PRODUCT = {
   [process.env.STRIPE_PRICE_RESUME_BUILDER]: 'resume_builder',
   // Each course now has its own distinct Stripe price and payment link,
   // so each needs its own env var mapping to its own product.
+  //
+  // BUG FIX (2026-08-04): this map was missing the last 3 of the 6 course
+  // products (digitalmarketing_course, finance_course, jobculture_course).
+  // Since courses are sold through plain Stripe Payment Links (no custom
+  // checkout-session metadata), this map is the ONLY way the webhook can
+  // identify which course was purchased. Without an entry here, a real,
+  // successful payment for one of these 3 courses would silently fail to
+  // grant access — the customer pays, but courseAccess.* in the frontend
+  // (which reads from courses recorded here via entitlements) never gets
+  // set. Set STRIPE_PRICE_DIGITALMARKETING_COURSE, STRIPE_PRICE_FINANCE_COURSE,
+  // and STRIPE_PRICE_JOBCULTURE_COURSE in Netlify env vars to each course's
+  // real Stripe Price ID for this fix to take effect.
   [process.env.STRIPE_PRICE_DISPATCH_COURSE]: 'dispatch_course',
   [process.env.STRIPE_PRICE_FREIGHT_COURSE]: 'freight_course',
   [process.env.STRIPE_PRICE_CUSTOMS_COURSE]: 'customs_course',
+  [process.env.STRIPE_PRICE_DIGITALMARKETING_COURSE]: 'digitalmarketing_course',
+  [process.env.STRIPE_PRICE_FINANCE_COURSE]: 'finance_course',
+  [process.env.STRIPE_PRICE_JOBCULTURE_COURSE]: 'jobculture_course',
 };
 
 exports.handler = async (event) => {

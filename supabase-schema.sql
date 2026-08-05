@@ -9,7 +9,7 @@
 CREATE TABLE entitlements (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT NOT NULL,
-  product TEXT NOT NULL,              -- 'citizenship_prep' | 'language_premium' | 'course_<slug>'
+  product TEXT NOT NULL,              -- e.g. 'citizenship_prep' | 'language_premium' | 'photo_tool' | 'resume_builder' | '<course_slug>_course' (dispatch_course, freight_course, customs_course, digitalmarketing_course, finance_course, jobculture_course)
   stripe_session_id TEXT,
   purchased_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(user_id, product)

@@ -42,20 +42,26 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body.' }) };
   }
 
-  const { product, coursePriceId, courseSlug } = body;
+  const { product } = body;
 
-  let priceId;
-  let metadataProduct;
-
-  if (product === 'citizenship_prep' || product === 'language_premium' || product === 'photo_tool') {
-    priceId = PRICE_IDS[product];
-    metadataProduct = product;
-  } else if (product === 'course' && coursePriceId && courseSlug) {
-    // Course purchases pass their own Stripe Price ID directly, since
-    // each course has its own price set independently (see courses table).
-    priceId = coursePriceId;
-    metadataProduct = `course_${courseSlug}`;
-  }
+  // BUG FIX (2026-08-04): this used to also accept a `course` product type
+  // where the Stripe Price ID (`coursePriceId`) and product label
+  // (`courseSlug`) were taken directly from the client request body and
+  // trusted as-is. That's a real price-tampering hole: this function is a
+  // public HTTP endpoint, so anyone (not just the frontend) could POST to
+  // it directly with an arbitrary priceId — e.g. substituting a cheaper
+  // price from this same Stripe account — and get a valid checkout session
+  // at that price while labelling it as any course they choose. The
+  // current frontend never actually calls this path (courses are sold
+  // through their own fixed Stripe Payment Links — see courseCatalog in
+  // index.html — which don't have this problem, since Stripe fixes the
+  // price server-side for a Payment Link). That branch has been removed
+  // rather than patched, since there was nothing depending on it. If you
+  // want dynamic Checkout Sessions for courses instead of Payment Links
+  // later, look up the price ID server-side from a trusted map (like
+  // PRICE_IDS below), never from the request body.
+  const priceId = PRICE_IDS[product];
+  const metadataProduct = product;
 
   if (!priceId) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Unknown or missing product.' }) };
